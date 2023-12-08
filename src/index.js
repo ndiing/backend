@@ -11,7 +11,6 @@ const https = require("https");
 const { Readable } = require("stream");
 const zlib = require("zlib");
 const moment = require("moment");
-
 require("./lib");
 require("./dev");
 
@@ -79,44 +78,43 @@ function auth() {
  * @returns {Function} Middleware function for rate limiting.
  */
 function rateLimit() {
-    const rateLimitMaps = new Map();
-    const rateLimitOptions = { limit: 30, window: 30 };
+    const temp = new Map();
+    const options = [
+        {
+            url: /.*/,
+            limit: 30,
+            window: 30,
+        },
+    ];
     return (req, res, next) => {
         try {
             req.ip = req.socket.remoteAddress;
-
+            const option = options.find((option) => option.url.test(req.url));
             const key = [req.method, req.ip, req.url].join();
-            if (!rateLimitMaps.has(key)) {
-                rateLimitMaps.set(key, {
-                    remaining: rateLimitOptions.limit,
+            if (!temp.has(key)) {
+                temp.set(key, {
+                    remaining: option.limit,
                 });
             }
-
-            const value = rateLimitMaps.get(key);
-
+            const value = temp.get(key);
             if (value.remaining > 0) {
                 --value.remaining;
-                rateLimitMaps.set(key, value);
+                temp.set(key, value);
             }
-
             if (value.remaining === 0 && value.reset === undefined) {
-                value.reset = moment().add(rateLimitOptions.window, "s");
-                rateLimitMaps.set(key, value);
+                value.reset = moment().add(option.window, "s");
+                temp.set(key, value);
             }
-
             const retryAfter = value.reset && value.reset.diff(moment(), "s");
-
             if (retryAfter <= 0) {
-                value.remaining = rateLimitOptions.limit;
+                value.remaining = option.limit;
                 value.reset = undefined;
-                rateLimitMaps.set(key, value);
+                temp.set(key, value);
             }
-
             res.set({
-                "X-RateLimit-Limit": rateLimitOptions.limit,
+                "X-RateLimit-Limit": option.limit,
                 "X-RateLimit-Remaining": value.remaining,
             });
-
             if (retryAfter > 0) {
                 res.set({
                     "X-RateLimit-Reset": value.reset,
@@ -140,7 +138,6 @@ function compression() {
     return (req, res, next) => {
         try {
             req.headers = new Headers(req.headers);
-
             res.send = function (body) {
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();
@@ -148,9 +145,7 @@ function compression() {
                     readable.push(null);
                     body = readable;
                 }
-
                 const acceptEncoding = req.headers.get("Accept-Encoding");
-
                 if (/\bgzip\b/.test(acceptEncoding)) {
                     body = body.pipe(zlib.createGzip());
                     res.set("Content-Encoding", "gzip");
@@ -182,9 +177,7 @@ function body() {
                 for (const chunk of req) {
                     buffer.push(chunk);
                 }
-
                 const body = Buffer.concat(buffer);
-
                 const contentType = req.headers["content-type"];
                 if (contentType.includes("json")) {
                     req.body = JSON.parse(body);
@@ -210,7 +203,6 @@ function notFound() {
     };
 }
 
-
 /**
  * Middleware for handling internal server errors.
  * @returns {Function} Middleware function for handling internal server errors.
@@ -221,7 +213,6 @@ function internalServerError() {
         if (err.statusCode >= 200 && err.statusCode < 300) {
             res.status(500);
         }
-
         err.stack = undefined;
         res.json(err);
     };

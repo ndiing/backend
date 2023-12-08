@@ -18,6 +18,12 @@ const COOKIE_ATTRIBUTES = {
 function init() {
     return async (req, res, next) => {
         try {
+            req.secure = req.socket.encrypted;
+
+            // if (!req.secure) {
+            //     return res.redirect("https://" + req.hostname + req.url);
+            // }
+
             // HTTP Messages
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];

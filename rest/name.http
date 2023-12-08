@@ -1,3 +1,6 @@
 ###
 GET http://localhost/api/name
 Accept-Encoding: gzip
+###
+GET https://localhost/api/name
+Accept-Encoding: gzip

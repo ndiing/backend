@@ -6,3 +6,4 @@ require("./jwt");
 require("./otp");
 require("./fetch");
 require("./helper");
+require("./cert");

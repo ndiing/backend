@@ -128,3 +128,5 @@ dist
 
 data
 src/dev
+*.key
+*.crt

@@ -328,18 +328,22 @@ class Store {
 function fetch(resource, options = {}) {
     return new Promise((resolve, reject) => {
         const request = new Request(resource, options);
+        
         if (!options.store) {
             options.store = new Store(`./data/${request.hostname}/default.min.json`);
         }
+
         const cookie = options.store.cookieStore.cookie;
         if (cookie && request.credentials === "includes") {
             // Cookie
             request.headers.set("Cookie", cookie);
         }
+
         if (process.env.NODE_ENV === "development") {
             const Agent = request.protocol === "https:" ? HttpsProxyAgent : HttpProxyAgent;
             request.agent = new Agent("http://127.0.0.1:8888");
         }
+
         const req = request.client.request(request);
         req.on("error", reject);
         req.on("response", (res) => {
@@ -348,10 +352,12 @@ function fetch(resource, options = {}) {
                 statusMessage: res.statusMessage,
                 headers: res.headers,
             });
+
             const setCookie = response.headers.getSetCookie();
             if (setCookie.length) {
                 options.store.cookieStore.cookie = setCookie;
             }
+
             const location = response.headers.get("Location");
             if (location && request.redirect === "follow" && request.follow > 0) {
                 --request.follow;
@@ -361,6 +367,7 @@ function fetch(resource, options = {}) {
                     store: options.store,
                 });
             }
+            
             resolve(response);
         });
         request.body.pipe(req);

@@ -258,28 +258,39 @@ const algs = {
 
 function encode(payload, options = {}) {
     let { header } = options;
+    
     const method = algs[header.alg];
+    
     payload = JSON.stringify(payload);
     payload = Crypto.encode(payload, { encoding: "base64url" });
+    
     header = JSON.stringify(header);
     header = Crypto.encode(header, { encoding: "base64url" });
+    
     const data = [header, payload].join(".");
     const signature = method.sign(data, options);
+    
     return [data, signature].join(".");
 }
 
 function decode(token, options = {}) {
     let [header, payload, signature] = token.split(".");
+    
     const data = [header, payload].join(".");
+    
     header = Crypto.decode(header, { encoding: "base64url" });
     header = JSON.parse(header);
+    
     const method = algs[header.alg];
     const verfied = method.verify(data, signature, options);
+    
     payload = Crypto.decode(payload, { encoding: "base64url" });
     payload = JSON.parse(payload);
+    
     if (!verfied) {
         throw new Error("Invalid Signature");
     }
+    
     return payload;
 }
 

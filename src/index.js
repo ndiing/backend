@@ -10,12 +10,9 @@ require("./lib");
 require("./dev");
 
 const app = express();
-
 app.use(init());
 app.use(auth());
-
 app.use("/api", require("./api"));
-
 app.use(missing());
 app.use(error());
 

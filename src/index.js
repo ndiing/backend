@@ -18,7 +18,6 @@ app.use(error());
 
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(config.https.options, app);
-
 httpServer.listen(config.http.port, "0.0.0.0", () => {
     console.log(httpServer.address());
 });

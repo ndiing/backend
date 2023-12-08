@@ -4,11 +4,9 @@ function delay(ms = 1000) {
 
 function flatten(obj) {
     let flattened = {};
-    
     Object.keys(obj).forEach((key) => {
         if (typeof obj[key] === "object" && obj[key] !== null) {
             const flatObject = flatten(obj[key]);
-            
             Object.keys(flatObject).forEach((nestedKey) => {
                 flattened[`${key}.${nestedKey}`] = flatObject[nestedKey];
             });
@@ -16,51 +14,23 @@ function flatten(obj) {
             flattened[key] = obj[key];
         }
     });
-
     return flattened;
 }
 
 function unflatten(obj) {
     let result = {};
-    
     for (const key in obj) {
         const keys = key.split(".");
-        
         keys.reduce((acc, currentKey, index) => {
             if (!acc[currentKey]) {
                 acc[currentKey] = isNaN(keys[index + 1]) ? {} : [];
             }
-            
             if (index === keys.length - 1) {
                 acc[currentKey] = obj[key];
             }
             return acc[currentKey];
         }, result);
     }
-
     return result;
 }
-// // Usage example
-// var data={
-//     server:{
-//         http:{
-//             port:80
-//         },
-//         https:{
-//             port:443,
-//             options:{
-//                 key:null,
-//                 cert:null,
-//             }
-//         },
-//     }
-// }
-// data=flatten(data)
-// console.log(data)
-// data=unflatten(data)
-// console.log(data)
-module.exports = {
-    delay,
-    flatten,
-    unflatten,
-};
+module.exports = { delay, flatten, unflatten };

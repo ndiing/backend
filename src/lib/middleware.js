@@ -7,35 +7,21 @@ function init() {
     return async (req, res, next) => {
         try {
             req.ip = req.socket.remoteAddress;
-            // HTTP security
             res.removeHeader("X-Powered-By");
-            res.set({
-                "Content-Security-Policy": "default-src 'self'",
-                "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-                "X-Content-Type-Options": "nosniff",
-                "X-Frame-Options": "DENY",
-                "X-XSS-Protection": "1; mode=block",
-                "Access-Control-Allow-Origin": "*",
-            });
-            // HTTP Messages
+            res.set({ "Content-Security-Policy": "default-src 'self'", "Strict-Transport-Security": "max-age=31536000; includeSubDomains", "X-Content-Type-Options": "nosniff", "X-Frame-Options": "DENY", "X-XSS-Protection": "1; mode=block", "Access-Control-Allow-Origin": "*" });
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];
-                
                 for (const chunk of req) {
                     buffer.push(chunk);
                 }
-                
                 const body = Buffer.concat(buffer);
                 const contentType = req.headers["content-type"];
-                
                 if (contentType.includes("json")) {
                     req.body = JSON.parse(body);
                 } else if (contentType.includes("urlencoded")) {
                     req.body = Object.fromEntries(new URLSearchParams(body.toString()).entries());
                 }
             }
-            // HTTP compression
-
             res.send = function (body) {
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();
@@ -43,9 +29,7 @@ function init() {
                     readable.push(null);
                     body = readable;
                 }
-                
                 const acceptEncoding = req.headers["accept-encoding"];
-                
                 if (/\bgzip\b/.test(acceptEncoding)) {
                     res.set("Content-Encoding", "gzip");
                     body = body.pipe(zlib.createGzip());
@@ -56,7 +40,6 @@ function init() {
                     res.set("Content-Encoding", "br");
                     body = body.pipe(zlib.createBrotliCompress());
                 }
-                
                 body.pipe(res);
             };
             next();
@@ -65,25 +48,7 @@ function init() {
         }
     };
 }
-const options = [
-    {
-        method: /.*/,
-        url: /.*/,
-        whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/],
-        limit: 30,
-        window: 30,
-        roles: [
-            {
-                role: /.*/,
-                POST: "any", //any/own
-                GET: "any", //any/own
-                PATCH: "any", //any/own
-                PUT: "any", //any/own
-                DELETE: "any", //any/own
-            },
-        ],
-    },
-];
+const options = [{ method: /.*/, url: /.*/, whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/], limit: 30, window: 30, roles: [{ role: /.*/, POST: "any", GET: "any", PATCH: "any", PUT: "any", DELETE: "any" }] }];
 const temp = new Map();
 
 function auth() {
@@ -91,36 +56,27 @@ function auth() {
         try {
             const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
             const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
-            
             if (!whitelist) {
                 const key = [req.method, req.ip, req.url].join();
-                
                 if (!temp.has(key)) {
                     temp.set(key, { remaining: option.limit });
                 }
-                
                 const value = temp.get(key);
-                
                 if (value.remaining > 0) {
                     --value.remaining;
                     temp.set(key, value);
                 }
-                
                 if (value.remaining === 0 && value.reset === undefined) {
                     value.reset = moment().add(option.window, "s");
                     temp.set(key, value);
                 }
-                
                 const retryAfter = value.reset && value.reset.diff(moment(), "s");
-                
                 if (retryAfter <= 0) {
                     value.remaining = option.limit;
                     value.reset = undefined;
                     temp.set(key, value);
                 }
-                
                 res.set({ "X-RateLimit-Limit": option.limit, "X-RateLimit-Remaining": value.remaining });
-                
                 if (retryAfter > 0) {
                     res.set({ "X-RateLimit-Reset": value.reset, "Retry-After": retryAfter });
                     res.status(429);
@@ -144,13 +100,10 @@ function missing() {
 function error() {
     return (err, req, res, next) => {
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
-        
         if (err.statusCode >= 200 && err.statusCode < 300) {
             res.status(500);
         }
-
         err.stack = undefined;
-
         res.json(err);
     };
 }

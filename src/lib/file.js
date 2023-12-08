@@ -3,9 +3,7 @@ const path = require("path");
 
 function read(file, data) {
     try {
-        data = fs.readFileSync(file, {
-            encoding: "utf8",
-        });
+        data = fs.readFileSync(file, { encoding: "utf8" });
         if (/\b\.json\b/.test(file)) {
             data = JSON.parse(data);
         }
@@ -20,9 +18,7 @@ function write(file, data) {
     try {
         fs.readdirSync(dir);
     } catch (error) {
-        fs.mkdirSync(dir, {
-            recursive: true,
-        });
+        fs.mkdirSync(dir, { recursive: true });
     }
     if (/\b\.json\b/.test(file)) {
         if (/\b\.min\b/.test(file)) {
@@ -33,10 +29,4 @@ function write(file, data) {
     }
     fs.writeFileSync(file, data);
 }
-// Usage example
-// write('./data/name/default.json',{})
-// console.log(read('./data/name/default.json'))
-module.exports = {
-    read,
-    write,
-};
+module.exports = { read, write };

@@ -69,15 +69,6 @@ class Headers {
         return Object.values(this);
     }
 }
-// // Usage example
-// var headers=new Headers()
-// headers.set('name','value')
-// headers.set('content-type','application/json')
-// console.log(headers.key('Content-Type'))
-// console.log(headers.key('Content-type'))
-// console.log(headers.key('content-Type'))
-// console.log(headers.key('content-type'))
-// console.log(headers)
 
 class Request {
     constructor(input, options = {}) {
@@ -89,11 +80,7 @@ class Request {
         this.origin = input.origin;
         this.path = input.pathname + input.search + input.hash;
         this.client = this.protocol === "https:" ? https : http;
-        this.agent =
-            options.agent ??
-            new this.client.Agent({
-                keepAlive: true,
-            });
+        this.agent = options.agent ?? new this.client.Agent({ keepAlive: true });
         this.insecureHTTPParser = options.insecureHTTPParser ?? true;
         this.timeout = options.timeout ?? 1000 * 30;
         this.body = options.body ?? "";
@@ -103,22 +90,11 @@ class Request {
             readable.push(null);
             this.body = readable;
         }
-        // this.bodyUsed = options.bodyUsed;
-        // this.cache = options.cache;
         this.credentials = options.credentials ?? "include";
-        // this.destination = options.destination;
-        this.headers = new Headers({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-            Connection: "Keep-Alive",
-            ...options.headers,
-        });
-        // this.integrity = options.integrity;
+        this.headers = new Headers({ "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36", Connection: "Keep-Alive", ...options.headers });
         this.method = options.method ?? "GET";
-        // this.mode = options.mode;
         this.redirect = options.redirect ?? "follow";
         this.follow = options.follow ?? 30;
-        // this.referrer = options.referrer;
-        // this.referrerPolicy = options.referrerPolicy;
         this.signal = options.signal;
         this.url = options.url;
     }
@@ -129,14 +105,10 @@ class Request {
     json() {}
     text() {}
 }
-// // Usage example
-// var request = new Request("http://localhost");
-// console.log(request);
 
 class Response {
     constructor(body, options = {}) {
         this.body = body;
-        // this.bodyUsed = options.bodyUsed;
         this.headers = new Headers(options.headers);
         const contentEncoding = this.headers.get("Content-Encoding");
         if (/\bgzip\b/.test(contentEncoding)) {
@@ -146,11 +118,9 @@ class Response {
         } else if (/\bbr\b/.test(contentEncoding)) {
             this.body = this.body.pipe(zlib.createBrotliDecompress());
         }
-        // this.redirected = options.redirected;
         this.status = options.status ?? options.statusCode;
         this.ok = this.status >= 200 && this.status < 300;
         this.statusText = options.statusText ?? options.statusMessage;
-        // this.type = options.type;
         this.url = options.url;
     }
     static error() {}
@@ -175,9 +145,6 @@ class Response {
         const buffer = await this.buffer();
         return Buffer.from(buffer);
     }
-    // async formData() {
-    //     const buffer=await this.buffer()
-    // }
     async json() {
         const buffer = await this.buffer();
         return JSON.parse(buffer);
@@ -252,39 +219,6 @@ class CookieStore {
         }
     }
 }
-// // Usage example
-// var cookieStore = new CookieStore()
-// cookieStore.set('name','value')
-// cookieStore.set('name2','value2')
-// cookieStore.set({
-//     name:'name3',
-//     value:'value3',
-// })
-// cookieStore.cookie='sessionId=38afes7a8'
-// cookieStore.cookie='id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT'
-// cookieStore.cookie='id=a3fWa; Max-Age=2592000'
-// cookieStore.cookie='qwerty=219ffwef9w0f; Domain=somecompany.co.uk'
-// cookieStore.cookie='sessionId=e8bb43229de9; Domain=foo.example.com'
-// cookieStore.cookie='__Secure-ID=123; Secure; Domain=example.com'
-// cookieStore.cookie='__Host-ID=123; Secure; Path=/'
-// cookieStore.cookie='__Secure-id=1'
-// cookieStore.cookie='__Host-id=1; Secure'
-// cookieStore.cookie='__Host-id=1; Secure; Path=/; Domain=example.com'
-// cookieStore.cookie='__Host-example=34d8g; SameSite=None; Secure; Path=/; Partitioned;'
-// cookieStore.cookie=[
-//     'sessionId=38afes7a8',
-//     'id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT',
-//     'id=a3fWa; Max-Age=2592000',
-//     'qwerty=219ffwef9w0f; Domain=somecompany.co.uk',
-//     'sessionId=e8bb43229de9; Domain=foo.example.com',
-//     '__Secure-ID=123; Secure; Domain=example.com',
-//     '__Host-ID=123; Secure; Path=/',
-//     '__Secure-id=1',
-//     '__Host-id=1; Secure',
-//     '__Host-id=1; Secure; Path=/; Domain=example.com',
-//     '__Host-example=34d8g; SameSite=None; Secure; Path=/; Partitioned;',
-// ]
-// console.log(cookieStore.cookie)
 
 class Store {
     constructor(file, data = {}) {
@@ -318,13 +252,6 @@ class Store {
         return true;
     }
 }
-// //Usage example
-// const store=new Store('./data/name/default.json')
-// // store.data='name'
-// // store.address=[]
-// // store.address.push({address:'line1'})
-// console.log(store)
-
 function fetch(resource, options = {}) {
     return new Promise((resolve, reject) => {
         const request = new Request(resource, options);
@@ -332,40 +259,32 @@ function fetch(resource, options = {}) {
         if (!options.store) {
             options.store = new Store(`./data/${request.hostname}/default.min.json`);
         }
-
+        
         const cookie = options.store.cookieStore.cookie;
         if (cookie && request.credentials === "includes") {
-            // Cookie
             request.headers.set("Cookie", cookie);
         }
-
+        
         if (process.env.NODE_ENV === "development") {
             const Agent = request.protocol === "https:" ? HttpsProxyAgent : HttpProxyAgent;
             request.agent = new Agent("http://127.0.0.1:8888");
         }
-
+        
         const req = request.client.request(request);
         req.on("error", reject);
         req.on("response", (res) => {
-            let response = new Response(res, {
-                statusCode: res.statusCode,
-                statusMessage: res.statusMessage,
-                headers: res.headers,
-            });
-
+            let response = new Response(res, { statusCode: res.statusCode, statusMessage: res.statusMessage, headers: res.headers });
+            
             const setCookie = response.headers.getSetCookie();
             if (setCookie.length) {
                 options.store.cookieStore.cookie = setCookie;
             }
-
+            
             const location = response.headers.get("Location");
             if (location && request.redirect === "follow" && request.follow > 0) {
                 --request.follow;
                 const url = new URL(location, request.origin);
-                response = fetch(url.toString(), {
-                    follow: request.follow,
-                    store: options.store,
-                });
+                response = fetch(url.toString(), { follow: request.follow, store: options.store });
             }
             
             resolve(response);
@@ -373,21 +292,4 @@ function fetch(resource, options = {}) {
         request.body.pipe(req);
     });
 }
-module.exports = {
-    default: fetch,
-    Headers,
-    Request,
-    Response,
-    CookieStore,
-    Store,
-};
-// // Usage example
-// fetch("http://google.com", {
-//     // redirect:'manual',
-//     headers: {
-//         "accept-encoding": "br",
-//     },
-// })
-//     // .then(res=>res.text())
-//     // .then(console.log)
-//     .catch(console.log);
+module.exports = { default: fetch, Headers, Request, Response, CookieStore, Store };

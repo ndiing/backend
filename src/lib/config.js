@@ -2,7 +2,6 @@ const { read, write } = require("./file");
 const { flatten, unflatten } = require("./helper");
 
 const version = "1.0.0";
-
 const config = unflatten(
     read("./config.json", {
         version,

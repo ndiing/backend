@@ -1,9 +1,7 @@
 const crypto = require("crypto");
 const Crypto = require("./crypto");
 
-// Hashing algorithms for JWT signatures
 const algs = {
-    // Various algorithms with sign and verify methods..
     HS256: {
         sign(data, options) {
             const { secret: key } = options;
@@ -34,7 +32,6 @@ const algs = {
             return Crypto.hmac(data, { algorithm: "sha512", key, encoding: "base64url" }) === signature;
         },
     },
-
     RS256: {
         sign(data, options) {
             const {
@@ -77,7 +74,6 @@ const algs = {
             return Crypto.verify(data, signature, { algorithm: "sha512", key, encoding: "base64url" });
         },
     },
-
     ES256: {
         sign(data, options) {
             const {
@@ -174,7 +170,6 @@ const algs = {
             });
         },
     },
-
     PS256: {
         sign(data, options) {
             const {
@@ -261,48 +256,27 @@ const algs = {
     },
 };
 
-/**
- * Encodes a JSON payload into a JWT token.
- * @param {Object} payload - Payload data to encode.
- * @param {Object} options - Options for encoding.
- * @returns {string} The encoded JWT token.
- */
 function encode(payload, options = {}) {
     let { header } = options;
-
     const method = algs[header.alg];
-
     payload = JSON.stringify(payload);
     payload = Crypto.encode(payload, { encoding: "base64url" });
     header = JSON.stringify(header);
     header = Crypto.encode(header, { encoding: "base64url" });
-
     const data = [header, payload].join(".");
     const signature = method.sign(data, options);
     return [data, signature].join(".");
 }
 
-/**
- * Decodes a JWT token and verifies its signature.
- * @param {string} token - JWT token to decode.
- * @param {Object} options - Options for decoding.
- * @returns {Object} The decoded payload if the signature is valid.
- * @throws {Error} If the signature is invalid.
- */
 function decode(token, options = {}) {
     let [header, payload, signature] = token.split(".");
     const data = [header, payload].join(".");
-
     header = Crypto.decode(header, { encoding: "base64url" });
     header = JSON.parse(header);
-
     const method = algs[header.alg];
-
     const verfied = method.verify(data, signature, options);
-
     payload = Crypto.decode(payload, { encoding: "base64url" });
     payload = JSON.parse(payload);
-
     if (!verfied) {
         throw new Error("Invalid Signature");
     }
@@ -324,7 +298,6 @@ function decode(token, options = {}) {
 // console.log(token);
 // var payload = decode(token, { secret });
 // console.log(payload);
-
 module.exports = {
     encode,
     decode,

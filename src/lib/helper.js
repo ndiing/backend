@@ -1,18 +1,7 @@
-/**
- * Delays the execution by a specified number of milliseconds.
- * @param {number} [ms=1000] - The number of milliseconds to delay the execution.
- * @returns {Promise<void>} A Promise that resolves after the specified delay.
- */
 function delay(ms = 1000) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/**
- * Function to flatten nested objects.
- *
- * @param {Object} obj - The object to flatten.
- * @returns {Object} - Flattened object.
- */
 function flatten(obj) {
     let flattened = {};
     Object.keys(obj).forEach((key) => {
@@ -28,12 +17,6 @@ function flatten(obj) {
     return flattened;
 }
 
-/**
- * Function to unflatten nested objects.
- *
- * @param {Object} obj - The object to unflatten.
- * @returns {Object} - Unflattened object.
- */
 function unflatten(obj) {
     let result = {};
     for (const key in obj) {
@@ -50,9 +33,7 @@ function unflatten(obj) {
     }
     return result;
 }
-
 // // Usage example
-
 // var data={
 //     server:{
 //         http:{
@@ -67,13 +48,10 @@ function unflatten(obj) {
 //         },
 //     }
 // }
-
 // data=flatten(data)
 // console.log(data)
-
 // data=unflatten(data)
 // console.log(data)
-
 module.exports = {
     delay,
     flatten,

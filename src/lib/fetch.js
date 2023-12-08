@@ -9,9 +9,6 @@ const { HttpsProxyAgent } = require("https-proxy-agent");
 
 const HEADERS = ["Accept", "Accept-CH", "Accept-CH-Lifetime", "Accept-Charset", "Accept-Encoding", "Accept-Language", "Accept-Patch", "Accept-Post", "Accept-Ranges", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods", "Access-Control-Allow-Origin", "Access-Control-Expose-Headers", "Access-Control-Max-Age", "Access-Control-Request-Headers", "Access-Control-Request-Method", "Age", "Allow", "Alt-Svc", "Alt-Used", "Authorization", "Cache-Control", "Clear-Site-Data", "Connection", "Content-Disposition", "Content-DPR", "Content-Encoding", "Content-Language", "Content-Length", "Content-Location", "Content-Range", "Content-Security-Policy", "Content-Security-Policy-Report-Only", "Content-Type", "Cookie", "Critical-CH", "Cross-Origin-Embedder-Policy", "Cross-Origin-Opener-Policy", "Cross-Origin-Resource-Policy", "Date", "Device-Memory", "Digest", "Deprecated", "DNT", "Downlink", "DPR", "Early-Data", "ECT", "ETag", "Expect", "Expect-CT", "Expires", "Forwarded", "From", "Host", "If-Match", "If-Modified-Since", "If-None-Match", "If-Range", "If-Unmodified-Since", "Keep-Alive", "Large-Allocation", "Last-Modified", "Link", "Location", "Max-Forwards", "NEL", "Origin", "Origin-Agent-Cluster", "Permissions-Policy", "Pragma", "Deprecated", "Proxy-Authenticate", "Proxy-Authorization", "Range", "Referer", "Referrer-Policy", "Retry-After", "RTT", "Save-Data", "Sec-CH-Prefers-Color-Scheme", "Sec-CH-Prefers-Reduced-Motion", "Sec-CH-Prefers-Reduced-Transparency", "Sec-CH-UA", "Sec-CH-UA-Arch", "Sec-CH-UA-Bitness", "Sec-CH-UA-Full-Version", "Deprecated", "Sec-CH-UA-Full-Version-List", "Sec-CH-UA-Mobile", "Sec-CH-UA-Model", "Sec-CH-UA-Platform", "Sec-CH-UA-Platform-Version", "Sec-Fetch-Dest", "Sec-Fetch-Mode", "Sec-Fetch-Site", "Sec-Fetch-User", "Sec-GPC", "Sec-Purpose", "Sec-WebSocket-Accept", "Server", "Server-Timing", "Service-Worker-Navigation-Preload", "Set-Cookie", "SourceMap", "Strict-Transport-Security", "Supports-Loading-Mode", "TE", "Timing-Allow-Origin", "Tk", "Trailer", "Transfer-Encoding", "Upgrade", "Upgrade-Insecure-Requests", "User-Agent", "Vary", "Via", "Viewport-Width", "Want-Digest", "Deprecated", "Warning", "Deprecated", "Width", "WWW-Authenticate", "X-Content-Type-Options", "X-DNS-Prefetch-Control", "X-Forwarded-For", "X-Forwarded-Host", "X-Forwarded-Proto", "X-Frame-Options", "X-XSS-Protection"];
 
-/**
- * Represents HTTP headers with utility methods for manipulation.
- */
 class Headers {
     constructor(init) {
         if (init) {
@@ -72,7 +69,6 @@ class Headers {
         return Object.values(this);
     }
 }
-
 // // Usage example
 // var headers=new Headers()
 // headers.set('name','value')
@@ -83,22 +79,16 @@ class Headers {
 // console.log(headers.key('content-type'))
 // console.log(headers)
 
-/**
- * Represents a network request.
- */
 class Request {
     constructor(input, options = {}) {
         input = new URL(input);
-
         this.protocol = input.protocol;
         this.hostname = input.hostname;
         this.port = parseInt(input.port || (this.protocol === "https:" ? 443 : 80));
         this.host = input.host;
         this.origin = input.origin;
         this.path = input.pathname + input.search + input.hash;
-
         this.client = this.protocol === "https:" ? https : http;
-
         this.agent =
             options.agent ??
             new this.client.Agent({
@@ -106,16 +96,13 @@ class Request {
             });
         this.insecureHTTPParser = options.insecureHTTPParser ?? true;
         this.timeout = options.timeout ?? 1000 * 30;
-
         this.body = options.body ?? "";
-
         if (!(this.body instanceof Readable)) {
             const readable = new Readable();
             readable.push(this.body);
             readable.push(null);
             this.body = readable;
         }
-
         // this.bodyUsed = options.bodyUsed;
         // this.cache = options.cache;
         this.credentials = options.credentials ?? "include";
@@ -135,7 +122,6 @@ class Request {
         this.signal = options.signal;
         this.url = options.url;
     }
-
     arrayBuffer() {}
     blob() {}
     clone() {}
@@ -143,20 +129,15 @@ class Request {
     json() {}
     text() {}
 }
-
 // // Usage example
 // var request = new Request("http://localhost");
 // console.log(request);
 
-/**
- * Represents a network response.
- */
 class Response {
     constructor(body, options = {}) {
         this.body = body;
         // this.bodyUsed = options.bodyUsed;
         this.headers = new Headers(options.headers);
-
         const contentEncoding = this.headers.get("Content-Encoding");
         if (/\bgzip\b/.test(contentEncoding)) {
             this.body = this.body.pipe(zlib.createGunzip());
@@ -165,7 +146,6 @@ class Response {
         } else if (/\bbr\b/.test(contentEncoding)) {
             this.body = this.body.pipe(zlib.createBrotliDecompress());
         }
-
         // this.redirected = options.redirected;
         this.status = options.status ?? options.statusCode;
         this.ok = this.status >= 200 && this.status < 300;
@@ -173,11 +153,9 @@ class Response {
         // this.type = options.type;
         this.url = options.url;
     }
-
     static error() {}
     static json() {}
     static redirect() {}
-
     async buffer() {
         const buffer = [];
         for await (const chunk of this.body) {
@@ -210,9 +188,6 @@ class Response {
     }
 }
 
-/**
- * Represents a cookie store.
- */
 class CookieStore {
     constructor(init) {
         if (init) {
@@ -222,7 +197,6 @@ class CookieStore {
             }
         }
     }
-
     delete(name) {
         let cookie = name;
         if (typeof cookie !== "object") {
@@ -251,7 +225,6 @@ class CookieStore {
         }
         this[cookie.name] = cookie;
     }
-
     get cookie() {
         const array = [];
         for (const name of Object.getOwnPropertyNames(this)) {
@@ -279,7 +252,6 @@ class CookieStore {
         }
     }
 }
-
 // // Usage example
 // var cookieStore = new CookieStore()
 // cookieStore.set('name','value')
@@ -314,9 +286,6 @@ class CookieStore {
 // ]
 // console.log(cookieStore.cookie)
 
-/**
- * Represents a data store.
- */
 class Store {
     constructor(file, data = {}) {
         this.file = file;
@@ -349,7 +318,6 @@ class Store {
         return true;
     }
 }
-
 // //Usage example
 // const store=new Store('./data/name/default.json')
 // // store.data='name'
@@ -357,31 +325,21 @@ class Store {
 // // store.address.push({address:'line1'})
 // console.log(store)
 
-/**
- * Performs a fetch operation for a network resource.
- * @param {string} resource - URL for the resource.
- * @param {Object} [options={}] - Fetch options.
- * @returns {Promise<Response>} - A Promise that resolves to a Response object.
- */
 function fetch(resource, options = {}) {
     return new Promise((resolve, reject) => {
         const request = new Request(resource, options);
-
         if (!options.store) {
             options.store = new Store(`./data/${request.hostname}/default.min.json`);
         }
-
         const cookie = options.store.cookieStore.cookie;
         if (cookie && request.credentials === "includes") {
             // Cookie
             request.headers.set("Cookie", cookie);
         }
-
         if (process.env.NODE_ENV === "development") {
             const Agent = request.protocol === "https:" ? HttpsProxyAgent : HttpProxyAgent;
             request.agent = new Agent("http://127.0.0.1:8888");
         }
-
         const req = request.client.request(request);
         req.on("error", reject);
         req.on("response", (res) => {
@@ -390,13 +348,10 @@ function fetch(resource, options = {}) {
                 statusMessage: res.statusMessage,
                 headers: res.headers,
             });
-
             const setCookie = response.headers.getSetCookie();
-
             if (setCookie.length) {
                 options.store.cookieStore.cookie = setCookie;
             }
-
             const location = response.headers.get("Location");
             if (location && request.redirect === "follow" && request.follow > 0) {
                 --request.follow;
@@ -411,7 +366,6 @@ function fetch(resource, options = {}) {
         request.body.pipe(req);
     });
 }
-
 module.exports = {
     default: fetch,
     Headers,
@@ -420,7 +374,6 @@ module.exports = {
     CookieStore,
     Store,
 };
-
 // // Usage example
 // fetch("http://google.com", {
 //     // redirect:'manual',

@@ -1,7 +1,6 @@
 const {default:fetch,Store} = require('../../lib/fetch')
 const path = require('path')
 
-// class
 class Service {
     constructor(options={}){
         const {
@@ -34,7 +33,6 @@ class Service {
     }
 }
 
-// exports
 module.exports = Service;
 
 // // Usage example

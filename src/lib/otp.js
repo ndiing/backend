@@ -3,25 +3,16 @@ const Crypto = require("./crypto");
 const moment = require("moment");
 const { delay } = require("./helper");
 
-/**
- * Generates a HMAC-based One-Time Password (HOTP).
- * @param {Object} options - Options for generating the HOTP.
- * @returns {string} The generated HOTP.
- */
+
 function hotp(options = {}) {
     let { key, counter = 0, algorithm = "sha1", digits = 6, encoding } = options;
-
     let keyBytes;
     if (encoding === "base32") keyBytes = Crypto.decode(key, { encoding });
     else keyBytes = Buffer.from(key);
-
     const counterBytes = Buffer.alloc(8);
     counterBytes.writeUInt32BE(counter, 4);
-
     const hash = Crypto.hmac(counterBytes, { algorithm, key: keyBytes, encoding: "hex" });
-
     const offset = parseInt(hash.charAt(hash.length - 1), 16);
-
     let result = parseInt(hash.substring(offset * 2, offset * 2 + 2 * 4), 16);
     result = result & 0x7fffffff;
     return String(result)
@@ -29,41 +20,27 @@ function hotp(options = {}) {
         .slice(0 - digits);
 }
 
-/**
- * Generates a Time-Based One-Time Password (TOTP).
- * @param {Object} options - Options for generating the TOTP.
- * @returns {string} The generated TOTP.
- */
 function totp(options = {}) {
     let { key, T = moment().unix() / 1000, T0 = 0, X = 30, algorithm = "sha1", digits = 6, encoding } = options;
     const counter = Math.floor((T - T0) / X);
     return hotp({ key, counter, algorithm, digits, encoding });
 }
-
 // Usage example
 // console.log(hotp({ key:'12345678901234567890' }));
 // console.log(hotp({ key:'12345678901234567890',counter:9 }));
-
 // sha1=20
 // sha256=32
 // sha512=64
-
 // console.log(totp({ T: 59, key: "12345678901234567890" }));
 // console.log(totp({ T: 59, key: "12345678901234567890123456789012", algorithm: "sha256" }));
 // console.log(totp({ T: 59, key: "1234567890123456789012345678901234567890123456789012345678901234", algorithm: "sha512" }));
 
-/**
- * Generates an OTP authentication URL.
- * @param {Object} options - Options for generating the OTP authentication URL.
- * @returns {Object} Object containing OTP-related information like type, label, URL, etc.
- */
 function otpauth(options = {}) {
     const bytes = {
         SHA1: Buffer.alloc(20),
         SHA256: Buffer.alloc(32),
         SHA512: Buffer.alloc(64),
     };
-
     let {
         type = "totp", //hotp/totp
         label = "label",
@@ -73,7 +50,7 @@ function otpauth(options = {}) {
         digits = 6,
         counter = 0, // when hotp
         period = 30, // when totp
-    } = {};
+    } = options;
     const url = new URL(`otpauth://${type}/${label}`);
     if (!secret) {
         secret = crypto.randomBytes(64).toString("base64");
@@ -101,12 +78,10 @@ function otpauth(options = {}) {
         qr: qr.toString(),
     };
 }
-
 // Usage example
 // console.log(otpauth())
 // key=GE2WWU2ZIFHDMWSTIRLUEVDOOM4U6TZL
 // console.log(totp({key:'GE2WWU2ZIFHDMWSTIRLUEVDOOM4U6TZL',encoding:'base32'}))
-
 module.exports = {
     hotp,
     totp,

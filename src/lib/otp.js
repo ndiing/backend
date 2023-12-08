@@ -78,3 +78,8 @@ function otpauth(options = {}) {
     return { type, label, secret, issuer, algorithm, digits, counter, period, url: url.toString(), qr: qr.toString() };
 }
 module.exports = { hotp, totp, otpauth };
+
+// // Usage example
+// console.log(hotp({key:'GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL'}))
+// console.log(totp({key:'GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL'}))
+// console.log(otpauth({}))

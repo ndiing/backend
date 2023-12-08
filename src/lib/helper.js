@@ -34,3 +34,19 @@ function unflatten(obj) {
     return result;
 }
 module.exports = { delay, flatten, unflatten };
+
+// // Usage example
+// // delay().then(console.log)
+// var data={
+//     user:{
+//         name:'',
+//         address:[
+//             'line1',
+//             'line2',
+//         ]
+//     }
+// }
+// var flattened=flatten(data)
+// console.log(flattened)
+// var unflattened=unflatten(flattened)
+// console.log(unflattened)

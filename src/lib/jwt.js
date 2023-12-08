@@ -200,3 +200,13 @@ function decode(token, options = {}) {
     return payload;
 }
 module.exports = { encode, decode };
+
+// // Usage example
+// var header={
+//     alg:'HS256'
+// }
+// var secret='secret'
+// var token = encode({},{header,secret})
+// console.log(token)
+// var payload = decode(token,{secret})
+// console.log(payload)

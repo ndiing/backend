@@ -171,3 +171,31 @@ function hmac(data, options = {}) {
     return crypto.createHmac(algorithm, key).update(data).digest(encoding);
 }
 module.exports = { encode, decode, encrypt, decrypt, privateEncrypt, publicDecrypt, publicEncrypt, privateDecrypt, sign, verify, hash, hmac };
+
+// // Usage example
+
+// var data='string'
+// var {publicKey,privateKey}=crypto.generateKeyPairSync('rsa', {
+//     modulusLength: 4096,
+//     publicKeyEncoding: {
+//       type: 'spki',
+//       format: 'pem',
+//     },
+//     privateKeyEncoding: {
+//       type: 'pkcs8',
+//       format: 'pem',
+//     },
+//   })
+
+// data=encode(data);console.log(data)
+// data=decode(data);console.log(data)
+// data=encrypt(data);console.log(data)
+// data=decrypt(data);console.log(data)
+// data=privateEncrypt(data,{key:privateKey});console.log(data)
+// data=publicDecrypt(data,{key:publicKey});console.log(data)
+// data=publicEncrypt(data,{key:publicKey});console.log(data)
+// data=privateDecrypt(data,{key:privateKey});console.log(data)
+// var signature=sign(data,{key:privateKey});console.log(signature)
+// var verified=verify(data,signature,{key:privateKey});console.log(verified)
+// data=hash(data);console.log(data)
+// data=hmac(data);console.log(data)

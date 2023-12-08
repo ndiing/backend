@@ -30,3 +30,8 @@ function write(file, data) {
     fs.writeFileSync(file, data);
 }
 module.exports = { read, write };
+
+// // Usage example
+// write('./data/name/default.json',{})
+// var data=read('./data/name/default.json')
+// console.log(data)

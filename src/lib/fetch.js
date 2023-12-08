@@ -293,3 +293,28 @@ function fetch(resource, options = {}) {
     });
 }
 module.exports = { default: fetch, Headers, Request, Response, CookieStore, Store };
+
+// // Usage example
+
+// var headers=new Headers()
+// console.log(headers)
+
+// var request=new Request('http://google.com')
+// console.log(request)
+
+// var response=new Response()
+// console.log(response)
+
+// var cookieStore=new CookieStore()
+// cookieStore.cookie='name=value'
+// console.log(cookieStore)
+// console.log(cookieStore.cookie)
+
+// var store = new Store('./data/name/default.json',{})
+// // store.name='line1'
+// console.log(store)
+
+// fetch('http://google.com')
+// .then(res=>res.text())
+// .then(console.log)
+// .catch(console.log)

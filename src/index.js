@@ -5,23 +5,19 @@ const http = require("http");
 const https = require("https");
 const express = require("express");
 const config = require("./lib/config");
-const { auth, body, notFound, internalServerError } = require("./lib/middleware");
+const { auth, init, missing, error } = require("./lib/middleware");
 require("./lib");
 require("./dev");
 
 const app = express();
 
-app.use(require("cors")());
-app.use(require("helmet")());
-
-app.use(body());
-
+app.use(init());
 app.use(auth());
 
 app.use("/api", require("./api"));
 
-app.use(notFound());
-app.use(internalServerError());
+app.use(missing());
+app.use(error());
 
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(config.https.options, app);

@@ -10,6 +10,16 @@ const options = [
         whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/],
         limit: 30,
         window: 30,
+        roles:[
+            {
+                role:'admin',
+                POST:'any',
+                GET:'any',
+                PATCH:'any',
+                PUT:'any',
+                DELETE:'any',
+            }
+        ]
     },
 ];
 
@@ -43,7 +53,6 @@ function auth() {
  * Middleware for rate limiting requests.
  * @returns {Function} Middleware function for rate limiting.
  */
-// This function creates a rate limiter middleware using a Map to track request limits.
 function rateLimit() {
     // Create a Map to store temporary data for rate limiting
     const temp = new Map();
@@ -128,10 +137,6 @@ function compression() {
     return (req, res, next) => {
         try {
             /**@override*/
-            // Convert the request headers to a Headers object (assumed to be compatible with the Fetch API)
-            req.headers = new Headers(req.headers);
-
-            /**@override*/
             // Override the 'send' method of the response object to handle compression
             res.send = function (body) {
                 // Check if the body is not an instance of Readable stream
@@ -144,7 +149,7 @@ function compression() {
                 }
 
                 // Get the client's accepted encodings from the request headers
-                const acceptEncoding = req.headers.get("Accept-Encoding");
+                const acceptEncoding = req.headers["accept-encoding"];
 
                 // Check the client's supported encodings and apply compression accordingly
                 if (/\bgzip\b/.test(acceptEncoding)) {

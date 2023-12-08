@@ -62,7 +62,7 @@ const options = [
         window: 30,
         roles: [
             {
-                role: "admin",
+                role: /.*/,
                 POST: "any",//any/own
                 GET: "any",//any/own
                 PATCH: "any",//any/own

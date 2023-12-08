@@ -2,13 +2,26 @@ const http = require("http");
 const { Readable } = require("stream");
 const zlib = require("zlib");
 const moment = require("moment");
+const { Headers } = require("./fetch");
+
+const COOKIE_ATTRIBUTES = {
+    domain: "Domain",
+    expires: "Expires",
+    httpOnly: "HttpOnly",
+    maxAge: "Max-Age",
+    partitioned: "Partitioned",
+    path: "Path",
+    secure: "Secure",
+    sameSite: "SameSite",
+};
 
 function init() {
     return async (req, res, next) => {
         try {
             res.removeHeader("X-Powered-By");
 
-            req.ip = req.socket.remoteAddress;
+            // HTTP headers
+            res.headers = new Headers(res.headers);
 
             // HTTP security
             res.set({
@@ -37,8 +50,25 @@ function init() {
                 }
             }
 
+            // HTTP cookies
+            const cookie = req.headers["cookie"];
+            if (cookie) {
+                req.cookies = Object.fromEntries(Array.from(cookie.matchAll(/([^= ]+)=([^;]+)/g), ([, name, value]) => [name, value]));
+            }
+
+            res.cookie = (name, value, options = {}) => {
+                const array = [];
+                array.push([name, value].join("="));
+                for (const name in options) {
+                    const value = options[name];
+                    array.push([COOKIE_ATTRIBUTES[name], value].join("="));
+                }
+                const cookie = array.join("; ");
+                res.headers.append("Set-Cookie", cookie);
+            };
+
             // HTTP compression
-            res.send = function (body) {
+            res.send = (body) => {
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();
                     readable.push(body);
@@ -57,6 +87,8 @@ function init() {
                     res.set("Content-Encoding", "br");
                     body = body.pipe(zlib.createBrotliCompress());
                 }
+
+                res.set(res.headers);
 
                 body.pipe(res);
             };
@@ -116,9 +148,15 @@ function auth() {
                     value.reset = undefined;
                     temp.set(key, value);
                 }
-                res.set({ "X-RateLimit-Limit": option.limit, "X-RateLimit-Remaining": value.remaining });
+                res.set({
+                    "X-RateLimit-Limit": option.limit,
+                    "X-RateLimit-Remaining": value.remaining,
+                });
                 if (retryAfter > 0) {
-                    res.set({ "X-RateLimit-Reset": value.reset, "Retry-After": retryAfter });
+                    res.set({
+                        "X-RateLimit-Reset": value.reset,
+                        "Retry-After": retryAfter,
+                    });
                     res.status(429);
                     throw new Error(http.STATUS_CODES[429]);
                 }
@@ -140,10 +178,12 @@ function missing() {
 function error() {
     return (err, req, res, next) => {
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
+        err.stack = undefined;
+
         if (err.statusCode >= 200 && err.statusCode < 300) {
             res.status(500);
         }
-        err.stack = undefined;
+
         res.json(err);
     };
 }

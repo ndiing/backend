@@ -3,6 +3,16 @@ const { Readable } = require("stream");
 const zlib = require("zlib");
 const moment = require("moment");
 
+const options = [
+    {
+        method: /.*/,
+        url: /.*/,
+        whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/],
+        limit: 30,
+        window: 30,
+    },
+];
+
 /**
  * Middleware for authentication.
  * @returns {Function} Middleware function for authentication.
@@ -10,6 +20,17 @@ const moment = require("moment");
 function auth() {
     return (req, res, next) => {
         try {
+            req.ip = req.socket.remoteAddress;
+
+            const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
+
+            const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
+
+            if (!whitelist) {
+                // authorization
+                // authentication
+            }
+
             next();
         } catch (error) {
             next(error);
@@ -23,50 +44,48 @@ function auth() {
  */
 function rateLimit() {
     const temp = new Map();
-    const options = [
-        {
-            url: /.*/,
-            limit: 30,
-            window: 30,
-        },
-    ];
     return (req, res, next) => {
         try {
-            req.ip = req.socket.remoteAddress;
-            const option = options.find((option) => option.url.test(req.url));
-            const key = [req.method, req.ip, req.url].join();
-            if (!temp.has(key)) {
-                temp.set(key, {
-                    remaining: option.limit,
-                });
-            }
-            const value = temp.get(key);
-            if (value.remaining > 0) {
-                --value.remaining;
-                temp.set(key, value);
-            }
-            if (value.remaining === 0 && value.reset === undefined) {
-                value.reset = moment().add(option.window, "s");
-                temp.set(key, value);
-            }
-            const retryAfter = value.reset && value.reset.diff(moment(), "s");
-            if (retryAfter <= 0) {
-                value.remaining = option.limit;
-                value.reset = undefined;
-                temp.set(key, value);
-            }
-            res.set({
-                "X-RateLimit-Limit": option.limit,
-                "X-RateLimit-Remaining": value.remaining,
-            });
-            if (retryAfter > 0) {
+            const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
+
+            const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
+
+            if (!whitelist) {
+                const key = [req.method, req.ip, req.url].join();
+                if (!temp.has(key)) {
+                    temp.set(key, {
+                        remaining: option.limit,
+                    });
+                }
+                const value = temp.get(key);
+                if (value.remaining > 0) {
+                    --value.remaining;
+                    temp.set(key, value);
+                }
+                if (value.remaining === 0 && value.reset === undefined) {
+                    value.reset = moment().add(option.window, "s");
+                    temp.set(key, value);
+                }
+                const retryAfter = value.reset && value.reset.diff(moment(), "s");
+                if (retryAfter <= 0) {
+                    value.remaining = option.limit;
+                    value.reset = undefined;
+                    temp.set(key, value);
+                }
                 res.set({
-                    "X-RateLimit-Reset": value.reset,
-                    "Retry-After": retryAfter,
+                    "X-RateLimit-Limit": option.limit,
+                    "X-RateLimit-Remaining": value.remaining,
                 });
-                res.status(429);
-                throw new Error(http.STATUS_CODES[429]);
+                if (retryAfter > 0) {
+                    res.set({
+                        "X-RateLimit-Reset": value.reset,
+                        "Retry-After": retryAfter,
+                    });
+                    res.status(429);
+                    throw new Error(http.STATUS_CODES[429]);
+                }
             }
+
             next();
         } catch (error) {
             next(error);

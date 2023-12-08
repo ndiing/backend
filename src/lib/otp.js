@@ -3,6 +3,11 @@ const Crypto = require("./crypto");
 const moment = require("moment");
 const { delay } = require("./helper");
 
+/**
+ * Generates a HMAC-based One-Time Password (HOTP).
+ * @param {Object} options - Options for generating the HOTP.
+ * @returns {string} The generated HOTP.
+ */
 function hotp(options = {}) {
     let { key, counter = 0, algorithm = "sha1", digits = 6, encoding } = options;
 
@@ -24,6 +29,11 @@ function hotp(options = {}) {
         .slice(0 - digits);
 }
 
+/**
+ * Generates a Time-Based One-Time Password (TOTP).
+ * @param {Object} options - Options for generating the TOTP.
+ * @returns {string} The generated TOTP.
+ */
 function totp(options = {}) {
     let { key, T = moment().unix() / 1000, T0 = 0, X = 30, algorithm = "sha1", digits = 6, encoding } = options;
     const counter = Math.floor((T - T0) / X);
@@ -42,6 +52,11 @@ function totp(options = {}) {
 // console.log(totp({ T: 59, key: "12345678901234567890123456789012", algorithm: "sha256" }));
 // console.log(totp({ T: 59, key: "1234567890123456789012345678901234567890123456789012345678901234", algorithm: "sha512" }));
 
+/**
+ * Generates an OTP authentication URL.
+ * @param {Object} options - Options for generating the OTP authentication URL.
+ * @returns {Object} Object containing OTP-related information like type, label, URL, etc.
+ */
 function otpauth(options = {}) {
     const bytes = {
         SHA1: Buffer.alloc(20),

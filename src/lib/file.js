@@ -1,7 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 
-// read
+/**
+ * Reads data from a file.
+ * If the file has a '.json' extension, attempts to parse the content as JSON.
+ * If the file doesn't exist, writes the provided data to the file.
+ * @param {string} file - The path to the file.
+ * @param {*} data - The default data to write if the file doesn't exist.
+ * @returns {*} The data read from the file or the provided data.
+ */
 function read(file, data) {
     try {
         data = fs.readFileSync(file, {
@@ -16,7 +23,12 @@ function read(file, data) {
     return data;
 }
 
-// write
+/**
+ * Writes data to a file.
+ * If the file has a '.json' extension, converts data to JSON format before writing.
+ * @param {string} file - The path to the file.
+ * @param {*} data - The data to write to the file.
+ */
 function write(file, data) {
     const dir = path.dirname(file);
     try {

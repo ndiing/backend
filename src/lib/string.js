@@ -1,18 +1,31 @@
-// toPascalCase
+/**
+ * Converts a string to PascalCase.
+ * @param {string} string - The input string.
+ * @returns {string} The string converted to PascalCase.
+ */
 function toPascalCase(string) {
     return string //
         .replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2) => $2.toUpperCase()) //
         .replace(/[^a-zA-Z0-9]+$/g, "");
 }
 
-// toCamelCase
+
+/**
+ * Converts a string to camelCase.
+ * @param {string} string - The input string.
+ * @returns {string} The string converted to camelCase.
+ */
 function toCamelCase(string) {
     return string //
         .replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2, $$) => ($$ === 0 ? $2.toLowerCase() : $2.toUpperCase())) //
         .replace(/[^a-zA-Z0-9]+$/g, "");
 }
 
-// toKebabCase
+/**
+ * Converts a string to kebab-case.
+ * @param {string} string - The input string.
+ * @returns {string} The string converted to kebab-case.
+ */
 function toKebabCase(string) {
     return (
         string
@@ -26,7 +39,12 @@ function toKebabCase(string) {
     );
 }
 
-// toSnakeCase
+
+/**
+ * Converts a string to snake_case.
+ * @param {string} string - The input string.
+ * @returns {string} The string converted to snake_case.
+ */
 function toSnakeCase(string) {
     return (
         string
@@ -40,7 +58,11 @@ function toSnakeCase(string) {
     );
 }
 
-// toTitleCase
+/**
+ * Converts a string to Title Case.
+ * @param {string} string - The input string.
+ * @returns {string} The string converted to Title Case.
+ */
 function toTitleCase(string) {
     return (
         string
@@ -75,6 +97,7 @@ function toTitleCase(string) {
 
 // console.log(data)
 
+// Export the functions as a module
 module.exports = {
     toPascalCase,
     toCamelCase,

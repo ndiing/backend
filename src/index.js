@@ -1,5 +1,6 @@
-// prevent error
-// logs error
+/**
+ * Logs uncaught exceptions and unhandled rejections.
+ */
 process.on("uncaughtException", console.log);
 process.on("unhandledRejection", console.log);
 
@@ -11,21 +12,33 @@ const { Readable } = require("stream");
 const zlib = require("zlib");
 const moment = require("moment");
 
-// REMOVE IT LATER
 require("./lib");
 require("./dev");
 
-// options
+/**
+ * SSL key and certificate options.
+ * @typedef {Object} Options
+ * @property {string | Buffer | Array<string | Buffer>} [key] - SSL key.
+ * @property {string | Buffer | Array<string | Buffer>} [cert] - SSL certificate.
+ */
 const options = {
     key: null,
     cert: null,
 };
 
-// app
+/**
+ * Express application instance.
+ */
 const app = express();
 
-// use
+/**
+ * Middleware for Cross-Origin Resource Sharing (CORS).
+ */
 app.use(require("cors")());
+
+/**
+ * Middleware for enhancing app security by setting various HTTP headers.
+ */
 app.use(require("helmet")());
 app.use(auth());
 app.use(rateLimit());
@@ -47,32 +60,31 @@ httpsServer.listen(443, "0.0.0.0", () => {
     console.log(httpsServer.address());
 });
 
-// function
+/**
+ * Middleware for authentication.
+ * @returns {Function} Middleware function for authentication.
+ */
 function auth() {
     return (req, res, next) => {
         try {
-            // authentication
-
-            // // authorization
-            // res.set("WWW-Authenticate", 'Basic realm=<realm>, charset="UTF-8"');
-            // res.status(401);
-            // throw new Error(http.STATUS_CODES[401]);
-
             next();
         } catch (error) {
             next(error);
         }
     };
 }
+
+/**
+ * Middleware for rate limiting requests.
+ * @returns {Function} Middleware function for rate limiting.
+ */
 function rateLimit() {
     const rateLimitMaps = new Map();
     const rateLimitOptions = { limit: 30, window: 30 };
     return (req, res, next) => {
         try {
-            // ip
             req.ip = req.socket.remoteAddress;
 
-            // key
             const key = [req.method, req.ip, req.url].join();
             if (!rateLimitMaps.has(key)) {
                 rateLimitMaps.set(key, {
@@ -80,38 +92,31 @@ function rateLimit() {
                 });
             }
 
-            // value
             const value = rateLimitMaps.get(key);
 
-            // remaining
             if (value.remaining > 0) {
                 --value.remaining;
                 rateLimitMaps.set(key, value);
             }
 
-            // reset
             if (value.remaining === 0 && value.reset === undefined) {
                 value.reset = moment().add(rateLimitOptions.window, "s");
                 rateLimitMaps.set(key, value);
             }
 
-            // retryAfter
             const retryAfter = value.reset && value.reset.diff(moment(), "s");
 
-            // reset
             if (retryAfter <= 0) {
                 value.remaining = rateLimitOptions.limit;
                 value.reset = undefined;
                 rateLimitMaps.set(key, value);
             }
 
-            // RateLimit
             res.set({
                 "X-RateLimit-Limit": rateLimitOptions.limit,
                 "X-RateLimit-Remaining": value.remaining,
             });
 
-            // Retry-After
             if (retryAfter > 0) {
                 res.set({
                     "X-RateLimit-Reset": value.reset,
@@ -126,15 +131,17 @@ function rateLimit() {
         }
     };
 }
+
+/**
+ * Middleware for compressing HTTP responses.
+ * @returns {Function} Middleware function for compression.
+ */
 function compression() {
     return (req, res, next) => {
         try {
-            // headers
             req.headers = new Headers(req.headers);
 
-            // send
             res.send = function (body) {
-                // Readable
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();
                     readable.push(body);
@@ -142,10 +149,8 @@ function compression() {
                     body = readable;
                 }
 
-                // Accept-Encoding
                 const acceptEncoding = req.headers.get("Accept-Encoding");
 
-                // Content-Encoding
                 if (/\bgzip\b/.test(acceptEncoding)) {
                     body = body.pipe(zlib.createGzip());
                     res.set("Content-Encoding", "gzip");
@@ -164,20 +169,22 @@ function compression() {
         }
     };
 }
+
+/**
+ * Middleware for parsing request body.
+ * @returns {Function} Middleware function for handling request body.
+ */
 function body() {
     return async (req, res, next) => {
         try {
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
-                // buffer
                 const buffer = [];
                 for (const chunk of req) {
                     buffer.push(chunk);
                 }
 
-                // body
                 const body = Buffer.concat(buffer);
 
-                // contentType
                 const contentType = req.headers["content-type"];
                 if (contentType.includes("json")) {
                     req.body = JSON.parse(body);
@@ -191,21 +198,30 @@ function body() {
         }
     };
 }
+
+/**
+ * Middleware for handling 404 (Not Found) errors.
+ * @returns {Function} Middleware function for handling 404 errors.
+ */
 function notFound() {
     return (req, res, next) => {
         res.status(404);
         next(new Error(http.STATUS_CODES[404]));
     };
 }
+
+
+/**
+ * Middleware for handling internal server errors.
+ * @returns {Function} Middleware function for handling internal server errors.
+ */
 function internalServerError() {
     return (err, req, res, next) => {
-        // err
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
         if (err.statusCode >= 200 && err.statusCode < 300) {
             res.status(500);
         }
 
-        // delete stack
         err.stack = undefined;
         res.json(err);
     };

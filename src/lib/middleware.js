@@ -18,21 +18,6 @@ const COOKIE_ATTRIBUTES = {
 function init() {
     return async (req, res, next) => {
         try {
-            res.removeHeader("X-Powered-By");
-
-            // HTTP headers
-            res.headers = new Headers(res.headers);
-
-            // HTTP security
-            res.set({
-                "Content-Security-Policy": "default-src 'self'",
-                "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-                "X-Content-Type-Options": "nosniff",
-                "X-Frame-Options": "DENY",
-                "X-XSS-Protection": "1; mode=block",
-                "Access-Control-Allow-Origin": "*",
-            });
-
             // HTTP Messages
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];
@@ -66,6 +51,21 @@ function init() {
                 const cookie = array.join("; ");
                 res.headers.append("Set-Cookie", cookie);
             };
+
+            res.removeHeader("X-Powered-By");
+
+            // HTTP headers
+            res.headers = new Headers(res.headers);
+
+            // HTTP security
+            res.set({
+                "Content-Security-Policy": "default-src 'self'",
+                "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "X-XSS-Protection": "1; mode=block",
+                "Access-Control-Allow-Origin": "*",
+            });
 
             // HTTP compression
             res.send = (body) => {

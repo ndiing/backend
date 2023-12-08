@@ -6,10 +6,11 @@ const moment = require("moment");
 function init() {
     return async (req, res, next) => {
         try {
-            req.ip = req.socket.remoteAddress;
-
             res.removeHeader("X-Powered-By");
 
+            req.ip = req.socket.remoteAddress;
+
+            // HTTP security
             res.set({
                 "Content-Security-Policy": "default-src 'self'",
                 "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -19,6 +20,7 @@ function init() {
                 "Access-Control-Allow-Origin": "*",
             });
 
+            // HTTP Messages
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];
                 for (const chunk of req) {
@@ -35,6 +37,7 @@ function init() {
                 }
             }
 
+            // HTTP compression
             res.send = function (body) {
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();

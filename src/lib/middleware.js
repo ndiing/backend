@@ -3,26 +3,6 @@ const { Readable } = require("stream");
 const zlib = require("zlib");
 const moment = require("moment");
 
-const options = [
-    {
-        method: /.*/,
-        url: /.*/,
-        whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/],
-        limit: 30,
-        window: 30,
-        roles: [
-            {
-                role: "admin",
-                POST: "any",
-                GET: "any",
-                PATCH: "any",
-                PUT: "any",
-                DELETE: "any",
-            },
-        ],
-    },
-];
-
 function body() {
     return async (req, res, next) => {
         try {
@@ -72,6 +52,26 @@ function compression() {
         }
     };
 }
+
+const options = [
+    {
+        method: /.*/,
+        url: /.*/,
+        whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/],
+        limit: 30,
+        window: 30,
+        roles: [
+            {
+                role: "admin",
+                POST: "any",//any/own
+                GET: "any",//any/own
+                PATCH: "any",//any/own
+                PUT: "any",//any/own
+                DELETE: "any",//any/own
+            },
+        ],
+    },
+];
 
 function auth() {
     return (req, res, next) => {

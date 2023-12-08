@@ -6,9 +6,9 @@ process.on("uncaughtException", console.log);
 process.on("unhandledRejection", console.log);
 
 // Require necessary modules
-const express = require("express");
 const http = require("http");
 const https = require("https");
+const express = require("express");
 const config = require("./lib/config");
 const { auth, rateLimit, compression, body, notFound, internalServerError } = require("./lib/middleware");
 

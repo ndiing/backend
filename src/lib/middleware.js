@@ -46,7 +46,7 @@ function auth() {
 function rateLimit() {
     // Create a Map to store temporary data for rate limiting
     const temp = new Map();
-    
+
     // Return a middleware function that handles rate limiting for incoming requests
     return (req, res, next) => {
         try {
@@ -60,29 +60,29 @@ function rateLimit() {
             if (!whitelist) {
                 // Create a unique key based on request method, IP, and URL
                 const key = [req.method, req.ip, req.url].join();
-                
+
                 // If the key is not in the temporary storage, initialize its data
                 if (!temp.has(key)) {
                     temp.set(key, {
                         remaining: option.limit,
                     });
                 }
-                
+
                 // Retrieve the stored value for the key
                 const value = temp.get(key);
-                
+
                 // Decrement the remaining count of requests allowed for this key
                 if (value.remaining > 0) {
                     --value.remaining;
                     temp.set(key, value);
                 }
-                
+
                 // If the limit is reached and no reset time is set, calculate and set the reset time
                 if (value.remaining === 0 && value.reset === undefined) {
                     value.reset = moment().add(option.window, "s");
                     temp.set(key, value);
                 }
-                
+
                 // Calculate time remaining until reset and reset the limit if necessary
                 const retryAfter = value.reset && value.reset.diff(moment(), "s");
                 if (retryAfter <= 0) {
@@ -90,13 +90,13 @@ function rateLimit() {
                     value.reset = undefined;
                     temp.set(key, value);
                 }
-                
+
                 // Set response headers for rate limit information
                 res.set({
                     "X-RateLimit-Limit": option.limit,
                     "X-RateLimit-Remaining": value.remaining,
                 });
-                
+
                 // If retryAfter is greater than 0, set headers for retry-after and rate limit reset time,
                 // then respond with a 429 status (Too Many Requests)
                 if (retryAfter > 0) {
@@ -117,7 +117,6 @@ function rateLimit() {
         }
     };
 }
-
 
 /**
  * Middleware for compressing HTTP responses.
@@ -159,23 +158,35 @@ function compression() {
  * @returns {Function} Middleware function for handling request body.
  */
 function body() {
+    // Returns an asynchronous middleware function that handles parsing request bodies
     return async (req, res, next) => {
         try {
+            // Check if the request method is POST, PATCH, or PUT
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];
+                // Iterate through the incoming request data (chunks) and store them in a buffer
                 for (const chunk of req) {
                     buffer.push(chunk);
                 }
+                // Concatenate the chunks into a single Buffer representing the entire request body
                 const body = Buffer.concat(buffer);
+
+                // Get the content type of the request from the headers
                 const contentType = req.headers["content-type"];
+
+                // Check if the content type includes 'json'
                 if (contentType.includes("json")) {
+                    // If content type is JSON, parse the body as JSON and assign it to req.body
                     req.body = JSON.parse(body);
                 } else if (contentType.includes("urlencoded")) {
+                    // If content type is URL-encoded, parse the body and convert it into an object
                     req.body = Object.fromEntries(new URLSearchParams(body.toString()).entries());
                 }
             }
+            // Move to the next middleware in the chain
             next();
         } catch (error) {
+            // Pass any caught error to the next middleware for error handling
             next(error);
         }
     };

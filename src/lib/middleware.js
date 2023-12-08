@@ -123,31 +123,49 @@ function rateLimit() {
  * @returns {Function} Middleware function for compression.
  */
 function compression() {
+    // Returns a middleware function to handle response compression
     return (req, res, next) => {
         try {
+            // Convert the request headers to a Headers object (assumed to be compatible with the Fetch API)
             req.headers = new Headers(req.headers);
+
+            // Override the 'send' method of the response object to handle compression
             res.send = function (body) {
+                // Check if the body is not an instance of Readable stream
                 if (!(body instanceof Readable)) {
+                    // If body is not a Readable stream, create a Readable stream from the body data
                     const readable = new Readable();
                     readable.push(body);
                     readable.push(null);
                     body = readable;
                 }
+
+                // Get the client's accepted encodings from the request headers
                 const acceptEncoding = req.headers.get("Accept-Encoding");
+
+                // Check the client's supported encodings and apply compression accordingly
                 if (/\bgzip\b/.test(acceptEncoding)) {
+                    // Compress the body using gzip if the client supports it
                     body = body.pipe(zlib.createGzip());
-                    res.set("Content-Encoding", "gzip");
+                    res.set("Content-Encoding", "gzip"); // Set the Content-Encoding header
                 } else if (/\bdeflate\b/.test(acceptEncoding)) {
+                    // Compress the body using deflate if the client supports it
                     body = body.pipe(zlib.createDeflate());
-                    res.set("Content-Encoding", "deflate");
+                    res.set("Content-Encoding", "deflate"); // Set the Content-Encoding header
                 } else if (/\bbr\b/.test(acceptEncoding)) {
+                    // Compress the body using Brotli if the client supports it
                     body = body.pipe(zlib.createBrotliCompress());
-                    res.set("Content-Encoding", "br");
+                    res.set("Content-Encoding", "br"); // Set the Content-Encoding header
                 }
+
+                // Pipe the compressed body to the response object
                 body.pipe(res);
             };
+
+            // Move to the next middleware in the chain
             next();
         } catch (error) {
+            // Pass any caught error to the next middleware for error handling
             next(error);
         }
     };

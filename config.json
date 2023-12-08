@@ -1,0 +1,7 @@
+{
+    "version": "1.0.0",
+    "http.port": 80,
+    "https.port": 443,
+    "https.options.key": null,
+    "https.options.cert": null
+}

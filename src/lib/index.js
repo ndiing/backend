@@ -1,3 +1,4 @@
+require("./config");
 require("./file");
 require("./string");
 require("./crypto");

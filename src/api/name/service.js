@@ -1,5 +1,6 @@
 const { default: fetch, Store } = require("../../lib/fetch");
 const path = require("path");
+
 class Service {
     constructor(options = {}) {
         const { userDataDir = "./data/name", profileDirectory = "default" } = options;
@@ -19,4 +20,5 @@ class Service {
         }
     }
 }
+
 module.exports = Service;

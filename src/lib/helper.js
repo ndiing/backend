@@ -3,8 +3,8 @@
  * @param {number} [ms=1000] - The number of milliseconds to delay the execution.
  * @returns {Promise<void>} A Promise that resolves after the specified delay.
  */
-function delay(ms=1000){
-    return new Promise(resolve=>setTimeout(resolve,ms))
+function delay(ms = 1000) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -74,8 +74,8 @@ function unflatten(obj) {
 // data=unflatten(data)
 // console.log(data)
 
-module.exports={
+module.exports = {
     delay,
     flatten,
     unflatten,
-}
+};

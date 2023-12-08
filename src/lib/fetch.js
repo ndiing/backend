@@ -357,7 +357,6 @@ class Store {
 // // store.address.push({address:'line1'})
 // console.log(store)
 
-
 /**
  * Performs a fetch operation for a network resource.
  * @param {string} resource - URL for the resource.
@@ -413,9 +412,8 @@ function fetch(resource, options = {}) {
     });
 }
 
-
 module.exports = {
-    default:fetch,
+    default: fetch,
     Headers,
     Request,
     Response,

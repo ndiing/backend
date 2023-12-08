@@ -9,7 +9,6 @@ function toPascalCase(string) {
         .replace(/[^a-zA-Z0-9]+$/g, "");
 }
 
-
 /**
  * Converts a string to camelCase.
  * @param {string} string - The input string.
@@ -38,7 +37,6 @@ function toKebabCase(string) {
             .toLowerCase()
     );
 }
-
 
 /**
  * Converts a string to snake_case.

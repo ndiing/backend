@@ -107,7 +107,6 @@ function otpauth(options = {}) {
 // key=GE2WWU2ZIFHDMWSTIRLUEVDOOM4U6TZL
 // console.log(totp({key:'GE2WWU2ZIFHDMWSTIRLUEVDOOM4U6TZL',encoding:'base32'}))
 
-
 module.exports = {
     hotp,
     totp,

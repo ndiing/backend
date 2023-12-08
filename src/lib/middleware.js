@@ -162,11 +162,11 @@ function internalServerError() {
     };
 }
 
-module.exports={
+module.exports = {
     auth,
     rateLimit,
     compression,
     body,
     notFound,
     internalServerError,
-}
+};

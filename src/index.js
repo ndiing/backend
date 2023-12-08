@@ -13,7 +13,6 @@ const { auth, rateLimit, compression, body, notFound, internalServerError } = re
 require("./lib");
 require("./dev");
 
-
 /**
  * Express application instance.
  */
@@ -47,5 +46,3 @@ httpServer.listen(config.http.port, "0.0.0.0", () => {
 httpsServer.listen(config.https.port, "0.0.0.0", () => {
     console.log(httpsServer.address());
 });
-
-

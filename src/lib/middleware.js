@@ -46,6 +46,33 @@ function body() {
     };
 }
 
+function compression() {
+    return (req, res, next) => {
+        try {
+            res.send = function (body) {
+                if (!(body instanceof Readable)) {
+                    const readable = new Readable();
+                    readable.push(body);
+                    readable.push(null);
+                    body = readable;
+                }
+                const acceptEncoding = req.headers["accept-encoding"];
+                if (/\bgzip\b/.test(acceptEncoding)) {
+                    body = body.pipe(zlib.createGzip());
+                } else if (/\bdeflate\b/.test(acceptEncoding)) {
+                    body = body.pipe(zlib.createDeflate());
+                } else if (/\bbr\b/.test(acceptEncoding)) {
+                    body = body.pipe(zlib.createBrotliCompress());
+                }
+                body.pipe(res);
+            };
+            next();
+        } catch (error) {
+            next(error);
+        }
+    };
+}
+
 function auth() {
     return (req, res, next) => {
         try {
@@ -94,33 +121,6 @@ function rateLimit() {
                     throw new Error(http.STATUS_CODES[429]);
                 }
             }
-            next();
-        } catch (error) {
-            next(error);
-        }
-    };
-}
-
-function compression() {
-    return (req, res, next) => {
-        try {
-            res.send = function (body) {
-                if (!(body instanceof Readable)) {
-                    const readable = new Readable();
-                    readable.push(body);
-                    readable.push(null);
-                    body = readable;
-                }
-                const acceptEncoding = req.headers["accept-encoding"];
-                if (/\bgzip\b/.test(acceptEncoding)) {
-                    body = body.pipe(zlib.createGzip());
-                } else if (/\bdeflate\b/.test(acceptEncoding)) {
-                    body = body.pipe(zlib.createDeflate());
-                } else if (/\bbr\b/.test(acceptEncoding)) {
-                    body = body.pipe(zlib.createBrotliCompress());
-                }
-                body.pipe(res);
-            };
             next();
         } catch (error) {
             next(error);

@@ -15,9 +15,10 @@ app.use(require("cors")());
 app.use(require("helmet")());
 
 app.use(body());
+app.use(compression());
+
 app.use(auth());
 app.use(rateLimit());
-app.use(compression());
 
 app.use("/api", require("./api"));
 

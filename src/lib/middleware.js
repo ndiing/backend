@@ -20,6 +20,7 @@ const options = [
 function auth() {
     return (req, res, next) => {
         try {
+            /**@override*/
             req.ip = req.socket.remoteAddress;
 
             const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
@@ -126,9 +127,11 @@ function compression() {
     // Returns a middleware function to handle response compression
     return (req, res, next) => {
         try {
+            /**@override*/
             // Convert the request headers to a Headers object (assumed to be compatible with the Fetch API)
             req.headers = new Headers(req.headers);
 
+            /**@override*/
             // Override the 'send' method of the response object to handle compression
             res.send = function (body) {
                 // Check if the body is not an instance of Readable stream

@@ -10,16 +10,16 @@ const options = [
         whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/],
         limit: 30,
         window: 30,
-        roles:[
+        roles: [
             {
-                role:'admin',
-                POST:'any',
-                GET:'any',
-                PATCH:'any',
-                PUT:'any',
-                DELETE:'any',
-            }
-        ]
+                role: "admin",
+                POST: "any",
+                GET: "any",
+                PATCH: "any",
+                PUT: "any",
+                DELETE: "any",
+            },
+        ],
     },
 ];
 

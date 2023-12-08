@@ -197,8 +197,12 @@ function body() {
  * @returns {Function} Middleware function for handling 404 errors.
  */
 function notFound() {
+    // Returns a middleware function to handle 404 (Not Found) errors
     return (req, res, next) => {
+        // Set the response status to 404 (Not Found)
         res.status(404);
+
+        // Trigger an error by calling 'next' with an error object containing the message for 404 status
         next(new Error(http.STATUS_CODES[404]));
     };
 }
@@ -208,12 +212,21 @@ function notFound() {
  * @returns {Function} Middleware function for handling internal server errors.
  */
 function internalServerError() {
+    // Returns a middleware function that handles internal server errors
     return (err, req, res, next) => {
+        // Convert the error object to a plain JSON object to avoid circular references
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
+
+        // Check if the error object has a statusCode property within the 200-299 range
         if (err.statusCode >= 200 && err.statusCode < 300) {
+            // If the error's statusCode is within the success range, set the response status to 500 (Internal Server Error)
             res.status(500);
         }
+
+        // Clear the stack trace from the error object
         err.stack = undefined;
+
+        // Send the formatted error response as JSON
         res.json(err);
     };
 }

@@ -19,16 +19,7 @@ function body() {
                     req.body = Object.fromEntries(new URLSearchParams(body.toString()).entries());
                 }
             }
-            next();
-        } catch (error) {
-            next(error);
-        }
-    };
-}
 
-function compression() {
-    return (req, res, next) => {
-        try {
             res.send = function (body) {
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();
@@ -46,6 +37,7 @@ function compression() {
                 }
                 body.pipe(res);
             };
+
             next();
         } catch (error) {
             next(error);
@@ -63,35 +55,21 @@ const options = [
         roles: [
             {
                 role: /.*/,
-                POST: "any",//any/own
-                GET: "any",//any/own
-                PATCH: "any",//any/own
-                PUT: "any",//any/own
-                DELETE: "any",//any/own
+                POST: "any", //any/own
+                GET: "any", //any/own
+                PATCH: "any", //any/own
+                PUT: "any", //any/own
+                DELETE: "any", //any/own
             },
         ],
     },
 ];
+const temp = new Map();
 
 function auth() {
     return (req, res, next) => {
         try {
             req.ip = req.socket.remoteAddress;
-            const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
-            const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
-            if (!whitelist) {
-            }
-            next();
-        } catch (error) {
-            next(error);
-        }
-    };
-}
-
-function rateLimit() {
-    const temp = new Map();
-    return (req, res, next) => {
-        try {
             const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
             const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
             if (!whitelist) {
@@ -145,4 +123,4 @@ function internalServerError() {
         res.json(err);
     };
 }
-module.exports = { auth, rateLimit, compression, body, notFound, internalServerError };
+module.exports = { auth, body, notFound, internalServerError };

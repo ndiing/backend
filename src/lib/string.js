@@ -1,13 +1,9 @@
 function toPascalCase(string) {
-    return string
-        .replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2) => $2.toUpperCase())
-        .replace(/[^a-zA-Z0-9]+$/g, "");
+    return string.replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2) => $2.toUpperCase()).replace(/[^a-zA-Z0-9]+$/g, "");
 }
 
 function toCamelCase(string) {
-    return string
-        .replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2, $$) => ($$ === 0 ? $2.toLowerCase() : $2.toUpperCase()))
-        .replace(/[^a-zA-Z0-9]+$/g, "");
+    return string.replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2, $$) => ($$ === 0 ? $2.toLowerCase() : $2.toUpperCase())).replace(/[^a-zA-Z0-9]+$/g, "");
 }
 
 function toKebabCase(string) {
@@ -35,8 +31,20 @@ function toTitleCase(string) {
 module.exports = { toPascalCase, toCamelCase, toKebabCase, toSnakeCase, toTitleCase };
 
 // // Usage example
-// console.log(toPascalCase('kebab-case-kebab-case'))
-// console.log(toCamelCase('kebab-case-kebab-case'))
-// console.log(toKebabCase('kebab-case-kebab-case'))
-// console.log(toSnakeCase('kebab-case-kebab-case'))
-// console.log(toTitleCase('kebab-case-kebab-case'))
+// var data = [
+//     "KebabCaseKebabCase",
+//     " -_KebabCaseKebabCase_- ",
+//     "kebabCaseKebabCase",
+//     " -_kebabCaseKebabCase_- ",
+//     "kebab-case-kebab-case",
+//     " -_kebab-case-kebab-case_- ",
+//     "kebab_case_kebab_case",
+//     " -_kebab_case_kebab_case_- ",
+//     "Kebab Case Kebab Case",
+//     " -_Kebab Case Kebab Case_- ",
+// ];
+// console.log(data.map(toPascalCase));
+// console.log(data.map(toCamelCase));
+// console.log(data.map(toKebabCase));
+// console.log(data.map(toSnakeCase));
+// console.log(data.map(toTitleCase));

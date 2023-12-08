@@ -7,11 +7,18 @@ function init() {
     return async (req, res, next) => {
         try {
             req.ip = req.socket.remoteAddress;
-            
+
             res.removeHeader("X-Powered-By");
-            
-            res.set({ "Content-Security-Policy": "default-src 'self'", "Strict-Transport-Security": "max-age=31536000; includeSubDomains", "X-Content-Type-Options": "nosniff", "X-Frame-Options": "DENY", "X-XSS-Protection": "1; mode=block", "Access-Control-Allow-Origin": "*" });
-            
+
+            res.set({
+                "Content-Security-Policy": "default-src 'self'",
+                "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "X-XSS-Protection": "1; mode=block",
+                "Access-Control-Allow-Origin": "*",
+            });
+
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];
                 for (const chunk of req) {
@@ -27,7 +34,7 @@ function init() {
                     req.body = Object.fromEntries(new URLSearchParams(body.toString()).entries());
                 }
             }
-            
+
             res.send = function (body) {
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();
@@ -50,21 +57,39 @@ function init() {
 
                 body.pipe(res);
             };
-            
+
             next();
         } catch (error) {
             next(error);
         }
     };
 }
-const options = [{ method: /.*/, url: /.*/, whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/], limit: 30, window: 30, roles: [{ role: /.*/, POST: "any", GET: "any", PATCH: "any", PUT: "any", DELETE: "any" }] }];
+const options = [
+    {
+        method: /.*/,
+        url: /.*/,
+        whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/],
+        limit: 30,
+        window: 30,
+        roles: [
+            {
+                role: /.*/,
+                POST: "any",
+                GET: "any",
+                PATCH: "any",
+                PUT: "any",
+                DELETE: "any",
+            },
+        ],
+    },
+];
 const temp = new Map();
 
 function auth() {
     return (req, res, next) => {
         try {
             const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
-            
+
             const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
             if (!whitelist) {
                 const key = [req.method, req.ip, req.url].join();
@@ -81,7 +106,7 @@ function auth() {
                     value.reset = moment().add(option.window, "s");
                     temp.set(key, value);
                 }
-                
+
                 const retryAfter = value.reset && value.reset.diff(moment(), "s");
                 if (retryAfter <= 0) {
                     value.remaining = option.limit;

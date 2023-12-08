@@ -7,9 +7,16 @@ class Service {
         const file = path.join(userDataDir, profileDirectory + ".min.json");
         this.store = new Store(file);
     }
+    
     fetch(resource, options = {}) {
-        return fetch(resource, { store: this.store, redirect: "manual", ...options, headers: { ...options.headers } });
+        return fetch(resource, {
+            store: this.store,
+            redirect: "manual",
+            ...options,
+            headers: { ...options.headers },
+        });
     }
+    
     async get(payload = {}) {
         try {
             const response = await this.fetch("http://google.com");

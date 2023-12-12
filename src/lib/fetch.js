@@ -307,12 +307,10 @@ function fetch(resource, options = {}) {
         }
 
         try {
-            const url = 
-            config.proxy.protocol+'//'+
-            config.proxy.hostname+':'
-            config.proxy.port
+            console.log(config.proxy)
+            const url = `${config.proxy.protocol}//${config.proxy.hostname}:${config.proxy.port}`;
             await useProxyServer(url);
-            const Agent = request.protocol === "https:" ? HttpsProxyAgent : HttpProxyAgent;
+            const Agent = config.proxy.protocol === "https:" ? HttpsProxyAgent : HttpProxyAgent;
             request.agent = new Agent(url);
         } catch (error) {}
 

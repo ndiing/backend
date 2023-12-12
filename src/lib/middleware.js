@@ -234,4 +234,5 @@ function error() {
         res.json(err);
     };
 }
+
 module.exports = { auth, init, missing, error };

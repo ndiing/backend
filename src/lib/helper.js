@@ -1,7 +1,19 @@
+/**
+ * Delays the execution of a function for a specified time.
+ *
+ * @param {number} [ms=1000] - The time in milliseconds to delay.
+ * @returns {Promise<void>} A promise that resolves after the delay.
+ */
 function delay(ms = 1000) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Flattens an object into a single-depth object with concatenated keys.
+ *
+ * @param {Object} obj - The object to be flattened.
+ * @returns {Object} The flattened object.
+ */
 function flatten(obj) {
     let flattened = {};
     Object.keys(obj).forEach((key) => {
@@ -17,6 +29,12 @@ function flatten(obj) {
     return flattened;
 }
 
+/**
+ * Unflattens a previously flattened object into its original structure.
+ *
+ * @param {Object} obj - The flattened object to be unflattened.
+ * @returns {Object} The unflattened object.
+ */
 function unflatten(obj) {
     let result = {};
     for (const key in obj) {

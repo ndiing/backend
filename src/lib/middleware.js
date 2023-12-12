@@ -15,6 +15,10 @@ const COOKIE_ATTRIBUTES = {
     sameSite: "SameSite",
 };
 
+/**
+ * Initializes middleware functions for HTTP request and response handling.
+ * @returns {Function} - The initialized middleware function.
+ */
 function init() {
     return async (req, res, next) => {
         try {
@@ -126,6 +130,10 @@ const options = [
 ];
 const temp = new Map();
 
+/**
+ * Provides authentication based on specified options.
+ * @returns {Function} - The authentication middleware function.
+ */
 function auth() {
     return (req, res, next) => {
         try {
@@ -174,6 +182,10 @@ function auth() {
     };
 }
 
+/**
+ * Middleware to handle missing routes or endpoints.
+ * @returns {Function} - The missing endpoint handler middleware.
+ */
 function missing() {
     return (req, res, next) => {
         res.status(404);
@@ -181,6 +193,10 @@ function missing() {
     };
 }
 
+/**
+ * Middleware to handle errors within the application.
+ * @returns {Function} - The error handler middleware.
+ */
 function error() {
     return (err, req, res, next) => {
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));

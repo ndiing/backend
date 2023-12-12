@@ -7,12 +7,24 @@ let defaultAttrs = [
     { shortName: "OU", value: "Ndiing" },
 ];
 
+/**
+ * Checks if the given domain is an IP address.
+ *
+ * @param {string} [domain=""] - The domain to check.
+ * @returns {boolean} True if the domain is an IP address, otherwise false.
+ */
 function isIpDomain(domain = "") {
     const ipReg = /^\d+?\.\d+?\.\d+?\.\d+?$/;
 
     return ipReg.test(domain);
 }
 
+/**
+ * Generates the subjectAltName extension based on the domain type.
+ *
+ * @param {string} [domain=""] - The domain to generate the extension for.
+ * @returns {Object} An object containing the subjectAltName extension details.
+ */
 function getExtensionSAN(domain = "") {
     const isIp = isIpDomain(domain);
     if (isIp) {
@@ -28,6 +40,12 @@ function getExtensionSAN(domain = "") {
     }
 }
 
+/**
+ * Generates RSA key pair and a certificate.
+ *
+ * @param {string} [serialNumber] - The serial number for the certificate.
+ * @returns {Object} An object containing the generated keys and certificate.
+ */
 function getKeysAndCert(serialNumber) {
     const keys = forge.pki.rsa.generateKeyPair(2048);
     const cert = forge.pki.createCertificate();
@@ -42,6 +60,12 @@ function getKeysAndCert(serialNumber) {
     };
 }
 
+/**
+ * Generates a root certificate authority (CA) with specified common name.
+ *
+ * @param {string} [commonName="CertManager"] - The common name for the root CA.
+ * @returns {Object} An object containing the root CA's private key and certificate.
+ */
 function generateRootCA(commonName) {
     const keysAndCert = getKeysAndCert();
     const keys = keysAndCert.keys;
@@ -70,6 +94,13 @@ function generateRootCA(commonName) {
     };
 }
 
+/**
+ * Generates certificates for a specific hostname signed by a root CA.
+ *
+ * @param {string} domain - The hostname for which the certificate is generated.
+ * @param {Object} rootCAConfig - Configuration for the root CA.
+ * @returns {Object} An object containing the private key and certificate for the given domain.
+ */
 function generateCertsForHostname(domain, rootCAConfig) {
     const md = forge.md.md5.create();
     md.update(domain);
@@ -106,13 +137,13 @@ function generateCertsForHostname(domain, rootCAConfig) {
     };
 }
 
-module.exports={
+module.exports = {
     isIpDomain,
     getExtensionSAN,
     getKeysAndCert,
     generateRootCA,
     generateCertsForHostname,
-}
+};
 
 // // Usage example
 // const ca=generateRootCA()

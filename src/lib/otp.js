@@ -3,6 +3,16 @@ const Crypto = require("./crypto");
 const moment = require("moment");
 const { delay } = require("./helper");
 
+/**
+ * Generates a HMAC-based One-Time Password (HOTP).
+ * @param {Object} options - Options for generating HOTP.
+ * @param {string} options.key - The secret key used to generate the OTP.
+ * @param {number} [options.counter=0] - The counter value for the OTP (default is 0).
+ * @param {string} [options.algorithm="sha1"] - The hashing algorithm used (e.g., "sha1", "sha256", "sha512").
+ * @param {number} [options.digits=6] - The number of digits in the generated OTP (default is 6).
+ * @param {string} [options.encoding] - The encoding of the secret key, if different from Buffer (e.g., "base32").
+ * @returns {string} - The generated One-Time Password.
+ */
 function hotp(options = {}) {
     let { key, counter = 0, algorithm = "sha1", digits = 6, encoding } = options;
     
@@ -27,6 +37,18 @@ function hotp(options = {}) {
         .slice(0 - digits);
 }
 
+/**
+ * Generates a Time-based One-Time Password (TOTP).
+ * @param {Object} options - Options for generating TOTP.
+ * @param {string} options.key - The secret key used to generate the OTP.
+ * @param {number} [options.T] - The time value for which OTP is generated (default is current time in seconds).
+ * @param {number} [options.T0=0] - The initial time value (default is 0).
+ * @param {number} [options.X=30] - The time step in seconds (default is 30).
+ * @param {string} [options.algorithm="sha1"] - The hashing algorithm used (e.g., "sha1", "sha256", "sha512").
+ * @param {number} [options.digits=6] - The number of digits in the generated OTP (default is 6).
+ * @param {string} [options.encoding] - The encoding of the secret key, if different from Buffer (e.g., "base32").
+ * @returns {string} - The generated One-Time Password.
+ */
 function totp(options = {}) {
     let { key, T = moment().unix() / 1000, T0 = 0, X = 30, algorithm = "sha1", digits = 6, encoding } = options;
     
@@ -35,6 +57,19 @@ function totp(options = {}) {
     return hotp({ key, counter, algorithm, digits, encoding });
 }
 
+/**
+ * Generates a URL and QR code for OTP configuration (TOTP or HOTP) compatible with OTP authentication apps.
+ * @param {Object} options - Options for generating OTP configuration.
+ * @param {string} [options.type="totp"] - The type of OTP ("totp" or "hotp").
+ * @param {string} [options.label="label"] - The label for the OTP entry.
+ * @param {string} [options.secret] - The secret key used for OTP generation.
+ * @param {string} [options.issuer="issuer"] - The issuer name for the OTP entry.
+ * @param {string} [options.algorithm="SHA1"] - The hashing algorithm used (e.g., "SHA1", "SHA256", "SHA512").
+ * @param {number} [options.digits=6] - The number of digits in the generated OTP (default is 6).
+ * @param {number} [options.counter=0] - The counter value for HOTP (applicable only if type is "hotp").
+ * @param {number} [options.period=30] - The time step in seconds for TOTP (applicable only if type is "totp").
+ * @returns {Object} - Information for OTP configuration including URL and QR code.
+ */
 function otpauth(options = {}) {
     const bytes = { SHA1: Buffer.alloc(20), SHA256: Buffer.alloc(32), SHA512: Buffer.alloc(64) };
     

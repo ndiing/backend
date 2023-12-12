@@ -1,6 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 
+/**
+ * Reads data from a file synchronously, handling JSON files.
+ *
+ * @param {string} file - The file path to read.
+ * @param {*} data - Default data if the file doesn't exist.
+ * @returns {*} The data read from the file or default data.
+ */
 function read(file, data) {
     try {
         data = fs.readFileSync(file, { encoding: "utf8" });
@@ -13,6 +20,12 @@ function read(file, data) {
     return data;
 }
 
+/**
+ * Writes data to a file synchronously, handling JSON files.
+ *
+ * @param {string} file - The file path to write to.
+ * @param {*} data - The data to write.
+ */
 function write(file, data) {
     const dir = path.dirname(file);
     try {

@@ -4,6 +4,13 @@ const RFC4648 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const RFC4648_HEX = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 const CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 
+/**
+ * Converts data to a DataView.
+ *
+ * @param {(ArrayBuffer|Buffer|Int8Array|Uint8Array|Uint8ClampedArray)} data - The input data to convert.
+ * @returns {DataView} A DataView object representing the input data.
+ * @throws {TypeError} Expected `data` to be an ArrayBuffer, Buffer, Int8Array, Uint8Array, or Uint8ClampedArray.
+ */
 function toDataView(data) {
     if (data instanceof Int8Array || data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
         return new DataView(data.buffer, data.byteOffset, data.byteLength);
@@ -14,6 +21,16 @@ function toDataView(data) {
     throw new TypeError("Expected `data` to be an ArrayBuffer, Buffer, Int8Array, Uint8Array or Uint8ClampedArray");
 }
 
+/**
+ * Encodes data using base32 encoding.
+ *
+ * @param {(Buffer|string)} data - The data to encode.
+ * @param {string} [letiant="RFC4648"] - The base32 variant to use for encoding (RFC3548, RFC4648, RFC4648-HEX, or Crockford).
+ * @param {Object} [options] - Additional options for encoding.
+ * @param {boolean} [options.padding] - Flag indicating whether to use padding in the output.
+ * @returns {string} The base32 encoded string.
+ * @throws {Error} Unknown base32 variant or invalid character found.
+ */
 function base32Encode(data, letiant = "RFC4648", options) {
     options = options || {};
     let alphabet, defaultPadding;
@@ -58,6 +75,14 @@ function base32Encode(data, letiant = "RFC4648", options) {
     return output.replace(/\=+$/, "");
 }
 
+/**
+ * Reads a character from the provided alphabet.
+ *
+ * @param {string} alphabet - The alphabet to use.
+ * @param {string} char - The character to read.
+ * @returns {number} The index of the character in the alphabet.
+ * @throws {Error} Invalid character found.
+ */
 function readChar(alphabet, char) {
     let idx = alphabet.indexOf(char);
     if (idx === -1) {
@@ -66,6 +91,14 @@ function readChar(alphabet, char) {
     return idx;
 }
 
+/**
+ * Decodes data from base32 encoding.
+ *
+ * @param {string} input - The base32 encoded input string.
+ * @param {string} [letiant="RFC4648"] - The base32 variant used for encoding (RFC3548, RFC4648, RFC4648-HEX, or Crockford).
+ * @returns {string} The decoded data.
+ * @throws {Error} Unknown base32 variant or invalid character found.
+ */
 function base32Decode(input, letiant = "RFC4648") {
     let alphabet;
     switch (letiant) {
@@ -101,50 +134,134 @@ function base32Decode(input, letiant = "RFC4648") {
     return Buffer.from(output.buffer).toString();
 }
 
+/**
+ * Encodes data using either base32 or another specified encoding.
+ *
+ * @param {(Buffer|string)} data - The data to encode.
+ * @param {Object} [options={}] - Additional options for encoding.
+ * @param {string} [options.encoding="base64"] - The encoding type to use (base64 or base32).
+ * @returns {string} The encoded data string.
+ */
 function encode(data, options = {}) {
     const { encoding = "base64" } = options;
     if (encoding === "base32") return base32Encode(data);
     return Buffer.from(data).toString(encoding);
 }
 
+/**
+ * Decodes data from either base32 or another specified encoding.
+ *
+ * @param {string} data - The data to decode.
+ * @param {Object} [options={}] - Additional options for decoding.
+ * @param {string} [options.encoding="base64"] - The encoding type to use (base64 or base32).
+ * @returns {string} The decoded data string.
+ */
 function decode(data, options = {}) {
     const { encoding = "base64" } = options;
     if (encoding === "base32") return base32Decode(data);
     return Buffer.from(data, encoding).toString();
 }
 
+/**
+ * Encrypts data using the specified algorithm, key, IV, and encoding.
+ *
+ * @param {string} data - The data to encrypt.
+ * @param {Object} [options={}] - Additional options for encryption.
+ * @param {string} [options.algorithm="aes-128-cbc"] - The encryption algorithm to use.
+ * @param {Buffer} [options.key=Buffer.alloc(16)] - The encryption key.
+ * @param {Buffer} [options.iv=Buffer.alloc(16)] - The initialization vector (IV).
+ * @param {string} [options.encoding="hex"] - The encoding type for the encrypted data.
+ * @returns {string} The encrypted data string.
+ */
 function encrypt(data, options = {}) {
     const { algorithm = "aes-128-cbc", key = Buffer.alloc(16), iv = Buffer.alloc(16), encoding = "hex" } = options;
     const cipher = crypto.createCipheriv(algorithm, key, iv);
     return Buffer.concat([cipher.update(data), cipher.final()]).toString(encoding);
 }
 
+/**
+ * Decrypts data using the specified algorithm, key, IV, and encoding.
+ *
+ * @param {string} data - The data to decrypt.
+ * @param {Object} [options={}] - Additional options for decryption.
+ * @param {string} [options.algorithm="aes-128-cbc"] - The decryption algorithm to use.
+ * @param {Buffer} [options.key=Buffer.alloc(16)] - The decryption key.
+ * @param {Buffer} [options.iv=Buffer.alloc(16)] - The initialization vector (IV).
+ * @param {string} [options.encoding="hex"] - The encoding type of the decrypted data.
+ * @returns {string} The decrypted data string.
+ */
 function decrypt(data, options = {}) {
     const { algorithm = "aes-128-cbc", key = Buffer.alloc(16), iv = Buffer.alloc(16), encoding = "hex" } = options;
     const cipher = crypto.createDecipheriv(algorithm, key, iv);
     return Buffer.concat([cipher.update(data, encoding), cipher.final()]).toString();
 }
 
+/**
+ * Encrypts data using a private key.
+ *
+ * @param {string} data - The data to encrypt.
+ * @param {Object} [options={}] - Additional options for encryption.
+ * @param {Buffer|string} key - The private key used for encryption.
+ * @param {string} [options.encoding="hex"] - The encoding type for the encrypted data.
+ * @returns {string} The encrypted data string.
+ */
 function privateEncrypt(data, options = {}) {
     const { key, encoding = "hex" } = options;
     return crypto.privateEncrypt(key, Buffer.from(data)).toString(encoding);
 }
 
+/**
+ * Decrypts data using a public key.
+ *
+ * @param {string} data - The data to decrypt.
+ * @param {Object} [options={}] - Additional options for decryption.
+ * @param {Buffer|string} key - The public key used for decryption.
+ * @param {string} [options.encoding="hex"] - The encoding type of the encrypted data.
+ * @returns {string} The decrypted data string.
+ */
 function publicDecrypt(data, options = {}) {
     const { key, encoding = "hex" } = options;
     return crypto.publicDecrypt(key, Buffer.from(data, encoding)).toString();
 }
 
+/**
+ * Encrypts data using a public key.
+ *
+ * @param {string} data - The data to encrypt.
+ * @param {Object} [options={}] - Additional options for encryption.
+ * @param {Buffer|string} key - The public key used for encryption.
+ * @param {string} [options.encoding="hex"] - The encoding type for the encrypted data.
+ * @returns {string} The encrypted data string.
+ */
 function publicEncrypt(data, options = {}) {
     const { key, encoding = "hex" } = options;
     return crypto.publicEncrypt(key, Buffer.from(data)).toString(encoding);
 }
 
+/**
+ * Decrypts data using a private key.
+ *
+ * @param {string} data - The data to decrypt.
+ * @param {Object} [options={}] - Additional options for decryption.
+ * @param {Buffer|string} key - The private key used for decryption.
+ * @param {string} [options.encoding="hex"] - The encoding type of the encrypted data.
+ * @returns {string} The decrypted data string.
+ */
 function privateDecrypt(data, options = {}) {
     const { key, encoding = "hex" } = options;
     return crypto.privateDecrypt(key, Buffer.from(data, encoding)).toString();
 }
 
+/**
+ * Signs data using a specified algorithm and key.
+ *
+ * @param {string} data - The data to sign.
+ * @param {Object} [options={}] - Additional options for signing.
+ * @param {string} [options.algorithm="sha256"] - The signing algorithm to use.
+ * @param {Buffer|string} key - The key used for signing.
+ * @param {string} [options.encoding="hex"] - The encoding type for the signature.
+ * @returns {Buffer} The signature.
+ */
 function sign(data, options = {}) {
     const { algorithm = "sha256", key, encoding = "hex" } = options;
     const sign = crypto.createSign(algorithm);
@@ -153,6 +270,17 @@ function sign(data, options = {}) {
     return sign.sign(key, encoding);
 }
 
+/**
+ * Verifies the signature of data using a specified algorithm, key, and signature.
+ *
+ * @param {string} data - The data to verify.
+ * @param {Buffer} signature - The signature to verify against.
+ * @param {Object} [options={}] - Additional options for verification.
+ * @param {string} [options.algorithm="sha256"] - The verification algorithm to use.
+ * @param {Buffer|string} key - The key used for verification.
+ * @param {string} [options.encoding="hex"] - The encoding type of the signature.
+ * @returns {boolean} A boolean indicating if the signature is valid.
+ */
 function verify(data, signature, options = {}) {
     const { algorithm = "sha256", key, encoding = "hex" } = options;
     const verify = crypto.createVerify(algorithm);
@@ -161,11 +289,30 @@ function verify(data, signature, options = {}) {
     return verify.verify(key, signature, encoding);
 }
 
+/**
+ * Computes the hash of data using a specified algorithm.
+ *
+ * @param {string} data - The data to hash.
+ * @param {Object} [options={}] - Additional options for hashing.
+ * @param {string} [options.algorithm="sha256"] - The hashing algorithm to use.
+ * @param {string} [options.encoding="hex"] - The encoding type for the hash.
+ * @returns {Buffer} The hash value.
+ */
 function hash(data, options = {}) {
     const { algorithm = "sha256", encoding = "hex" } = options;
     return crypto.createHash(algorithm).update(data).digest(encoding);
 }
 
+/**
+ * Computes a Hash-based Message Authentication Code (HMAC) using a specified algorithm and key.
+ *
+ * @param {string} data - The data to create an HMAC for.
+ * @param {Object} [options={}] - Additional options for HMAC.
+ * @param {string} [options.algorithm="sha256"] - The HMAC algorithm to use.
+ * @param {string} [options.key=""] - The key used for the HMAC.
+ * @param {string} [options.encoding="hex"] - The encoding type for the HMAC.
+ * @returns {Buffer} The HMAC value.
+ */
 function hmac(data, options = {}) {
     const { algorithm = "sha256", key = "", encoding = "hex" } = options;
     return crypto.createHmac(algorithm, key).update(data).digest(encoding);

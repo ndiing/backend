@@ -1,6 +1,22 @@
 const crypto = require("crypto");
 const Crypto = require("./crypto");
 
+/**
+ * A set of algorithms for signing and verifying data using different cryptographic methods.
+ * @typedef {Object} Algorithms
+ * @property {Object} HS256 - Algorithm using HMAC with SHA-256.
+ * @property {Object} HS384 - Algorithm using HMAC with SHA-384.
+ * @property {Object} HS512 - Algorithm using HMAC with SHA-512.
+ * @property {Object} RS256 - Algorithm using RSA with SHA-256.
+ * @property {Object} RS384 - Algorithm using RSA with SHA-384.
+ * @property {Object} RS512 - Algorithm using RSA with SHA-512.
+ * @property {Object} ES256 - Algorithm using ECDSA with SHA-256.
+ * @property {Object} ES384 - Algorithm using ECDSA with SHA-384.
+ * @property {Object} ES512 - Algorithm using ECDSA with SHA-512.
+ * @property {Object} PS256 - Algorithm using RSA-PSS with SHA-256.
+ * @property {Object} PS384 - Algorithm using RSA-PSS with SHA-384.
+ * @property {Object} PS512 - Algorithm using RSA-PSS with SHA-512.
+ */
 const algs = {
     HS256: {
         sign(data, options) {
@@ -160,6 +176,15 @@ const algs = {
     },
 };
 
+/**
+ * Encodes a payload and header into a JSON Web Token (JWT).
+ *
+ * @param {Object} payload - The payload object to be encoded.
+ * @param {Object} options - Options for encoding the token.
+ * @param {Object} options.header - The header object containing the algorithm.
+ * @param {string} options.secret - The secret key for signing the token.
+ * @returns {string} The generated JSON Web Token (JWT).
+ */
 function encode(payload, options = {}) {
     let { header } = options;
     
@@ -178,6 +203,15 @@ function encode(payload, options = {}) {
     return [data, signature].join(".");
 }
 
+/**
+ * Decodes a JSON Web Token (JWT) and verifies its integrity.
+ *
+ * @param {string} token - The JWT to be decoded and verified.
+ * @param {Object} options - Options for decoding the token.
+ * @param {string} options.secret - The secret key for verifying the token.
+ * @returns {Object} The payload object extracted from the decoded token.
+ * @throws {Error} Throws an error if the token signature is invalid.
+ */
 function decode(token, options = {}) {
     let [header, payload, signature] = token.split(".");
     

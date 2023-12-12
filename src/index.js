@@ -6,13 +6,34 @@ const https = require("https");
 const express = require("express");
 const config = require("./lib/config");
 const { auth, init, missing, error } = require("./lib/middleware");
+const os = require("os");
 // require("./lib");
 // require("./dev");
 
 const app = express();
+
 app.use(init());
 app.use(auth());
+
 app.use("/api", require("./api"));
+
+app.get("/status", (req, res) => {
+    res.json({
+        data: {
+            uptime: os.uptime(),
+            hostname: os.hostname(),
+            totalMemory: os.totalmem(),
+            freeMemory: os.freemem(),
+            loadAverage: os.loadavg(),
+            cpuCores: os.cpus(),
+            platform: os.platform(),
+            release: os.release(),
+            networkInterfaces: os.networkInterfaces(),
+            userInfo: os.userInfo(),
+        },
+    });
+});
+
 app.use(missing());
 app.use(error());
 

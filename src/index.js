@@ -6,8 +6,8 @@ const https = require("https");
 const express = require("express");
 const config = require("./lib/config");
 const { auth, init, missing, error } = require("./lib/middleware");
-require("./lib");
-require("./dev");
+// require("./lib");
+// require("./dev");
 
 const app = express();
 app.use(init());

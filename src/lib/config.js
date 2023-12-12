@@ -1,34 +1,34 @@
 const { read, write } = require("./file");
 const { flatten, unflatten } = require("./helper");
-const { generateRootCA,generateCertsForHostname } = require("./cert");
-const fs=require('fs')
+const { generateRootCA, generateCertsForHostname } = require("./cert");
+const fs = require("fs");
 
 const version = "1.0.0";
 
 const config = unflatten(
     read("./config.json", {
-        "version": "1.0.0",
-        "http": {
-            "port": 80
+        version: "1.0.0",
+        http: {
+            port: 80,
         },
-        "https": {
-            "port": 443,
-            "options": {
-                "key": null,
-                "cert": null
-            }
+        https: {
+            port: 443,
+            options: {
+                key: null,
+                cert: null,
+            },
         },
-        "proxy": {
-            "protocol": "http:",
-            "hostname": "127.0.0.1",
-            "port": 8888
-        }
-    }
-    )
+        proxy: {
+            protocol: "http:",
+            hostname: "127.0.0.1",
+            port: 8888,
+            url: "http://127.0.0.1:8888",
+        },
+    })
 );
 
-config.https.options.key=fs.readFileSync('./host.key')
-config.https.options.cert=fs.readFileSync('./host.crt')
+config.https.options.key = fs.readFileSync("./host.key");
+config.https.options.cert = fs.readFileSync("./host.crt");
 
 if (config.version !== version) {
     config.version = version;

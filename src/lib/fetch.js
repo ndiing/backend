@@ -269,6 +269,23 @@ class Store {
 }
 
 /**
+ * Sends a request to a specified proxy server URL.
+ *
+ * @param {string} [url="http://127.0.0.1:8888"] - The URL of the proxy server.
+ * @returns {Promise<http.IncomingMessage>} A Promise that resolves with the response data if the request is successful, otherwise rejects with an error.
+ */
+function useProxyServer(url = "http://127.0.0.1:8888") {
+    url = new URL(url);
+    return new Promise((resolve, reject) => {
+        const req = http.request(url);
+        req.on("error", reject);
+        req.on("response", resolve);
+        req.end();
+    });
+}
+
+
+/**
  * Makes an HTTP request.
  *
  * @param {string} resource - The resource URL.
@@ -276,7 +293,7 @@ class Store {
  * @returns {Promise<Response>} The response from the server.
  */
 function fetch(resource, options = {}) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const request = new Request(resource, options);
 
         if (!options.store) {
@@ -288,10 +305,12 @@ function fetch(resource, options = {}) {
             request.headers.set("Cookie", cookie);
         }
 
-        if (process.env.NODE_ENV === "development") {
+        try {
+            const url = "http://127.0.0.1:8888";
+            await useProxyServer(url);
             const Agent = request.protocol === "https:" ? HttpsProxyAgent : HttpProxyAgent;
-            request.agent = new Agent("http://127.0.0.1:8888");
-        }
+            request.agent = new Agent(url);
+        } catch (error) {}
 
         const req = request.client.request(request);
         req.on("error", reject);

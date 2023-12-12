@@ -16,13 +16,6 @@
 |   root.key
 |   yarn.lock
 |
-+---data
-|   +---google.com
-|   |       default.min.json
-|   |
-|   \---name
-|           default.json
-|
 +---rest
 |       name.http
 |       rest.http
@@ -39,11 +32,6 @@
     |           index.js
     |           model.js
     |           service.js
-    |
-    +---dev
-    |       index.js
-    |       jwt.json
-    |       wa.js
     |
     \---lib
             cert.js

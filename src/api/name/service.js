@@ -1,4 +1,5 @@
-const { default: fetch, Store } = require("../../lib/fetch");
+const { default: fetch } = require("../../lib/fetch");
+const Store = require("../../lib/store");
 const path = require("path");
 
 class Service {
@@ -7,7 +8,7 @@ class Service {
         const file = path.join(userDataDir, profileDirectory + ".min.json");
         this.store = new Store(file);
     }
-    
+
     fetch(resource, options = {}) {
         return fetch(resource, {
             store: this.store,
@@ -16,7 +17,7 @@ class Service {
             headers: { ...options.headers },
         });
     }
-    
+
     async get(payload = {}) {
         try {
             const response = await this.fetch("http://google.com");

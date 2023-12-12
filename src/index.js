@@ -7,8 +7,8 @@ const express = require("express");
 const config = require("./lib/config");
 const { auth, init, missing, error } = require("./lib/middleware");
 const os = require("os");
-// require("./lib");
-// require("./dev");
+require("./lib");
+require("./dev");
 
 const app = express();
 

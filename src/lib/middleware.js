@@ -24,13 +24,17 @@ const COOKIE_ATTRIBUTES = {
 function init() {
     return async (req, res, next) => {
         try {
+            //
+            // handle request
+            //
+
             // secure
             req.secure = req.socket.encrypted;
 
             // upgrade-insecure-requests
             const upgradeInsecureRequests = req.headers["upgrade-insecure-requests"];
             if (upgradeInsecureRequests && !req.secure) {
-                res.status(302)
+                res.status(302);
                 return res.redirect("https://" + req.hostname + req.url);
             }
 
@@ -55,6 +59,25 @@ function init() {
                 req.cookies = Object.fromEntries(Array.from(cookie.matchAll(/([^= ]+)=([^;]+)/g), ([, name, value]) => [name, value]));
             }
 
+            //
+            // handle response
+            //
+
+            // headers
+            res.headers = new Headers(res.headers);
+
+            res.removeHeader("X-Powered-By");
+
+            // security
+            res.set({
+                "Content-Security-Policy": "default-src 'self'",
+                "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "X-XSS-Protection": "1; mode=block",
+                "Access-Control-Allow-Origin": "*",
+            });
+
             // res cookie
             res.cookie = (name, value, options = {}) => {
                 const array = [];
@@ -66,20 +89,6 @@ function init() {
                 const cookie = array.join("; ");
                 res.headers.append("Set-Cookie", cookie);
             };
-            res.removeHeader("X-Powered-By");
-
-            // headers
-            res.headers = new Headers(res.headers);
-
-            // security
-            res.set({
-                "Content-Security-Policy": "default-src 'self'",
-                "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-                "X-Content-Type-Options": "nosniff",
-                "X-Frame-Options": "DENY",
-                "X-XSS-Protection": "1; mode=block",
-                "Access-Control-Allow-Origin": "*",
-            });
 
             // res send
             res.send = (body) => {
@@ -221,7 +230,6 @@ function missing() {
  */
 function error() {
     return (err, req, res, next) => {
-
         // err
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
         err.stack = undefined;
@@ -230,7 +238,7 @@ function error() {
         if (err.statusCode >= 200 && err.statusCode < 300) {
             res.status(500);
         }
-        
+
         res.json(err);
     };
 }

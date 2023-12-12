@@ -346,3 +346,7 @@ module.exports = { encode, decode, encrypt, decrypt, privateEncrypt, publicDecry
 // var verified=verify(data,signature,{key:privateKey});console.log(verified)
 // data=hash(data);console.log(data)
 // data=hmac(data);console.log(data)
+
+// var data='username:password'
+// data=encode(data,{encoding:'base64'})
+// console.log(data)

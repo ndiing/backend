@@ -1,5 +1,7 @@
 const crypto = require("crypto");
 const Crypto = require("./crypto");
+const config = require("./config");
+const moment = require("moment");
 
 /**
  * A set of algorithms for signing and verifying data using different cryptographic methods.
@@ -187,19 +189,19 @@ const algs = {
  */
 function encode(payload, options = {}) {
     let { header } = options;
-    
+
     const method = algs[header.alg];
-    
+
     payload = JSON.stringify(payload);
     payload = Crypto.encode(payload, { encoding: "base64url" });
-    
+
     header = JSON.stringify(header);
     header = Crypto.encode(header, { encoding: "base64url" });
-    
+
     const data = [header, payload].join(".");
-    
+
     const signature = method.sign(data, options);
-    
+
     return [data, signature].join(".");
 }
 
@@ -214,33 +216,44 @@ function encode(payload, options = {}) {
  */
 function decode(token, options = {}) {
     let [header, payload, signature] = token.split(".");
-    
+
     const data = [header, payload].join(".");
-    
-    header = Crypto.decode(header, { encoding: "base64url" });
-    header = JSON.parse(header);
-    
-    const method = algs[header.alg];
-    
-    const verfied = method.verify(data, signature, options);
-    
-    payload = Crypto.decode(payload, { encoding: "base64url" });
-    payload = JSON.parse(payload);
-    
-    if (!verfied) {
-        throw new Error("Invalid Signature");
+
+    try {
+        header = Crypto.decode(header, { encoding: "base64url" });
+        header = JSON.parse(header);
+
+        payload = Crypto.decode(payload, { encoding: "base64url" });
+        payload = JSON.parse(payload);
+    } catch (error) {
+        throw new Error("The access token provided is malformed");
     }
-    
+
+    const method = algs[header.alg];
+
+    const verfied = method.verify(data, signature, options);
+
+    if (!verfied) {
+        throw new Error("The access token provided is invalid");
+    }
+
+    if (payload.exp && moment()>moment(payload.exp)) {
+        throw new Error("The access token provided is expired");
+    }
+
+    // throw new Error('The access token provided is revoked')
+
     return payload;
 }
 module.exports = { encode, decode };
 
 // // Usage example
 // var header={
-//     alg:'HS256'
+//     alg:'ES512',
+//     typ:'JWT'
 // }
-// var secret='secret'
-// var token = encode({},{header,secret})
+// var secret={key:config.https.options.key}
+// var token = encode({role:'admin',exp:moment().add(30,'s')},{header,secret})
 // console.log(token)
 // var payload = decode(token,{secret})
 // console.log(payload)

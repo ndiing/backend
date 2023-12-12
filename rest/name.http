@@ -1,6 +1,18 @@
 ###
 GET http://localhost/api/name
 Accept-Encoding: gzip
+
 ###
-GET https://localhost/api/name
+GET http://localhost/api/name
 Accept-Encoding: gzip
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+###
+GET http://localhost/api/name
+Accept-Encoding: gzip
+Authorization: Bearer {{token}}
+
+###
+GET http://localhost/api/name
+Accept-Encoding: gzip
+Authorization: Bearer eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJleHAiOiIyMDIzLTEyLTEyVDE3OjU0OjQ3LjY2N1oifQ.fMxBaOUx28wB52oDC2YQiujjUFa9stiwHXhqotwAaKrlNqpJtVx3RY4AQaEtc12VYKR-KSVl1R3NOvvKwpo-VEGSupD4myxZ_mW2vCzHqJPSw932G1pXRyoALVCV1ZlBrNDwNfiVU2iXzHfEo7N8pVSXEHohqom2cASzWQfYW5TY13JWfo45cDBPkFh8sl5jhvsycvkwv0MrpYXHC1xcQGKuQsMDSG6rr2nHWwgkrlZGr2CmEkskzwlN_kR-96RJePVesmrUu8aNAODQH0yUiib2TOoFOuc5bzc47VcDswY1vc601ecvvIhtexjNjsuIwtLnaODhcf3Z7OV1RkI39g

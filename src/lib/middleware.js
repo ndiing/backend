@@ -3,6 +3,9 @@ const { Readable } = require("stream");
 const zlib = require("zlib");
 const moment = require("moment");
 const { Headers } = require("./fetch");
+const JWT = require("./jwt");
+const config = require("./config");
+const Crypto = require("./crypto");
 
 const COOKIE_ATTRIBUTES = {
     domain: "Domain",
@@ -23,20 +26,15 @@ function init() {
     return async (req, res, next) => {
         try {
             req.secure = req.socket.encrypted;
-
             // if (!req.secure) {
             //     return res.redirect("https://" + req.hostname + req.url);
             // }
-
-            // HTTP Messages
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];
                 for (const chunk of req) {
                     buffer.push(chunk);
                 }
-
                 const body = Buffer.concat(buffer);
-
                 const contentType = req.headers["content-type"];
                 if (contentType.includes("json")) {
                     req.body = JSON.parse(body);
@@ -44,13 +42,10 @@ function init() {
                     req.body = Object.fromEntries(new URLSearchParams(body.toString()).entries());
                 }
             }
-
-            // HTTP cookies
             const cookie = req.headers["cookie"];
             if (cookie) {
                 req.cookies = Object.fromEntries(Array.from(cookie.matchAll(/([^= ]+)=([^;]+)/g), ([, name, value]) => [name, value]));
             }
-
             res.cookie = (name, value, options = {}) => {
                 const array = [];
                 array.push([name, value].join("="));
@@ -61,13 +56,8 @@ function init() {
                 const cookie = array.join("; ");
                 res.headers.append("Set-Cookie", cookie);
             };
-
             res.removeHeader("X-Powered-By");
-
-            // HTTP headers
             res.headers = new Headers(res.headers);
-
-            // HTTP security
             res.set({
                 "Content-Security-Policy": "default-src 'self'",
                 "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -76,8 +66,6 @@ function init() {
                 "X-XSS-Protection": "1; mode=block",
                 "Access-Control-Allow-Origin": "*",
             });
-
-            // HTTP compression
             res.send = (body) => {
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();
@@ -85,7 +73,6 @@ function init() {
                     readable.push(null);
                     body = readable;
                 }
-
                 const acceptEncoding = req.headers["accept-encoding"];
                 if (/\bgzip\b/.test(acceptEncoding)) {
                     res.set("Content-Encoding", "gzip");
@@ -97,82 +84,104 @@ function init() {
                     res.set("Content-Encoding", "br");
                     body = body.pipe(zlib.createBrotliCompress());
                 }
-
                 res.set(res.headers);
-
                 body.pipe(res);
             };
-
             next();
         } catch (error) {
             next(error);
         }
     };
 }
-const options = [
-    {
-        method: /.*/,
-        url: /.*/,
-        whitelist: [/^(127\.0\.0\.1|10(\.[0-9]{1,3}){3}|192\.168(\.[0-9]{1,3}){2}|172\.(1[6-9]|2[0-9]|3[0-1])(\.[0-9]{1,3}){2})$/],
-        limit: 30,
-        window: 30,
-        roles: [
-            {
-                role: /.*/,
-                POST: "any",
-                GET: "any",
-                PATCH: "any",
-                PUT: "any",
-                DELETE: "any",
-            },
-        ],
-    },
-];
-const temp = new Map();
 
 /**
  * Provides authentication based on specified options.
  * @returns {Function} - The authentication middleware function.
  */
 function auth() {
+    const options = [
+        {
+            method: /.*/, //POST/GET/PATCH/DELETE/PUT/...
+            url: /.*/,
+            whitelist: [
+                // local ip & loopback
+                /^(?:127\.0\.0\.1)|(?:10\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))|(?:192\.168\.(\d{1,3})\.(\d{1,3}))|(?:172\.(?:1[6-9]|2[0-9]|3[0-1])\.(\d{1,3})\.(\d{1,3}))$/,
+            ],
+            roles: [
+                {
+                    role: /.*/, //public/...
+                    scheme: /.*/, //Basic/Bearer
+                    POST: "any", //any/own
+                    GET: "any", //any/own
+                    PATCH: "any", //any/own
+                    DELETE: "any", //any/own
+                    PUT: "any", //any/own
+                    limit: 30,
+                    window: 30,
+                },
+            ],
+        },
+    ];
+    const temp = new Map();
     return (req, res, next) => {
         try {
             const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
-
             const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
             if (!whitelist) {
-                const key = [req.method, req.ip, req.url].join();
-                if (!temp.has(key)) {
-                    temp.set(key, { remaining: option.limit });
+                const [scheme, token] = (req.headers["authorization"] || "").split(" ");
+
+                // !token
+                if (token == undefined) {
+                    res.status(401);
+                    res.set("WWW-Authenticate", 'Basic realm=<realm>, charset="UTF-8"');
+                    throw new Error(http.STATUS_CODES[401]);
                 }
 
-                const value = temp.get(key);
-                if (value.remaining > 0) {
-                    --value.remaining;
-                    temp.set(key, value);
-                }
-                if (value.remaining === 0 && value.reset === undefined) {
-                    value.reset = moment().add(option.window, "s");
-                    temp.set(key, value);
+                // payload
+                let payload;
+                try {
+                    payload = JWT.decode(token, { secret: { key: config.https.options.key } });
+                } catch (error) {
+                    res.status(401);
+                    throw error;
                 }
 
-                const retryAfter = value.reset && value.reset.diff(moment(), "s");
-                if (retryAfter <= 0) {
-                    value.remaining = option.limit;
-                    value.reset = undefined;
-                    temp.set(key, value);
+                const role = option.roles.find((role) => role.role.test(payload.role));
+
+                // !role
+                if (role[req.method] === undefined) {
+                    res.status(403);
+                    throw new Error(http.STATUS_CODES[403]);
                 }
-                res.set({
-                    "X-RateLimit-Limit": option.limit,
-                    "X-RateLimit-Remaining": value.remaining,
-                });
-                if (retryAfter > 0) {
+
+                // limit
+                if (role.limit !== undefined) {
+                    const key = [req.method, req.ip, req.url].join();
+                    let value = temp.get(key);
+                    if (value == undefined || (value.date && moment() > value.date)) {
+                        value = { remaining: role.limit, date: undefined };
+                        temp.set(key, value);
+                    }
+                    if (value.remaining > 0) {
+                        --value.remaining;
+                        temp.set(key, value);
+                    }
                     res.set({
-                        "X-RateLimit-Reset": value.reset,
-                        "Retry-After": retryAfter,
+                        "X-RateLimit-Limit": role.limit,
+                        "X-RateLimit-Remaining": value.remaining,
                     });
-                    res.status(429);
-                    throw new Error(http.STATUS_CODES[429]);
+                    if (value.remaining <= 0 && value.date === undefined) {
+                        value.date = moment().add(role.window, "s");
+                        temp.set(key, value);
+                    }
+                    if (value.date) {
+                        res.set({
+                            "X-RateLimit-Reset": value.date.utc(),
+                            "Retry-After": value.date.diff(moment(), "s"),
+                        });
+                        res.status(429);
+                        throw new Error(http.STATUS_CODES[429]);
+                    }
                 }
             }
             next();
@@ -201,12 +210,11 @@ function error() {
     return (err, req, res, next) => {
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
         err.stack = undefined;
-
         if (err.statusCode >= 200 && err.statusCode < 300) {
             res.status(500);
         }
-
         res.json(err);
     };
 }
+
 module.exports = { auth, init, missing, error };

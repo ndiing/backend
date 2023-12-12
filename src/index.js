@@ -17,23 +17,6 @@ app.use(auth());
 
 app.use("/api", require("./api"));
 
-app.get("/status", (req, res) => {
-    res.json({
-        data: {
-            uptime: os.uptime(),
-            hostname: os.hostname(),
-            totalMemory: os.totalmem(),
-            freeMemory: os.freemem(),
-            loadAverage: os.loadavg(),
-            cpuCores: os.cpus(),
-            platform: os.platform(),
-            release: os.release(),
-            networkInterfaces: os.networkInterfaces(),
-            userInfo: os.userInfo(),
-        },
-    });
-});
-
 app.use(missing());
 app.use(error());
 

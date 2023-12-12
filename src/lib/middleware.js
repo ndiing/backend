@@ -6,7 +6,6 @@ const { Headers } = require("./fetch");
 const JWT = require("./jwt");
 const config = require("./config");
 const Crypto = require("./crypto");
-
 const COOKIE_ATTRIBUTES = {
     domain: "Domain",
     expires: "Expires",
@@ -26,9 +25,11 @@ function init() {
     return async (req, res, next) => {
         try {
             req.secure = req.socket.encrypted;
-            // if (!req.secure) {
-            //     return res.redirect("https://" + req.hostname + req.url);
-            // }
+            const upgradeInsecureRequests = req.headers["upgrade-insecure-requests"];
+            if (upgradeInsecureRequests && !req.secure) {
+                res.status(302)
+                return res.redirect("https://" + req.hostname + req.url);
+            }
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];
                 for (const chunk of req) {
@@ -101,21 +102,18 @@ function init() {
 function auth() {
     const options = [
         {
-            method: /.*/, //POST/GET/PATCH/DELETE/PUT/...
+            method: /.*/,
             url: /.*/,
-            whitelist: [
-                // local ip & loopback
-                /^(?:127\.0\.0\.1)|(?:10\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))|(?:192\.168\.(\d{1,3})\.(\d{1,3}))|(?:172\.(?:1[6-9]|2[0-9]|3[0-1])\.(\d{1,3})\.(\d{1,3}))$/,
-            ],
+            whitelist: [/^(?:127\.0\.0\.1)|(?:10\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}))|(?:192\.168\.(\d{1,3})\.(\d{1,3}))|(?:172\.(?:1[6-9]|2[0-9]|3[0-1])\.(\d{1,3})\.(\d{1,3}))$/],
             roles: [
                 {
-                    role: /.*/, //public/...
-                    scheme: /.*/, //Basic/Bearer
-                    POST: "any", //any/own
-                    GET: "any", //any/own
-                    PATCH: "any", //any/own
-                    DELETE: "any", //any/own
-                    PUT: "any", //any/own
+                    role: /.*/,
+                    scheme: /.*/,
+                    POST: "any",
+                    GET: "any",
+                    PATCH: "any",
+                    DELETE: "any",
+                    PUT: "any",
                     limit: 30,
                     window: 30,
                 },
@@ -129,15 +127,11 @@ function auth() {
             const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
             if (!whitelist) {
                 const [scheme, token] = (req.headers["authorization"] || "").split(" ");
-
-                // !token
                 if (token == undefined) {
                     res.status(401);
                     res.set("WWW-Authenticate", 'Basic realm=<realm>, charset="UTF-8"');
                     throw new Error(http.STATUS_CODES[401]);
                 }
-
-                // payload
                 let payload;
                 try {
                     payload = JWT.decode(token, { secret: { key: config.https.options.key } });
@@ -145,16 +139,11 @@ function auth() {
                     res.status(401);
                     throw error;
                 }
-
                 const role = option.roles.find((role) => role.role.test(payload.role));
-
-                // !role
                 if (role[req.method] === undefined) {
                     res.status(403);
                     throw new Error(http.STATUS_CODES[403]);
                 }
-
-                // limit
                 if (role.limit !== undefined) {
                     const key = [req.method, req.ip, req.url].join();
                     let value = temp.get(key);
@@ -216,5 +205,4 @@ function error() {
         res.json(err);
     };
 }
-
 module.exports = { auth, init, missing, error };

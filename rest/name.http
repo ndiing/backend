@@ -5,6 +5,11 @@ Accept-Encoding: gzip
 ###
 GET http://localhost/api/name
 Accept-Encoding: gzip
+Upgrade-Insecure-Requests: 1
+
+###
+GET http://localhost/api/name
+Accept-Encoding: gzip
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 
 ###

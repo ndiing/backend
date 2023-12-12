@@ -435,9 +435,9 @@ class DB {
 
         let data = this.docs.slice();
 
+        // Sort
         options._sort = [].concat(options._sort).filter(Boolean);
         options._order = [].concat(options._order).filter(Boolean);
-
         const sortOptions = options._sort.map((value, index) => ({
             field: value,
             order: options._order[index] || "asc",
@@ -446,12 +446,15 @@ class DB {
             data = this.multiSort(data, sortOptions);
         }
 
+        // Filter
+        // Operators
         const names = Object.keys(options).filter((name) => !Object.keys(this.properties).includes(name));
         const filterCriteria = names.map((name) => ({ field: name, value: options[name] }));
         if (filterCriteria.length) {
             data = this.multiFilter(data, filterCriteria);
         }
 
+        // Full-text search
         if (options.q !== undefined) {
             data = this.fullTextSearch(data, options.q);
         }
@@ -463,11 +466,13 @@ class DB {
         options._page = Number(options._page);
         options._limit = Number(options._limit);
 
+        // Slice
         if (isNaN(options._start) && isNaN(options._end)) {
             options._start = (options._page - 1) * options._limit;
             options._end = options._start + options._limit;
         }
 
+        // Paginate
         if (!isNaN(options._start) && !isNaN(options._end)) {
             data = data.slice(options._start, options._end);
         }

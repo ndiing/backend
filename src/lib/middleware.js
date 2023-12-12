@@ -123,7 +123,7 @@ function auth() {
             roles: [
                 {
                     role: /.*/,
-                    scheme: /.*/,
+                    // scheme: /.*/,
                     POST: "any",
                     GET: "any",
                     PATCH: "any",
@@ -147,7 +147,7 @@ function auth() {
                 const [scheme, token] = (req.headers["authorization"] || "").split(" ");
                 if (token == undefined) {
                     res.status(401);
-                    res.set("WWW-Authenticate", 'Basic realm=<realm>, charset="UTF-8"');
+                    // res.set("WWW-Authenticate", 'Basic realm=<realm>, charset="UTF-8"');
                     throw new Error(http.STATUS_CODES[401]);
                 }
 

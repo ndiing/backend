@@ -130,3 +130,4 @@ data
 src/dev
 *.key
 *.crt
+config.json

@@ -1,3 +1,4 @@
+const forge = require("node-forge");
 
 let defaultAttrs = [
     { name: "countryName", value: "ID" },
@@ -5,7 +6,6 @@ let defaultAttrs = [
     { shortName: "ST", value: "JT" },
     { shortName: "OU", value: "Ndiing" },
 ];
-
 
 /**
  * Checks if the given domain is an IP address.
@@ -108,7 +108,10 @@ function generateCertsForHostname(domain, rootCAConfig) {
             value: domain,
         },
     ]);
-    const extensions = [{ name: "basicConstraints", cA: false }, getExtensionSAN(domain)];
+    const extensions = [
+        { name: "basicConstraints", cA: false },
+        getExtensionSAN(domain),
+    ];
     cert.setSubject(attrs);
     cert.setExtensions(extensions);
     cert.sign(caKey, forge.md.sha256.create());

@@ -23,31 +23,61 @@ const algs = {
     HS256: {
         sign(data, options) {
             const { secret: key } = options;
-            return Crypto.hmac(data, { algorithm: "sha256", key, encoding: "base64url" });
+            return Crypto.hmac(data, {
+                algorithm: "sha256",
+                key,
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const { secret: key } = options;
-            return Crypto.hmac(data, { algorithm: "sha256", key, encoding: "base64url" }) === signature;
+            return (
+                Crypto.hmac(data, {
+                    algorithm: "sha256",
+                    key,
+                    encoding: "base64url",
+                }) === signature
+            );
         },
     },
     HS384: {
         sign(data, options) {
             const { secret: key } = options;
-            return Crypto.hmac(data, { algorithm: "sha384", key, encoding: "base64url" });
+            return Crypto.hmac(data, {
+                algorithm: "sha384",
+                key,
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const { secret: key } = options;
-            return Crypto.hmac(data, { algorithm: "sha384", key, encoding: "base64url" }) === signature;
+            return (
+                Crypto.hmac(data, {
+                    algorithm: "sha384",
+                    key,
+                    encoding: "base64url",
+                }) === signature
+            );
         },
     },
     HS512: {
         sign(data, options) {
             const { secret: key } = options;
-            return Crypto.hmac(data, { algorithm: "sha512", key, encoding: "base64url" });
+            return Crypto.hmac(data, {
+                algorithm: "sha512",
+                key,
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const { secret: key } = options;
-            return Crypto.hmac(data, { algorithm: "sha512", key, encoding: "base64url" }) === signature;
+            return (
+                Crypto.hmac(data, {
+                    algorithm: "sha512",
+                    key,
+                    encoding: "base64url",
+                }) === signature
+            );
         },
     },
     RS256: {
@@ -55,13 +85,21 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha256", key, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha256",
+                key,
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha256", key, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha256",
+                key,
+                encoding: "base64url",
+            });
         },
     },
     RS384: {
@@ -69,13 +107,21 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha384", key, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha384",
+                key,
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha384", key, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha384",
+                key,
+                encoding: "base64url",
+            });
         },
     },
     RS512: {
@@ -83,13 +129,21 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha512", key, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha512",
+                key,
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha512", key, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha512",
+                key,
+                encoding: "base64url",
+            });
         },
     },
     ES256: {
@@ -97,13 +151,31 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha256", key: { key, dsaEncoding: "ieee-p1363", padding: crypto.constants.RSA_PKCS1_PADDING, saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST }, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha256",
+                key: {
+                    key,
+                    dsaEncoding: "ieee-p1363",
+                    padding: crypto.constants.RSA_PKCS1_PADDING,
+                    saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+                },
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha256", key: { key, dsaEncoding: "ieee-p1363", padding: crypto.constants.RSA_PKCS1_PADDING, saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST }, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha256",
+                key: {
+                    key,
+                    dsaEncoding: "ieee-p1363",
+                    padding: crypto.constants.RSA_PKCS1_PADDING,
+                    saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+                },
+                encoding: "base64url",
+            });
         },
     },
     ES384: {
@@ -111,13 +183,31 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha384", key: { key, dsaEncoding: "ieee-p1363", padding: crypto.constants.RSA_PKCS1_PADDING, saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST }, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha384",
+                key: {
+                    key,
+                    dsaEncoding: "ieee-p1363",
+                    padding: crypto.constants.RSA_PKCS1_PADDING,
+                    saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+                },
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha384", key: { key, dsaEncoding: "ieee-p1363", padding: crypto.constants.RSA_PKCS1_PADDING, saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST }, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha384",
+                key: {
+                    key,
+                    dsaEncoding: "ieee-p1363",
+                    padding: crypto.constants.RSA_PKCS1_PADDING,
+                    saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+                },
+                encoding: "base64url",
+            });
         },
     },
     ES512: {
@@ -125,13 +215,31 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha512", key: { key, dsaEncoding: "ieee-p1363", padding: crypto.constants.RSA_PKCS1_PADDING, saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST }, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha512",
+                key: {
+                    key,
+                    dsaEncoding: "ieee-p1363",
+                    padding: crypto.constants.RSA_PKCS1_PADDING,
+                    saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+                },
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha512", key: { key, dsaEncoding: "ieee-p1363", padding: crypto.constants.RSA_PKCS1_PADDING, saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST }, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha512",
+                key: {
+                    key,
+                    dsaEncoding: "ieee-p1363",
+                    padding: crypto.constants.RSA_PKCS1_PADDING,
+                    saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+                },
+                encoding: "base64url",
+            });
         },
     },
     PS256: {
@@ -139,13 +247,21 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha256", key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING }, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha256",
+                key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING },
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha256", key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING }, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha256",
+                key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING },
+                encoding: "base64url",
+            });
         },
     },
     PS384: {
@@ -153,13 +269,21 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha384", key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING }, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha384",
+                key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING },
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha384", key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING }, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha384",
+                key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING },
+                encoding: "base64url",
+            });
         },
     },
     PS512: {
@@ -167,13 +291,21 @@ const algs = {
             const {
                 secret: { key },
             } = options;
-            return Crypto.sign(data, { algorithm: "sha512", key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING }, encoding: "base64url" });
+            return Crypto.sign(data, {
+                algorithm: "sha512",
+                key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING },
+                encoding: "base64url",
+            });
         },
         verify(data, signature, options) {
             const {
                 secret: { key },
             } = options;
-            return Crypto.verify(data, signature, { algorithm: "sha512", key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING }, encoding: "base64url" });
+            return Crypto.verify(data, signature, {
+                algorithm: "sha512",
+                key: { key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING },
+                encoding: "base64url",
+            });
         },
     },
 };
@@ -235,7 +367,7 @@ module.exports = {
     algs,
     encode,
     decode,
-}
+};
 
 // // Usage example
 // var header={

@@ -56,7 +56,7 @@ module.exports = {
     delay,
     flatten,
     unflatten,
-}
+};
 
 // // Usage example
 // // delay().then(console.log)

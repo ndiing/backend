@@ -46,7 +46,7 @@ function write(file, data) {
 module.exports = {
     read,
     write,
-}
+};
 
 // // Usage example
 // write('./data/name/default.json',{})

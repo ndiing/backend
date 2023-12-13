@@ -112,7 +112,8 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
     err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
-    // err.stack = undefined;
+    console.log(err.stack)
+    err.stack = undefined;
 
     if (err.statusCode >= 200 && err.statusCode < 300) {
         res.status(500);

@@ -6,16 +6,16 @@ const { delay } = require("./helper");
 /**
  * Generates a HMAC-based One-Time Password (HOTP).
  * @param {Object} options - Options for generating HOTP.
- * @param {string} options.key - The secret key used to generate the OTP.
+ * @param {string} options.secret - The secret secret used to generate the OTP.
  * @param {number} [options.counter=0] - The counter value for the OTP (default is 0).
  * @param {string} [options.algorithm="sha1"] - The hashing algorithm used (e.g., "sha1", "sha256", "sha512").
  * @param {number} [options.digits=6] - The number of digits in the generated OTP (default is 6).
- * @param {string} [options.encoding] - The encoding of the secret key, if different from Buffer (e.g., "base32").
+ * @param {string} [options.encoding] - The encoding of the secret secret, if different from Buffer (e.g., "base32").
  * @returns {string} - The generated One-Time Password.
  */
 function hotp(options = {}) {
     let {
-        key,
+        secret,
         counter = 0,
         algorithm = "sha1",
         digits = 6,
@@ -24,9 +24,9 @@ function hotp(options = {}) {
     let keyBytes;
 
     if (encoding === "base32") {
-        keyBytes = Crypto.decode(key, { encoding });
+        keyBytes = Crypto.decode(secret, { encoding });
     } else {
-        keyBytes = Buffer.from(key);
+        keyBytes = Buffer.from(secret);
     }
 
     const counterBytes = Buffer.alloc(8);
@@ -51,29 +51,29 @@ function hotp(options = {}) {
 /**
  * Generates a Time-based One-Time Password (TOTP).
  * @param {Object} options - Options for generating TOTP.
- * @param {string} options.key - The secret key used to generate the OTP.
+ * @param {string} options.secret - The secret secret used to generate the OTP.
  * @param {number} [options.T] - The time value for which OTP is generated (default is current time in seconds).
  * @param {number} [options.T0=0] - The initial time value (default is 0).
- * @param {number} [options.X=30] - The time step in seconds (default is 30).
+ * @param {number} [options.period=30] - The time step in seconds (default is 30).
  * @param {string} [options.algorithm="sha1"] - The hashing algorithm used (e.g., "sha1", "sha256", "sha512").
  * @param {number} [options.digits=6] - The number of digits in the generated OTP (default is 6).
- * @param {string} [options.encoding] - The encoding of the secret key, if different from Buffer (e.g., "base32").
+ * @param {string} [options.encoding] - The encoding of the secret secret, if different from Buffer (e.g., "base32").
  * @returns {string} - The generated One-Time Password.
  */
 function totp(options = {}) {
     let {
-        key,
+        secret,
         T = moment().unix() / 1000,
         T0 = 0,
-        X = 30,
+        period = 30,
         algorithm = "sha1",
         digits = 6,
         encoding,
     } = options;
 
-    const counter = Math.floor((T - T0) / X);
+    const counter = Math.floor((T - T0) / period);
 
-    return hotp({ key, counter, algorithm, digits, encoding });
+    return hotp({ secret, counter, algorithm, digits, encoding });
 }
 
 /**
@@ -81,7 +81,7 @@ function totp(options = {}) {
  * @param {Object} options - Options for generating OTP configuration.
  * @param {string} [options.type="totp"] - The type of OTP ("totp" or "hotp").
  * @param {string} [options.label="label"] - The label for the OTP entry.
- * @param {string} [options.secret] - The secret key used for OTP generation.
+ * @param {string} [options.secret] - The secret secret used for OTP generation.
  * @param {string} [options.issuer="issuer"] - The issuer name for the OTP entry.
  * @param {string} [options.algorithm="SHA1"] - The hashing algorithm used (e.g., "SHA1", "SHA256", "SHA512").
  * @param {number} [options.digits=6] - The number of digits in the generated OTP (default is 6).
@@ -146,8 +146,8 @@ function otpauth(options = {}) {
         issuer,
         algorithm,
         digits,
-        counter,
-        period,
+        ...(type === "hotp"&&{counter}),
+        ...(type === "totp"&&{period}),
         url: url.toString(),
         qr: qr.toString(),
     };
@@ -160,6 +160,6 @@ module.exports = {
 };
 
 // // Usage example
-// console.log(hotp({ key: "GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL" }));
-// console.log(totp({ key: "GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL" }));
+// console.log(hotp({ secret: "GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL" }));
+// console.log(totp({ secret: "GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL" }));
 // console.log(otpauth({}));

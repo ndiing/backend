@@ -24,21 +24,14 @@ const COOKIE_ATTRIBUTES = {
 function init() {
     return async (req, res, next) => {
         try {
-            //
-            // handle request
-            //
-
-            // secure
             req.secure = req.socket.encrypted;
 
-            // upgrade-insecure-requests
             const upgradeInsecureRequests = req.headers["upgrade-insecure-requests"];
             if (upgradeInsecureRequests && !req.secure) {
                 res.status(302);
                 return res.redirect("https://" + req.hostname + req.url);
             }
 
-            // body
             if (["POST", "PATCH", "PUT"].includes(req.method)) {
                 const buffer = [];
                 for (const chunk of req) {
@@ -53,22 +46,15 @@ function init() {
                 }
             }
 
-            // cookie
             const cookie = req.headers["cookie"];
             if (cookie) {
                 req.cookies = Object.fromEntries(Array.from(cookie.matchAll(/([^= ]+)=([^;]+)/g), ([, name, value]) => [name, value]));
             }
 
-            //
-            // handle response
-            //
-
-            // headers
             res.headers = new Headers(res.headers);
 
             res.removeHeader("X-Powered-By");
 
-            // security
             res.set({
                 "Content-Security-Policy": "default-src 'self'",
                 "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -78,7 +64,6 @@ function init() {
                 "Access-Control-Allow-Origin": "*",
             });
 
-            // res cookie
             res.cookie = (name, value, options = {}) => {
                 const array = [];
                 array.push([name, value].join("="));
@@ -90,7 +75,6 @@ function init() {
                 res.headers.append("Set-Cookie", cookie);
             };
 
-            // res send
             res.send = (body) => {
                 if (!(body instanceof Readable)) {
                     const readable = new Readable();
@@ -149,10 +133,8 @@ function auth() {
         try {
             const option = options.find((option) => option.method.test(req.method) && option.url.test(req.url));
 
-            // whitelist
             const whitelist = option.whitelist.some((regex) => regex.test(req.ip));
             if (!whitelist) {
-                // token
                 const [scheme, token] = (req.headers["authorization"] || "").split(" ");
                 if (token == undefined) {
                     res.status(401);
@@ -160,7 +142,6 @@ function auth() {
                     throw new Error(http.STATUS_CODES[401]);
                 }
 
-                // payload
                 let payload;
                 try {
                     payload = JWT.decode(token, { secret: { key: config.https.options.key } });
@@ -169,14 +150,12 @@ function auth() {
                     throw error;
                 }
 
-                // role
                 const role = option.roles.find((role) => role.role.test(payload.role));
                 if (role[req.method] === undefined) {
                     res.status(403);
                     throw new Error(http.STATUS_CODES[403]);
                 }
 
-                // limit
                 if (role.limit !== undefined) {
                     const key = [req.method, req.ip, req.url].join();
                     let value = temp.get(key);
@@ -230,11 +209,9 @@ function missing() {
  */
 function error() {
     return (err, req, res, next) => {
-        // err
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
         err.stack = undefined;
 
-        // status
         if (err.statusCode >= 200 && err.statusCode < 300) {
             res.status(500);
         }

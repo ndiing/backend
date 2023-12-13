@@ -48,9 +48,12 @@ function getExtensionSAN(domain = "") {
 function getKeysAndCert(serialNumber) {
     const keys = forge.pki.rsa.generateKeyPair(2048);
     const cert = forge.pki.createCertificate();
+
     cert.publicKey = keys.publicKey;
     cert.serialNumber = serialNumber || Math.floor(Math.random() * 100000) + "";
-    var now = Date.now();
+
+    const now = Date.now();
+    
     cert.validity.notBefore = new Date(now - 24 * 60 * 60 * 1000);
     cert.validity.notAfter = new Date(now + 824 * 24 * 60 * 60 * 1000);
     return {
@@ -66,16 +69,18 @@ function getKeysAndCert(serialNumber) {
  * @returns {Object} An object containing the root CA's private key and certificate.
  */
 function generateRootCA(commonName) {
+    commonName = commonName || "CertManager";
+
     const keysAndCert = getKeysAndCert();
     const keys = keysAndCert.keys;
     const cert = keysAndCert.cert;
-    commonName = commonName || "CertManager";
     const attrs = defaultAttrs.concat([
         {
             name: "commonName",
             value: commonName,
         },
     ]);
+
     cert.setSubject(attrs);
     cert.setIssuer(attrs);
     cert.setExtensions([{ name: "basicConstraints", cA: true }]);
@@ -96,12 +101,12 @@ function generateRootCA(commonName) {
 function generateCertsForHostname(domain, rootCAConfig) {
     const md = forge.md.md5.create();
     md.update(domain);
+
     const keysAndCert = getKeysAndCert(md.digest().toHex());
     const keys = keysAndCert.keys;
     const cert = keysAndCert.cert;
     const caCert = forge.pki.certificateFromPem(rootCAConfig.cert);
     const caKey = forge.pki.privateKeyFromPem(rootCAConfig.key);
-    cert.setIssuer(caCert.subject.attributes);
     const attrs = defaultAttrs.concat([
         {
             name: "commonName",
@@ -112,6 +117,8 @@ function generateCertsForHostname(domain, rootCAConfig) {
         { name: "basicConstraints", cA: false },
         getExtensionSAN(domain),
     ];
+
+    cert.setIssuer(caCert.subject.attributes);
     cert.setSubject(attrs);
     cert.setExtensions(extensions);
     cert.sign(caKey, forge.md.sha256.create());

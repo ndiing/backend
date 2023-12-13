@@ -17,9 +17,9 @@ const app = express();
 app.use(async (req, res, next) => {
     try {
         req.secure = req.socket.encrypted;
+
         const upgradeInsecureRequests =
             req.headers["upgrade-insecure-requests"];
-
         if (upgradeInsecureRequests && !req.secure) {
             res.status(302);
             return res.redirect("https://" + req.hostname + req.url);
@@ -27,13 +27,12 @@ app.use(async (req, res, next) => {
 
         if (["POST", "PATCH", "PUT"].includes(req.method)) {
             const buffer = [];
-
-            for (const chunk of req) {
+            for await (const chunk of req) {
                 buffer.push(chunk);
             }
             const body = Buffer.concat(buffer);
-            const contentType = req.headers["content-type"];
 
+            const contentType = req.headers["content-type"];
             if (contentType.includes("json")) {
                 req.body = JSON.parse(body);
             } else if (contentType.includes("urlencoded")) {
@@ -42,8 +41,11 @@ app.use(async (req, res, next) => {
                 );
             }
         }
+
         const headers = new Headers();
+
         res.removeHeader("X-Powered-By");
+
         res.set({
             "Content-Security-Policy": "default-src 'self'",
             "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -52,8 +54,8 @@ app.use(async (req, res, next) => {
             "X-XSS-Protection": "1; mode=block",
             "Access-Control-Allow-Origin": "*",
         });
-        const cookie = req.headers["cookie"];
 
+        const cookie = req.headers["cookie"];
         if (cookie) {
             req.cookies = Object.fromEntries(
                 Array.from(
@@ -66,13 +68,11 @@ app.use(async (req, res, next) => {
         res.cookie = (name, value, options = {}) => {
             const array = [];
             array.push([name, value].join("="));
-
             for (const name in options) {
                 const value = options[name];
                 array.push([COOKIE_ATTRIBUTES[name], value].join("="));
             }
-            const cookie = array.join("; ");
-            headers.append("Set-Cookie", cookie);
+            headers.append("Set-Cookie", array.join("; "));
         };
 
         res.send = (body) => {
@@ -82,8 +82,8 @@ app.use(async (req, res, next) => {
                 readable.push(null);
                 body = readable;
             }
-            const acceptEncoding = req.headers["accept-encoding"];
 
+            const acceptEncoding = req.headers["accept-encoding"];
             if (/\bgzip\b/.test(acceptEncoding)) {
                 res.set("Content-Encoding", "gzip");
                 body = body.pipe(zlib.createGzip());
@@ -94,6 +94,7 @@ app.use(async (req, res, next) => {
                 res.set("Content-Encoding", "br");
                 body = body.pipe(zlib.createBrotliCompress());
             }
+            
             res.set(headers);
             body.pipe(res);
         };
@@ -111,7 +112,7 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
     err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
-    err.stack = undefined;
+    // err.stack = undefined;
 
     if (err.statusCode >= 200 && err.statusCode < 300) {
         res.status(500);

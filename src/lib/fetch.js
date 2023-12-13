@@ -155,8 +155,10 @@ class Headers {
             }
         }
     }
+
     append(name, value) {
         name = this.key(name);
+
         if (this[name]) {
             if (Array.isArray(this[name])) {
                 this[name].push(value);
@@ -167,34 +169,42 @@ class Headers {
             this[name] = value;
         }
     }
+
     delete(name) {
         name = this.key(name);
         delete this[name];
     }
+
     entries() {
         return Object.fromEntries(this);
     }
+
     forEach(callback) {
         for (const [name, value] of Object.fromEntries(this)) {
             callback(value, name);
         }
     }
+
     get(name) {
         name = this.key(name);
         return this[name];
     }
+
     getSetCookie() {
         let name = "Set-Cookie";
         name = this.key(name);
         return [].concat(this[name]).filter(Boolean);
     }
+
     has(name) {
         name = this.key(name);
         return !!this[name];
     }
+
     keys() {
         return Object.keys(this);
     }
+
     key(name) {
         return (
             HTTP_HEADERS.find((key) =>
@@ -202,10 +212,12 @@ class Headers {
             ) ?? name
         );
     }
+
     set(name, value) {
         name = this.key(name);
         this[name] = value;
     }
+
     values() {
         return Object.values(this);
     }
@@ -217,6 +229,7 @@ class Headers {
 class Request {
     constructor(input, options = {}) {
         input = new URL(input);
+
         this.protocol = input.protocol;
         this.hostname = input.hostname;
         this.port = parseInt(
@@ -225,11 +238,13 @@ class Request {
         this.host = input.host;
         this.origin = input.origin;
         this.path = input.pathname + input.search + input.hash;
+
         this.client = this.protocol === "https:" ? https : http;
         this.agent =
             options.agent ?? new this.client.Agent({ keepAlive: true });
         this.insecureHTTPParser = options.insecureHTTPParser ?? true;
         this.timeout = options.timeout ?? 1000 * 30;
+
         this.body = options.body ?? "";
         if (!(this.body instanceof Readable)) {
             const readable = new Readable();
@@ -237,6 +252,7 @@ class Request {
             readable.push(null);
             this.body = readable;
         }
+
         this.credentials = options.credentials ?? "include";
         this.headers = new Headers({
             "User-Agent":
@@ -250,12 +266,18 @@ class Request {
         this.signal = options.signal;
         this.url = options.url;
     }
-    arrayBuffer() {}
-    blob() {}
-    clone() {}
-    formData() {}
-    json() {}
-    text() {}
+
+    // arrayBuffer() {}
+
+    // blob() {}
+
+    // clone() {}
+
+    // formData() {}
+
+    // json() {}
+
+    // text() {}
 }
 
 /**
@@ -265,6 +287,7 @@ class Response {
     constructor(body, options = {}) {
         this.body = body;
         this.headers = new Headers(options.headers);
+
         const contentEncoding = this.headers.get("Content-Encoding");
         if (/\bgzip\b/.test(contentEncoding)) {
             this.body = this.body.pipe(zlib.createGunzip());
@@ -273,21 +296,28 @@ class Response {
         } else if (/\bbr\b/.test(contentEncoding)) {
             this.body = this.body.pipe(zlib.createBrotliDecompress());
         }
+
         this.status = options.status ?? options.statusCode;
         this.ok = this.status >= 200 && this.status < 300;
         this.statusText = options.statusText ?? options.statusMessage;
         this.url = options.url;
     }
-    static error() {}
-    static json() {}
-    static redirect() {}
+
+    // static error() {}
+
+    // static json() {}
+
+    // static redirect() {}
+
     async buffer() {
         const buffer = [];
+
         for await (const chunk of this.body) {
             buffer.push(chunk);
         }
         return Buffer.concat(buffer);
     }
+
     async arrayBuffer() {
         const buffer = await this.buffer();
         return buffer.buffer.slice(
@@ -295,18 +325,22 @@ class Response {
             buffer.byteOffset + buffer.byteLength
         );
     }
+
     async blob() {
         const buffer = await this.buffer();
         return new Blob([buffer]);
     }
+
     async clone() {
         const buffer = await this.buffer();
         return Buffer.from(buffer);
     }
+
     async json() {
         const buffer = await this.buffer();
         return JSON.parse(buffer);
     }
+
     async text() {
         const buffer = await this.buffer();
         return buffer.toString();
@@ -323,6 +357,7 @@ class Response {
  * @param {string} [url="http://127.0.0.1:8888"] - The URL of the proxy server.
  * @returns {Promise<http.IncomingMessage>} A Promise that resolves with the response data if the request is successful, otherwise rejects with an error.
  */
+
 function useProxyServer(url = "http://127.0.0.1:8888") {
     url = new URL(url);
     return new Promise((resolve, reject) => {
@@ -340,18 +375,22 @@ function useProxyServer(url = "http://127.0.0.1:8888") {
  * @param {Object} [options={}] - Additional options for the request.
  * @returns {Promise<Response>} The response from the server.
  */
+
 function fetch(resource, options = {}) {
     return new Promise(async (resolve, reject) => {
         const request = new Request(resource, options);
+
         if (!options.store) {
             options.store = new Store(
                 `./data/${request.hostname}/default.min.json`
             );
         }
+
         const cookie = options.store.cookieStore.cookie;
         if (cookie && request.credentials === "includes") {
             request.headers.set("Cookie", cookie);
         }
+
         try {
             console.log(config.proxy);
             const url = `${config.proxy.protocol}//${config.proxy.hostname}:${config.proxy.port}`;
@@ -362,6 +401,7 @@ function fetch(resource, options = {}) {
                     : HttpProxyAgent;
             request.agent = new Agent(url);
         } catch (error) {}
+
         const req = request.client.request(request);
         req.on("error", reject);
         req.on("response", (res) => {
@@ -370,10 +410,12 @@ function fetch(resource, options = {}) {
                 statusMessage: res.statusMessage,
                 headers: res.headers,
             });
+
             const setCookie = response.headers.getSetCookie();
             if (setCookie.length) {
                 options.store.cookieStore.cookie = setCookie;
             }
+            
             const location = response.headers.get("Location");
             if (
                 location &&

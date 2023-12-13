@@ -22,21 +22,27 @@ function hotp(options = {}) {
         encoding,
     } = options;
     let keyBytes;
+
     if (encoding === "base32") {
         keyBytes = Crypto.decode(key, { encoding });
     } else {
         keyBytes = Buffer.from(key);
     }
+
     const counterBytes = Buffer.alloc(8);
     counterBytes.writeUInt32BE(counter, 4);
+
     const hash = Crypto.hmac(counterBytes, {
         algorithm,
         key: keyBytes,
         encoding: "hex",
     });
+
     const offset = parseInt(hash.charAt(hash.length - 1), 16);
+
     let result = parseInt(hash.substring(offset * 2, offset * 2 + 2 * 4), 16);
     result = result & 0x7fffffff;
+
     return String(result)
         .padStart(digits, "0")
         .slice(0 - digits);
@@ -64,7 +70,9 @@ function totp(options = {}) {
         digits = 6,
         encoding,
     } = options;
+
     const counter = Math.floor((T - T0) / X);
+
     return hotp({ key, counter, algorithm, digits, encoding });
 }
 
@@ -87,6 +95,7 @@ function otpauth(options = {}) {
         SHA256: Buffer.alloc(32),
         SHA512: Buffer.alloc(64),
     };
+
     let {
         type = "totp",
         label = "label",
@@ -97,12 +106,15 @@ function otpauth(options = {}) {
         counter = 0,
         period = 30,
     } = options;
+
     const url = new URL(`otpauth://${type}/${label}`);
+
     if (!secret) {
         secret = crypto.randomBytes(64).toString("base64");
         secret = bytes[algorithm].fill(secret);
         secret = Crypto.encode(secret, { encoding: "base32" });
     }
+
     if (secret !== undefined) {
         url.searchParams.set("secret", secret);
     }
@@ -121,10 +133,12 @@ function otpauth(options = {}) {
     if (type === "totp" && period !== undefined) {
         url.searchParams.set("period", period);
     }
+    
     const qr = new URL(
         `https://chart.googleapis.com/chart?cht=qr&chs=256x256&chl=`
     );
     qr.searchParams.set("chl", url.toString());
+    
     return {
         type,
         label,

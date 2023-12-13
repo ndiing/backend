@@ -11,9 +11,11 @@ const path = require("path");
 function read(file, data) {
     try {
         data = fs.readFileSync(file, { encoding: "utf8" });
+        
         if (/\b\.json\b/.test(file)) {
             data = JSON.parse(data);
         }
+        
     } catch (error) {
         write(file, data);
     }
@@ -33,6 +35,7 @@ function write(file, data) {
     } catch (error) {
         fs.mkdirSync(dir, { recursive: true });
     }
+
     if (/\b\.json\b/.test(file)) {
         if (/\b\.min\b/.test(file)) {
             data = JSON.stringify(data);
@@ -40,6 +43,7 @@ function write(file, data) {
             data = JSON.stringify(data, null, 4);
         }
     }
+
     fs.writeFileSync(file, data);
 }
 

@@ -392,14 +392,12 @@ function fetch(resource, options = {}) {
         }
 
         try {
-            console.log(config.proxy);
-            const url = `${config.proxy.protocol}//${config.proxy.hostname}:${config.proxy.port}`;
-            await useProxyServer(url);
+            await useProxyServer(config.proxy.url);
             const Agent =
                 config.proxy.protocol === "https:"
                     ? HttpsProxyAgent
                     : HttpProxyAgent;
-            request.agent = new Agent(url);
+            request.agent = new Agent(config.proxy.url);
         } catch (error) {}
 
         const req = request.client.request(request);

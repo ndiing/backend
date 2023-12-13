@@ -6,6 +6,9 @@ const https = require("https");
 const express = require("express");
 const config = require("./lib/config");
 const os = require("os");
+const {Headers} = require("./lib/fetch");
+const {Readable} = require("stream");
+const zlib = require("zlib");
 require("./lib");
 require("./dev");
 
@@ -39,7 +42,7 @@ app.use(async (req, res, next) => {
                 );
             }
         }
-        res.headers = new Headers(res.headers);
+        const headers = new Headers();
         res.removeHeader("X-Powered-By");
         res.set({
             "Content-Security-Policy": "default-src 'self'",
@@ -69,7 +72,7 @@ app.use(async (req, res, next) => {
                 array.push([COOKIE_ATTRIBUTES[name], value].join("="));
             }
             const cookie = array.join("; ");
-            res.headers.append("Set-Cookie", cookie);
+            headers.append("Set-Cookie", cookie);
         };
 
         res.send = (body) => {
@@ -91,7 +94,7 @@ app.use(async (req, res, next) => {
                 res.set("Content-Encoding", "br");
                 body = body.pipe(zlib.createBrotliCompress());
             }
-            res.set(res.headers);
+            res.set(headers);
             body.pipe(res);
         };
         next();

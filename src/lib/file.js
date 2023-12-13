@@ -49,6 +49,6 @@ module.exports = {
 };
 
 // // Usage example
-// write('./data/name/default.json',{})
-// var data=read('./data/name/default.json')
-// console.log(data)
+// write("./data/name/default.json", {});
+// var data = read("./data/name/default.json");
+// console.log(data);

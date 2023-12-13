@@ -130,7 +130,7 @@ module.exports = {
 };
 
 // // Usage example
-// const ca=generateRootCA()
-// const root=generateCertsForHostname('localhost',ca)
-// // console.log(ca)
-// // console.log(root)
+// const ca = generateRootCA();
+// const root = generateCertsForHostname("localhost", ca);
+// console.log(ca);
+// console.log(root);

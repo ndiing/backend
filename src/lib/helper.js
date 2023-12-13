@@ -60,16 +60,13 @@ module.exports = {
 
 // // Usage example
 // // delay().then(console.log)
-// var data={
-//     user:{
-//         name:'',
-//         address:[
-//             'line1',
-//             'line2',
-//         ]
-//     }
-// }
-// var flattened=flatten(data)
-// console.log(flattened)
-// var unflattened=unflatten(flattened)
-// console.log(unflattened)
+// var data = {
+//     user: {
+//         name: "",
+//         address: ["line1", "line2"],
+//     },
+// };
+// var flattened = flatten(data);
+// console.log(flattened);
+// var unflattened = unflatten(flattened);
+// console.log(unflattened);

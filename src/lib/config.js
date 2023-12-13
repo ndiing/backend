@@ -36,9 +36,9 @@ if (config.version !== version) {
 
 module.exports = config;
 
-// const ca = generateRootCA()
-// write('./root.key',ca.key)
-// write('./root.crt',ca.cert)
-// const host=generateCertsForHostname('localhost',ca)
-// write('./host.key',host.key)
-// write('./host.crt',host.cert)
+// const ca = generateRootCA();
+// write("./root.key", ca.key);
+// write("./root.crt", ca.cert);
+// const host = generateCertsForHostname("localhost", ca);
+// write("./host.key", host.key);
+// write("./host.crt", host.cert);

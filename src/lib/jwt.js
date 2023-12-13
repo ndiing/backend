@@ -370,12 +370,15 @@ module.exports = {
 };
 
 // // Usage example
-// var header={
-//     alg:'ES512',
-//     typ:'JWT'
-// }
-// var secret={key:config.https.options.key}
-// var token = encode({role:'admin',exp:moment().add(30,'s')},{header,secret})
-// console.log(token)
-// var payload = decode(token,{secret})
-// console.log(payload)
+// var header = {
+//     alg: "ES512",
+//     typ: "JWT",
+// };
+// var secret = { key: config.https.options.key };
+// var token = encode(
+//     { role: "admin", exp: moment().add(30, "s") },
+//     { header, secret }
+// );
+// console.log(token);
+// var payload = decode(token, { secret });
+// console.log(payload);

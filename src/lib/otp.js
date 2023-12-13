@@ -146,6 +146,6 @@ module.exports = {
 };
 
 // // Usage example
-// console.log(hotp({key:'GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL'}))
-// console.log(totp({key:'GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL'}))
-// console.log(otpauth({}))
+// console.log(hotp({ key: "GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL" }));
+// console.log(totp({ key: "GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL" }));
+// console.log(otpauth({}));

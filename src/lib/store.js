@@ -67,6 +67,7 @@ class CookieStore {
         }
     }
 }
+
 /**
  * Represents a simple in-memory database.
  */
@@ -125,7 +126,6 @@ class DB {
         if (index === -1) {
             throw new Error("Dokumen tidak ada");
         }
-
         const oldDoc = this.docs[index];
         for (const name in doc) {
             oldDoc[name] = doc[name];
@@ -146,7 +146,6 @@ class DB {
         if (index === -1) {
             throw new Error("Dokumen tidak ada");
         }
-
         this.docs.splice(index, 1);
     }
 
@@ -198,7 +197,6 @@ class DB {
             for (let i = 0; i < sortOptions.length; i++) {
                 const sortField = sortOptions[i].field;
                 const sortOrder = sortOptions[i].order === "asc" ? 1 : -1;
-
                 if (a[sortField] < b[sortField]) {
                     return -1 * sortOrder;
                 }
@@ -270,7 +268,6 @@ class DB {
      */
     getAll(options = {}) {
         let data = this.docs.slice();
-
         options._sort = [].concat(options._sort).filter(Boolean);
         options._order = [].concat(options._order).filter(Boolean);
         const sortOptions = options._sort.map((value, index) => ({
@@ -280,33 +277,26 @@ class DB {
         if (sortOptions?.length) {
             data = this.multiSort(data, sortOptions);
         }
-
         const names = Object.keys(options).filter((name) => !Object.keys(this.properties).includes(name));
         const filterCriteria = names.map((name) => ({ field: name, value: options[name] }));
         if (filterCriteria.length) {
             data = this.multiFilter(data, filterCriteria);
         }
-
         if (options.q !== undefined) {
             data = this.fullTextSearch(data, options.q);
         }
-
         const total = data.length;
-
         options._start = Number(options._start);
         options._end = Number(options._end);
         options._page = Number(options._page);
         options._limit = Number(options._limit);
-
         if (isNaN(options._start) && isNaN(options._end)) {
             options._start = (options._page - 1) * options._limit;
             options._end = options._start + options._limit;
         }
-
         if (!isNaN(options._start) && !isNaN(options._end)) {
             data = data.slice(options._start, options._end);
         }
-
         return {
             data,
             ...(sortOptions.length && { sorters: sortOptions }),
@@ -358,7 +348,11 @@ class Store {
     }
 }
 
-module.exports = Store;
+module.exports = {
+    CookieStore,
+    DB,
+    default:Store,
+}
 
 // // Usage example
 // const db = new DB([

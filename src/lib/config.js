@@ -4,7 +4,6 @@ const { generateRootCA, generateCertsForHostname } = require("./cert");
 const fs = require("fs");
 
 const version = "1.0.0";
-
 const config = unflatten(
     read("./config.json", {
         version: "1.0.0",

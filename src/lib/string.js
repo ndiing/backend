@@ -53,7 +53,14 @@ function toTitleCase(string) {
         .replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2, $$) => ($$ === 0 ? "" : " ") + $2.toUpperCase())
         .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, "");
 }
-module.exports = { toPascalCase, toCamelCase, toKebabCase, toSnakeCase, toTitleCase };
+
+module.exports = {
+    toPascalCase,
+    toCamelCase,
+    toKebabCase,
+    toSnakeCase,
+    toTitleCase,
+}
 
 // // Usage example
 // var data = [

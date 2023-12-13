@@ -1,4 +1,3 @@
-const forge = require("node-forge");
 
 let defaultAttrs = [
     { name: "countryName", value: "ID" },
@@ -6,6 +5,7 @@ let defaultAttrs = [
     { shortName: "ST", value: "JT" },
     { shortName: "OU", value: "Ndiing" },
 ];
+
 
 /**
  * Checks if the given domain is an IP address.
@@ -15,7 +15,6 @@ let defaultAttrs = [
  */
 function isIpDomain(domain = "") {
     const ipReg = /^\d+?\.\d+?\.\d+?\.\d+?$/;
-
     return ipReg.test(domain);
 }
 
@@ -52,8 +51,8 @@ function getKeysAndCert(serialNumber) {
     cert.publicKey = keys.publicKey;
     cert.serialNumber = serialNumber || Math.floor(Math.random() * 100000) + "";
     var now = Date.now();
-    cert.validity.notBefore = new Date(now - 24 * 60 * 60 * 1000); // 1 day before
-    cert.validity.notAfter = new Date(now + 824 * 24 * 60 * 60 * 1000); // 824 days after
+    cert.validity.notBefore = new Date(now - 24 * 60 * 60 * 1000);
+    cert.validity.notAfter = new Date(now + 824 * 24 * 60 * 60 * 1000);
     return {
         keys,
         cert,
@@ -70,9 +69,7 @@ function generateRootCA(commonName) {
     const keysAndCert = getKeysAndCert();
     const keys = keysAndCert.keys;
     const cert = keysAndCert.cert;
-
     commonName = commonName || "CertManager";
-
     const attrs = defaultAttrs.concat([
         {
             name: "commonName",
@@ -82,14 +79,9 @@ function generateRootCA(commonName) {
     cert.setSubject(attrs);
     cert.setIssuer(attrs);
     cert.setExtensions([{ name: "basicConstraints", cA: true }]);
-
     cert.sign(keys.privateKey, forge.md.sha256.create());
-
     return {
-        // privateKey: forge.pki.privateKeyToPem(keys.privateKey),
         key: forge.pki.privateKeyToPem(keys.privateKey),
-        // publicKey: forge.pki.publicKeyToPem(keys.publicKey),
-        // certificate: forge.pki.certificateToPem(cert),
         cert: forge.pki.certificateToPem(cert),
     };
 }
@@ -104,35 +96,24 @@ function generateRootCA(commonName) {
 function generateCertsForHostname(domain, rootCAConfig) {
     const md = forge.md.md5.create();
     md.update(domain);
-
     const keysAndCert = getKeysAndCert(md.digest().toHex());
     const keys = keysAndCert.keys;
     const cert = keysAndCert.cert;
-
     const caCert = forge.pki.certificateFromPem(rootCAConfig.cert);
     const caKey = forge.pki.privateKeyFromPem(rootCAConfig.key);
-
     cert.setIssuer(caCert.subject.attributes);
-
     const attrs = defaultAttrs.concat([
         {
             name: "commonName",
             value: domain,
         },
     ]);
-
     const extensions = [{ name: "basicConstraints", cA: false }, getExtensionSAN(domain)];
-
     cert.setSubject(attrs);
     cert.setExtensions(extensions);
-
     cert.sign(caKey, forge.md.sha256.create());
-
     return {
-        // privateKey: forge.pki.privateKeyToPem(keys.privateKey),
         key: forge.pki.privateKeyToPem(keys.privateKey),
-        // publicKey: forge.pki.publicKeyToPem(keys.publicKey),
-        // certificate: forge.pki.certificateToPem(cert),
         cert: forge.pki.certificateToPem(cert),
     };
 }

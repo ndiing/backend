@@ -164,7 +164,6 @@ class Response {
         return buffer.toString();
     }
 }
-
 // // Usage example
 // const store=new Store('./data/name/default.json')
 // // store.db.post({_id:10})
@@ -196,16 +195,13 @@ function useProxyServer(url = "http://127.0.0.1:8888") {
 function fetch(resource, options = {}) {
     return new Promise(async (resolve, reject) => {
         const request = new Request(resource, options);
-
         if (!options.store) {
             options.store = new Store(`./data/${request.hostname}/default.min.json`);
         }
-
         const cookie = options.store.cookieStore.cookie;
         if (cookie && request.credentials === "includes") {
             request.headers.set("Cookie", cookie);
         }
-
         try {
             console.log(config.proxy);
             const url = `${config.proxy.protocol}//${config.proxy.hostname}:${config.proxy.port}`;
@@ -213,51 +209,49 @@ function fetch(resource, options = {}) {
             const Agent = config.proxy.protocol === "https:" ? HttpsProxyAgent : HttpProxyAgent;
             request.agent = new Agent(url);
         } catch (error) {}
-
         const req = request.client.request(request);
         req.on("error", reject);
         req.on("response", (res) => {
             let response = new Response(res, { statusCode: res.statusCode, statusMessage: res.statusMessage, headers: res.headers });
-
             const setCookie = response.headers.getSetCookie();
             if (setCookie.length) {
                 options.store.cookieStore.cookie = setCookie;
             }
-
             const location = response.headers.get("Location");
             if (location && request.redirect === "follow" && request.follow > 0) {
                 --request.follow;
                 const url = new URL(location, request.origin);
                 response = fetch(url.toString(), { follow: request.follow, store: options.store });
             }
-
             resolve(response);
         });
         request.body.pipe(req);
     });
 }
-module.exports = { default: fetch, Headers, Request, Response };
+
+module.exports = {
+    Headers,
+    Request,
+    Response,
+
+    useProxyServer,
+    default:fetch,
+}
 
 // // Usage example
-
 // var headers=new Headers()
 // console.log(headers)
-
 // var request=new Request('http://google.com')
 // console.log(request)
-
 // var response=new Response()
 // console.log(response)
-
 // var cookieStore=new CookieStore()
 // cookieStore.cookie='name=value'
 // console.log(cookieStore)
 // console.log(cookieStore.cookie)
-
 // var store = new Store('./data/name/default.json',{})
 // // store.name='line1'
 // console.log(store)
-
 // fetch('http://google.com')
 // .then(res=>res.text())
 // .then(console.log)

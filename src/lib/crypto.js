@@ -4,6 +4,7 @@ const RFC4648 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const RFC4648_HEX = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 const CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 
+
 /**
  * Converts data to a DataView.
  *
@@ -317,10 +318,27 @@ function hmac(data, options = {}) {
     const { algorithm = "sha256", key = "", encoding = "hex" } = options;
     return crypto.createHmac(algorithm, key).update(data).digest(encoding);
 }
-module.exports = { encode, decode, encrypt, decrypt, privateEncrypt, publicDecrypt, publicEncrypt, privateDecrypt, sign, verify, hash, hmac };
+
+module.exports = {
+    toDataView,
+    base32Encode,
+    readChar,
+    base32Decode,
+    encode,
+    decode,
+    encrypt,
+    decrypt,
+    privateEncrypt,
+    publicDecrypt,
+    publicEncrypt,
+    privateDecrypt,
+    sign,
+    verify,
+    hash,
+    hmac,
+}
 
 // // Usage example
-
 // var data='string'
 // var {publicKey,privateKey}=crypto.generateKeyPairSync('rsa', {
 //     modulusLength: 4096,
@@ -333,7 +351,6 @@ module.exports = { encode, decode, encrypt, decrypt, privateEncrypt, publicDecry
 //       format: 'pem',
 //     },
 //   })
-
 // data=encode(data);console.log(data)
 // data=decode(data);console.log(data)
 // data=encrypt(data);console.log(data)
@@ -346,7 +363,6 @@ module.exports = { encode, decode, encrypt, decrypt, privateEncrypt, publicDecry
 // var verified=verify(data,signature,{key:privateKey});console.log(verified)
 // data=hash(data);console.log(data)
 // data=hmac(data);console.log(data)
-
 // var data='username:password'
 // data=encode(data,{encoding:'base64'})
 // console.log(data)

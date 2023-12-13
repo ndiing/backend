@@ -51,7 +51,12 @@ function unflatten(obj) {
     }
     return result;
 }
-module.exports = { delay, flatten, unflatten };
+
+module.exports = {
+    delay,
+    flatten,
+    unflatten,
+}
 
 // // Usage example
 // // delay().then(console.log)

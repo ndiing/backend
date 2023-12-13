@@ -42,7 +42,11 @@ function write(file, data) {
     }
     fs.writeFileSync(file, data);
 }
-module.exports = { read, write };
+
+module.exports = {
+    read,
+    write,
+}
 
 // // Usage example
 // write('./data/name/default.json',{})

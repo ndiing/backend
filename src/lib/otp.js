@@ -63,7 +63,7 @@ function hotp(options = {}) {
 function totp(options = {}) {
     let {
         secret,
-        T = moment().unix() / 1000,
+        T = moment().unix(),
         T0 = 0,
         period = 30,
         algorithm = "sha1",
@@ -105,6 +105,7 @@ function otpauth(options = {}) {
         digits = 6,
         counter = 0,
         period = 30,
+        encoding='base32'
     } = options;
 
     const url = new URL(`otpauth://${type}/${label}`);
@@ -112,7 +113,7 @@ function otpauth(options = {}) {
     if (!secret) {
         secret = crypto.randomBytes(64).toString("base64");
         secret = bytes[algorithm].fill(secret);
-        secret = Crypto.encode(secret, { encoding: "base32" });
+        secret = Crypto.encode(secret, { encoding });
     }
 
     if (secret !== undefined) {
@@ -150,6 +151,7 @@ function otpauth(options = {}) {
         ...(type === "totp"&&{period}),
         url: url.toString(),
         qr: qr.toString(),
+        encoding,
     };
 }
 
@@ -160,6 +162,7 @@ module.exports = {
 };
 
 // // Usage example
-// console.log(hotp({ secret: "GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL" }));
-// console.log(totp({ secret: "GZ3GS6TCKNBU4TSINMXTSOCRO5GWOTJL" }));
-// console.log(otpauth({}));
+// console.log(hotp({ secret: "GRSGW6SXNJATARLTGRRFANTFPJDW4Q3J" }));
+// console.log(totp({ secret: "GRSGW6SXNJATARLTGRRFANTFPJDW4Q3J" }));
+// console.log(totp({ secret: "GRSGW6SXNJATARLTGRRFANTFPJDW4Q3J",encoding:'base32' }));
+// // console.log(otpauth({}));

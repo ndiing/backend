@@ -9,6 +9,7 @@ const os = require("os");
 const { Headers } = require("./lib/fetch");
 const { Readable } = require("stream");
 const zlib = require("zlib");
+const authController = require("./api/auth/controller");
 require("./lib");
 require("./dev");
 
@@ -103,6 +104,9 @@ app.use(async (req, res, next) => {
         next(error);
     }
 });
+
+app.use(authController.init)
+
 app.use("/api", require("./api"));
 
 app.use((req, res, next) => {

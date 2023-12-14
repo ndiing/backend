@@ -20,7 +20,6 @@ const config = unflatten(
         proxy: {
             url: "http://127.0.0.1:8888",
         },
-        authorization: [],
     })
 );
 

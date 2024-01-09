@@ -10,7 +10,7 @@ const { Headers } = require("./lib/fetch");
 const { Readable } = require("stream");
 const zlib = require("zlib");
 const authController = require("./api/auth/controller");
-require("./lib");
+// require("./lib");
 require("./dev");
 
 const app = express();
@@ -19,8 +19,7 @@ app.use(async (req, res, next) => {
     try {
         req.secure = req.socket.encrypted;
 
-        const upgradeInsecureRequests =
-            req.headers["upgrade-insecure-requests"];
+        const upgradeInsecureRequests = req.headers["upgrade-insecure-requests"];
         if (upgradeInsecureRequests && !req.secure) {
             res.status(302);
             return res.redirect("https://" + req.hostname + req.url);
@@ -37,9 +36,7 @@ app.use(async (req, res, next) => {
             if (contentType.includes("json")) {
                 req.body = JSON.parse(body);
             } else if (contentType.includes("urlencoded")) {
-                req.body = Object.fromEntries(
-                    new URLSearchParams(body.toString()).entries()
-                );
+                req.body = Object.fromEntries(new URLSearchParams(body.toString()).entries());
             }
         }
 
@@ -58,12 +55,7 @@ app.use(async (req, res, next) => {
 
         const cookie = req.headers["cookie"];
         if (cookie) {
-            req.cookies = Object.fromEntries(
-                Array.from(
-                    cookie.matchAll(/([^= ]+)=([^;]+)/g),
-                    ([, name, value]) => [name, value]
-                )
-            );
+            req.cookies = Object.fromEntries(Array.from(cookie.matchAll(/([^= ]+)=([^;]+)/g), ([, name, value]) => [name, value]));
         }
 
         res.cookie = (name, value, options = {}) => {
@@ -95,7 +87,7 @@ app.use(async (req, res, next) => {
                 res.set("Content-Encoding", "br");
                 body = body.pipe(zlib.createBrotliCompress());
             }
-            
+
             res.set(headers);
             body.pipe(res);
         };
@@ -105,7 +97,7 @@ app.use(async (req, res, next) => {
     }
 });
 
-app.use(authController.init)
+app.use(authController.init);
 
 app.use("/api", require("./api"));
 
@@ -116,7 +108,7 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
     err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
-    console.log(err.stack)
+    console.log(err.stack);
     err.stack = undefined;
 
     if (err.statusCode >= 200 && err.statusCode < 300) {
@@ -129,9 +121,11 @@ const httpServer = http.createServer(app);
 const httpsServer = https.createServer(config.https.options, app);
 
 httpServer.listen(config.http.port, "0.0.0.0", () => {
-    console.log(httpServer.address());
+    const { port } = httpServer.address();
+    console.log(`http://localhost${port !== 80 ? `:${port}` : ``}`);
 });
 
 httpsServer.listen(config.https.port, "0.0.0.0", () => {
-    console.log(httpsServer.address());
+    const { port } = httpsServer.address();
+    console.log(`https://localhost${port !== 443 ? `:${port}` : ``}`);
 });

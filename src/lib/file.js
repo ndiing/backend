@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { replacer, reviver } = require("./helper");
 
 /**
  * Reads data from a file synchronously, handling JSON files.
@@ -11,12 +12,12 @@ const path = require("path");
 function read(file, data) {
     try {
         data = fs.readFileSync(file, { encoding: "utf8" });
-        
+
         if (/\b\.json\b/.test(file)) {
-            data = JSON.parse(data);
+            data = JSON.parse(data, reviver);
         }
-        
     } catch (error) {
+        // console.log(error)
         write(file, data);
     }
     return data;
@@ -38,9 +39,9 @@ function write(file, data) {
 
     if (/\b\.json\b/.test(file)) {
         if (/\b\.min\b/.test(file)) {
-            data = JSON.stringify(data);
+            data = JSON.stringify(data, replacer);
         } else {
-            data = JSON.stringify(data, null, 4);
+            data = JSON.stringify(data, replacer, 4);
         }
     }
 

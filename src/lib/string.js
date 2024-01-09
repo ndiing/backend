@@ -4,11 +4,7 @@
  * @returns {string} - The string converted to PascalCase.
  */
 function toPascalCase(string) {
-    return string
-        .replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2) =>
-            $2.toUpperCase()
-        )
-        .replace(/[^a-zA-Z0-9]+$/g, "");
+    return string.replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2) => $2.toUpperCase()).replace(/[^a-zA-Z0-9]+$/g, "");
 }
 
 /**
@@ -17,11 +13,7 @@ function toPascalCase(string) {
  * @returns {string} - The string converted to camelCase.
  */
 function toCamelCase(string) {
-    return string
-        .replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2, $$) =>
-            $$ === 0 ? $2.toLowerCase() : $2.toUpperCase()
-        )
-        .replace(/[^a-zA-Z0-9]+$/g, "");
+    return string.replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2, $$) => ($$ === 0 ? $2.toLowerCase() : $2.toUpperCase())).replace(/[^a-zA-Z0-9]+$/g, "");
 }
 
 /**
@@ -58,10 +50,7 @@ function toSnakeCase(string) {
 function toTitleCase(string) {
     return string
         .replace(/([a-z])([A-Z])/g, ($, $1, $2) => $1 + " " + $2.toUpperCase())
-        .replace(
-            /([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g,
-            ($, $1, $2, $$) => ($$ === 0 ? "" : " ") + $2.toUpperCase()
-        )
+        .replace(/([^a-zA-Z0-9]+|^)([a-zA-Z0-9])/g, ($, $1, $2, $$) => ($$ === 0 ? "" : " ") + $2.toUpperCase())
         .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, "");
 }
 

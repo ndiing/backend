@@ -10,11 +10,25 @@ const config = require("../../lib/config");
 const moment = require("moment");
 
 class Controller {
-    static async init(req,res,next){
+    static async init(req, res, next) {
         try {
-            next()
+            const access = config.accessControl.find((access) => access.method.test(req.method) && access.url.test(req.url));
+
+            if (!access) {
+                res.status(403);
+                throw new Error(http.STATUS_CODES[403]);
+            }
+
+            const whitelist = access.whitelist.some((whitelist) => whitelist.test(req.ip));
+
+            if (!whitelist) {
+                res.status(403);
+                throw new Error(http.STATUS_CODES[403]);
+            }
+
+            next();
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 }

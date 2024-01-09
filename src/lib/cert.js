@@ -53,7 +53,7 @@ function getKeysAndCert(serialNumber) {
     cert.serialNumber = serialNumber || Math.floor(Math.random() * 100000) + "";
 
     const now = Date.now();
-    
+
     cert.validity.notBefore = new Date(now - 24 * 60 * 60 * 1000);
     cert.validity.notAfter = new Date(now + 824 * 24 * 60 * 60 * 1000);
     return {
@@ -113,10 +113,7 @@ function generateCertsForHostname(domain, rootCAConfig) {
             value: domain,
         },
     ]);
-    const extensions = [
-        { name: "basicConstraints", cA: false },
-        getExtensionSAN(domain),
-    ];
+    const extensions = [{ name: "basicConstraints", cA: false }, getExtensionSAN(domain)];
 
     cert.setIssuer(caCert.subject.attributes);
     cert.setSubject(attrs);

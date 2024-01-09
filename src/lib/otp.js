@@ -14,13 +14,7 @@ const { delay } = require("./helper");
  * @returns {string} - The generated One-Time Password.
  */
 function hotp(options = {}) {
-    let {
-        secret,
-        counter = 0,
-        algorithm = "sha1",
-        digits = 6,
-        encoding,
-    } = options;
+    let { secret, counter = 0, algorithm = "sha1", digits = 6, encoding } = options;
     let keyBytes;
 
     if (encoding === "base32") {
@@ -61,15 +55,7 @@ function hotp(options = {}) {
  * @returns {string} - The generated One-Time Password.
  */
 function totp(options = {}) {
-    let {
-        secret,
-        T = moment().unix(),
-        T0 = 0,
-        period = 30,
-        algorithm = "sha1",
-        digits = 6,
-        encoding,
-    } = options;
+    let { secret, T = moment().unix(), T0 = 0, period = 30, algorithm = "sha1", digits = 6, encoding } = options;
 
     const counter = Math.floor((T - T0) / period);
 
@@ -96,17 +82,7 @@ function otpauth(options = {}) {
         SHA512: Buffer.alloc(64),
     };
 
-    let {
-        type = "totp",
-        label = "label",
-        secret,
-        issuer = "issuer",
-        algorithm = "SHA1",
-        digits = 6,
-        counter = 0,
-        period = 30,
-        encoding='base32'
-    } = options;
+    let { type = "totp", label = "label", secret, issuer = "issuer", algorithm = "SHA1", digits = 6, counter = 0, period = 30, encoding = "base32" } = options;
 
     const url = new URL(`otpauth://${type}/${label}`);
 
@@ -134,12 +110,10 @@ function otpauth(options = {}) {
     if (type === "totp" && period !== undefined) {
         url.searchParams.set("period", period);
     }
-    
-    const qr = new URL(
-        `https://chart.googleapis.com/chart?cht=qr&chs=256x256&chl=`
-    );
+
+    const qr = new URL(`https://chart.googleapis.com/chart?cht=qr&chs=256x256&chl=`);
     qr.searchParams.set("chl", url.toString());
-    
+
     return {
         type,
         label,
@@ -147,8 +121,8 @@ function otpauth(options = {}) {
         issuer,
         algorithm,
         digits,
-        ...(type === "hotp"&&{counter}),
-        ...(type === "totp"&&{period}),
+        ...(type === "hotp" && { counter }),
+        ...(type === "totp" && { period }),
         url: url.toString(),
         qr: qr.toString(),
         encoding,

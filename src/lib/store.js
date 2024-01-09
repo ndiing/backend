@@ -38,7 +38,7 @@ class CookieStore {
         if (typeof cookie !== "object") {
             cookie = { name };
         }
-        
+
         return [this[cookie.name]];
     }
 
@@ -67,14 +67,11 @@ class CookieStore {
         if (!Array.isArray(value)) {
             value = [value];
         }
-        
-        const regex =
-            /(Domain|Expires|HttpOnly|Max-Age|Partitioned|Path|Secure|SameSite)/i;
+
+        const regex = /(Domain|Expires|HttpOnly|Max-Age|Partitioned|Path|Secure|SameSite)/i;
 
         for (const string of value) {
-            for (const [, name, value] of string.matchAll(
-                /([^= ]+)=([^;]+)/g
-            )) {
+            for (const [, name, value] of string.matchAll(/([^= ]+)=([^;]+)/g)) {
                 if (regex.test(name)) {
                     continue;
                 }
@@ -258,11 +255,7 @@ class DB {
         return array.filter((item) =>
             filterCriteria.every((criteria) => {
                 const { field, value } = criteria;
-                const [, name, operator = "_eq"] = field.match(
-                    new RegExp(
-                        `^(\\w+?)(${Object.keys(this.operators).join("|")})?$`
-                    )
-                );
+                const [, name, operator = "_eq"] = field.match(new RegExp(`^(\\w+?)(${Object.keys(this.operators).join("|")})?$`));
                 return this.operators[operator](item[name], value);
             })
         );
@@ -277,12 +270,8 @@ class DB {
 
     fullTextSearch(array, searchQuery) {
         return array.filter((item) => {
-            const values = Object.values(item).map((value) =>
-                String(value).toLowerCase()
-            );
-            return values.some((value) =>
-                value.includes(searchQuery.toLowerCase())
-            );
+            const values = Object.values(item).map((value) => String(value).toLowerCase());
+            return values.some((value) => value.includes(searchQuery.toLowerCase()));
         });
     }
 
@@ -330,9 +319,7 @@ class DB {
         if (sortOptions?.length) {
             data = this.multiSort(data, sortOptions);
         }
-        const names = Object.keys(options).filter(
-            (name) => !Object.keys(this.properties).includes(name)
-        );
+        const names = Object.keys(options).filter((name) => !Object.keys(this.properties).includes(name));
         const filterCriteria = names.map((name) => ({
             field: name,
             value: options[name],
@@ -386,11 +373,7 @@ class Store {
     }
 
     get(target, name) {
-        if (
-            ["[object Array]", "[object Object]"].includes(
-                toString.call(target[name])
-            )
-        ) {
+        if (["[object Array]", "[object Object]"].includes(toString.call(target[name]))) {
             return new Proxy(target[name], this);
         }
         return target[name];

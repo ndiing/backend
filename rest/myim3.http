@@ -1,0 +1,45 @@
+### Token App
+GET http://localhost/api/myim3/postApiV2TokenApp
+
+### Otp Send
+GET http://localhost/api/myim3/postApiV2OtpSend
+?msisdn=6281515599684
+
+### Otp Validate
+GET http://localhost/api/myim3/postApiV2OtpValidate
+?otp=193044
+
+### Profile Logout
+GET http://localhost/api/myim3/postApiV2ProfileLogout
+
+
+
+
+
+
+### Dashboard Get V4
+GET http://localhost/api/myim3/postApiV2DashboardGetV4
+
+
+
+
+
+
+### Prepaid Voucherreload
+GET http://localhost/api/myim3/postApiV2PrepaidVoucherreload
+?vouchercode=32146547987465
+&target_msisdn=81515599684
+
+
+
+
+
+
+### Transaction History
+GET http://localhost/api/myim3/postApiV2TransactionHistory
+?fromdate=
+&todate=
+&start=0
+&end=20
+&status=
+&category=

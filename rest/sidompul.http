@@ -1,0 +1,256 @@
+### Auth Otp
+GET http://localhost/api/sidompul/postV3AuthOtp
+?profileDirectory=default
+&msisdn=6281938064470
+
+### Auth Otp
+GET http://localhost/api/sidompul/getV3AuthOtp
+?profileDirectory=default
+&msisdn=6281938064470
+&otp=864675
+
+### Auth Refresh Token
+GET http://localhost/api/sidompul/postV3AuthRefreshToken
+?profileDirectory=default
+
+### Auth Logout
+GET http://localhost/api/sidompul/postV3AuthLogout
+?profileDirectory=default
+
+
+
+
+
+
+### Account Balance
+GET http://localhost/api/sidompul/getV1AccountBalance
+?profileDirectory=default
+
+
+
+
+
+
+### Trx History
+GET http://localhost/api/sidompul/getV3TrxHistory
+?profileDirectory=default
+&servicetype=
+&status=
+&startdate=2023-12-10
+&enddate=2023-12-17
+&q=
+&startamount=0
+&endamount=100000000
+
+### Trx History Order
+GET http://localhost/api/sidompul/getV3TrxHistoryOrder
+?profileDirectory=default
+&trx_type_v2=
+&status=
+&startdate=2023-12-14
+&enddate=2023-12-17
+&startamount=0
+&endamount=100000000
+
+
+
+
+
+
+### Content Product Category Digital
+GET http://localhost/api/sidompul/getV2ContentProductCategoryDigital
+?profileDirectory=default
+&brand=AXIS
+
+### Trx Digital Voucher Inject
+GET http://localhost/api/sidompul/postV2TrxDigitalVoucherInject
+?profileDirectory=default
+&pin=6341
+&owner=AXIS
+&productCode=BR661348MINI
+&productName=AIGO+Mini+1GB+1hr+%2B+Lokal
+&quantity=1
+&targetMsisdn=62859181233249
+
+
+
+
+
+
+### Content Profiling Productcategoriesv2
+GET http://localhost/api/sidompul/getV2ContentProfilingProductcategoriesv2
+?profileDirectory=default
+&brand=AXIS
+
+### Content Next Best Offer
+GET http://localhost/api/sidompul/getV3ContentNextBestOffer
+?profileDirectory=default
+&msisdn=62859181233249
+&location=NBO
+&maxOffer=10
+
+### Content Profiling Product Item List
+GET http://localhost/api/sidompul/getV3ContentProfilingProductItemList
+?profileDirectory=default
+&brand=AXIS
+&product-category=AIGO+BRONET+24JAM+%28Kota+Anda%29
+&msisdn-b=62859181233249
+
+### Content Profiling Product Best Offer
+GET http://localhost/api/sidompul/getV3ContentProfilingProductBestOffer
+?profileDirectory=default
+&brand=AXIS
+&product-category=AIGO+BRONET+24JAM+%28Kota+Anda%29
+&msisdn-b=62859181233249
+
+### Trx Multiple Package
+GET http://localhost/api/sidompul/postV4TrxMultiplePackage
+?profileDirectory=default
+&msisdn=62859181233249
+&offerId=
+&originalProduct=
+&pin=6341
+&productCode=ABR2GB30DBF
+
+
+
+
+
+
+### Content Profiling Nbo Product Benefit
+GET http://localhost/api/sidompul/getV3ContentProfilingNboProductBenefit
+?profileDirectory=default
+&product-code=uY9wFjP%252BHzn9dvNZjkvqTg%252BTyQejFDu65Fky8VkukfC1Rb1ooHfIxmzPyrW3hp03sLAxMNNU2Sa5q%252BPGN5Cm%252BPJOhk8kVwHw1UsTy5y73kwcBD8sOeB5gyf9ycm21UVqoLJuGdpRjSggmbs9kxMXSntfWuo3N6CdTi%252B4L7iezXoa99lFvC4W46yOEJHs54fDfjwB1Nf5r7EHH1nthgi02n8ZSNLpWuviD1qusaaGzOw%253D
+&msisdn-b=62859181233249
+&flag-encrypt=true
+
+### Trx Nbo Package
+GET http://localhost/api/sidompul/postV4TrxNboPackage
+?profileDirectory=default
+&msisdn=62859181233249
+&offerId=62139
+&originalProduct=
+&pin=6341
+&productCode=uY9wFjP%252BHzn9dvNZjkvqTg%252BTyQejFDu65Fky8VkukfC1Rb1ooHfIxmzPyrW3hp03sLAxMNNU2Sa5q%252BPGN5Cm%252BPJOhk8kVwHw1UsTy5y73kwcBD8sOeB5gyf9ycm21UVqoLJuGdpRjSggmbs9kxMXSntfWuo3N6CdTi%252B4L7iezXoa99lFvC4W46yOEJHs54fDfjwB1Nf5r7EHH1nthgi02n8ZSNLpWuviD1qusaaGzOw%253D
+
+
+
+
+
+
+### Content Api Productitemlist
+GET http://localhost/api/sidompul/getV1ContentApiProductitemlist
+?profileDirectory=default
+&parent-account-cd=l8LgNvncSPlUL32Yisglf%252Boc4SYwqLM08PzRgwNe1HKE5fu4D8u9ys4tZg%252FPRCRdksxHu4EHS297PcX4steJpA%253D%253D
+&brand=AXIS
+&product-category=HOT100
+&msisdn-b=62859181233249
+
+### Trx Claim Tagging Ro
+GET http://localhost/api/sidompul/postV1TrxClaimTaggingRo
+?profileDirectory=default
+&inputValidation=321654
+&msisdn=62859181233249
+&pin=6341%3D
+&programId=HOT100
+&programType=SP
+
+### Trx Claim Tagging Ro
+GET http://localhost/api/sidompul/postV1TrxClaimTaggingRo
+?profileDirectory=default
+&inputValidation=3214654798746541
+&msisdn=62859181233249
+&pin=6341%3D
+&programId=HOT100
+&programType=VOUCHER
+
+
+
+
+
+
+### Content Denom Pulsa
+GET http://localhost/api/sidompul/getV2ContentDenomPulsa
+?profileDirectory=default
+&msisdn=62859181233249
+
+### Loyalty Upsell Offer W2p
+GET http://localhost/api/sidompul/getV2LoyaltyUpsellOfferW2p
+?profileDirectory=default
+&msisdn=62859181233249
+&quota=5000
+
+### Trx W2p
+GET http://localhost/api/sidompul/postV2TrxW2p
+?profileDirectory=default
+&denom=5000
+&msisdn=62859181233249
+&pin=6341
+
+
+
+
+
+
+### Common Voucher
+GET http://localhost/api/sidompul/getV2CommonVoucher
+?profileDirectory=default
+&type=SA
+&voucherCode=3214654798746541
+
+### Common Voucher
+GET http://localhost/api/sidompul/getV2CommonVoucher
+?profileDirectory=default
+&type=HYBRID
+&voucherCode=3214654798746541
+
+### Common Voucher
+GET http://localhost/api/sidompul/getV2CommonVoucher
+?profileDirectory=default
+&type=AIGO
+&voucherCode=3214654798746541
+
+
+
+
+
+
+### Package Check4GStatus
+GET http://localhost/api/sidompul/getV2PackageCheck4GStatus
+?profileDirectory=default
+&msisdn=62859181233249
+
+### Package Check Balance
+GET http://localhost/api/sidompul/getV2PackageCheckBalance
+?profileDirectory=default
+&msisdn=62859181233249
+
+### Package Check
+GET http://localhost/api/sidompul/getV4PackageCheck
+?profileDirectory=default
+&msisdn=62859181233249
+
+### Common Prefix
+GET http://localhost/api/sidompul/getV1CommonPrefix
+?profileDirectory=default
+&msisdn=62859181233249
+
+### Package Check Dukcapil
+GET http://localhost/api/sidompul/getV2PackageCheckDukcapil
+?profileDirectory=default
+&msisdn=62859181233249
+
+### Package Check SPExp Date
+GET http://localhost/api/sidompul/getV2PackageCheckSPExpDate
+?profileDirectory=default
+&msisdn=62859181233249
+
+### Package Check Tenure
+GET http://localhost/api/sidompul/getV2PackageCheckTenure
+?profileDirectory=default
+&msisdn=62859181233249
+
+### Bonus
+GET http://localhost/api/sidompul/getV2Bonus
+?profileDirectory=default
+&msisdn=62859181233249

@@ -5,6 +5,7 @@ require("./fetch");
 require("./file");
 require("./helper");
 require("./jwt");
+require("./mssql");
 require("./otp");
 require("./store");
 require("./string");

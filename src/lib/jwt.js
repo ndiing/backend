@@ -369,7 +369,7 @@ function decode(token, options = {}) {
     }
 
     // throw new Error('The access token provided is revoked')
-    
+
     return payload;
 }
 

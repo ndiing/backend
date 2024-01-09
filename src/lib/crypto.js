@@ -12,19 +12,13 @@ const CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
  * @throws {TypeError} Expected `data` to be an ArrayBuffer, Buffer, Int8Array, Uint8Array, or Uint8ClampedArray.
  */
 function toDataView(data) {
-    if (
-        data instanceof Int8Array ||
-        data instanceof Uint8Array ||
-        data instanceof Uint8ClampedArray
-    ) {
+    if (data instanceof Int8Array || data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
         return new DataView(data.buffer, data.byteOffset, data.byteLength);
     }
     if (data instanceof ArrayBuffer) {
         return new DataView(data);
     }
-    throw new TypeError(
-        "Expected `data` to be an ArrayBuffer, Buffer, Int8Array, Uint8Array or Uint8ClampedArray"
-    );
+    throw new TypeError("Expected `data` to be an ArrayBuffer, Buffer, Int8Array, Uint8Array or Uint8ClampedArray");
 }
 
 /**
@@ -57,8 +51,7 @@ function base32Encode(data, letiant = "RFC4648", options) {
         default:
             throw new Error("Unknown base32 letiant: " + letiant);
     }
-    const padding =
-        options.padding !== undefined ? options.padding : defaultPadding;
+    const padding = options.padding !== undefined ? options.padding : defaultPadding;
     const view = toDataView(Buffer.from(data));
     let bits = 0;
     let value = 0;
@@ -120,10 +113,7 @@ function base32Decode(input, letiant = "RFC4648") {
             break;
         case "Crockford":
             alphabet = CROCKFORD;
-            input = input
-                .toUpperCase()
-                .replace(/O/g, "0")
-                .replace(/[IL]/g, "1");
+            input = input.toUpperCase().replace(/O/g, "0").replace(/[IL]/g, "1");
             break;
         default:
             throw new Error("Unknown base32 letiant: " + letiant);
@@ -184,16 +174,9 @@ function decode(data, options = {}) {
  * @returns {string} The encrypted data string.
  */
 function encrypt(data, options = {}) {
-    const {
-        algorithm = "aes-128-cbc",
-        key = Buffer.alloc(16),
-        iv = Buffer.alloc(16),
-        encoding = "hex",
-    } = options;
+    const { algorithm = "aes-128-cbc", key = Buffer.alloc(16), iv = Buffer.alloc(16), encoding = "hex" } = options;
     const cipher = crypto.createCipheriv(algorithm, key, iv);
-    return Buffer.concat([cipher.update(data), cipher.final()]).toString(
-        encoding
-    );
+    return Buffer.concat([cipher.update(data), cipher.final()]).toString(encoding);
 }
 
 /**
@@ -208,17 +191,9 @@ function encrypt(data, options = {}) {
  * @returns {string} The decrypted data string.
  */
 function decrypt(data, options = {}) {
-    const {
-        algorithm = "aes-128-cbc",
-        key = Buffer.alloc(16),
-        iv = Buffer.alloc(16),
-        encoding = "hex",
-    } = options;
+    const { algorithm = "aes-128-cbc", key = Buffer.alloc(16), iv = Buffer.alloc(16), encoding = "hex" } = options;
     const cipher = crypto.createDecipheriv(algorithm, key, iv);
-    return Buffer.concat([
-        cipher.update(data, encoding),
-        cipher.final(),
-    ]).toString();
+    return Buffer.concat([cipher.update(data, encoding), cipher.final()]).toString();
 }
 
 /**

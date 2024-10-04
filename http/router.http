@@ -1,0 +1,32 @@
+### router test
+
+###
+GET http://localhost/
+Cookie: name1=value1; name2=value2; name3=value3
+
+###
+GET http://localhost/
+Accept-Encoding: gzip
+
+###
+GET http://localhost/
+Accept-Encoding: deflate
+
+### rest-client tidak support br
+GET http://localhost/
+Accept-Encoding: br
+
+###
+POST http://localhost/
+Content-Type: application/json
+
+{
+    "user":"name",
+    "pass":"word"
+}
+
+###
+POST http://localhost/blogs
+Content-Type: application/x-www-form-urlencoded
+
+user=name&pass=word

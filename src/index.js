@@ -1,10 +1,15 @@
-const Router = require("./lib/router.js");
-require("./lib/index.js");
+process.on("uncaughtException", console.log);
+process.on("unhandledRejection", console.log);
 
+const Router = require("./lib/router.js");
+const { compression, messages, cookies, security, cors, authorization, fallback, catchAll } = require("./lib/middleware.js");
+const fs = require("fs");
 const http = require("http");
 const https = require("https");
-const fs = require("fs");
-const { compression, messages, cookies, security, cors, authorization, fallback, catchAll } = require("./lib/middleware.js");
+
+if (process.env.NODE_ENV === "development") {
+    require("./lib/index.js");
+}
 
 const options = {
     key: fs.readFileSync("./host.key"),

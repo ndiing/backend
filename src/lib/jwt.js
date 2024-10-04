@@ -41,6 +41,7 @@ const signer = {
         return crypto.sign("sha512", data, { key: secret, padding: crypto.constants.RSA_PKCS1_PSS_PADDING }).toString("base64url");
     },
 };
+
 const verifier = {
     hs256: (signature, secret, data) => {
         return signature === signer.hs256(secret, data);

@@ -8,7 +8,7 @@ class Router {
 
     add(method, path, ...middlewares) {
         if (typeof path === "function") {
-            middlewares = [path];
+            middlewares = [path, ...middlewares];
             path = "*";
         }
 
@@ -63,6 +63,8 @@ class Router {
             req.protocol_ = req.socket.encrypted ? "https:" : "http:";
             req.host_ = req.headers.host;
             req.url_ = new URL(req.protocol_ + "//" + req.host_ + req.url);
+            req.remoteAddress_ = req.socket.remoteAddress;
+            req.pathname_ = req.url_.pathname;
 
             req.query = {};
             for (const [name, value] of req.url_.searchParams) {
@@ -97,7 +99,7 @@ class Router {
             for (const route of this.routes) {
                 const matches = req.url_.pathname.match(route.regexp);
 
-                if (!(!!matches && (route.method === req.method || route.method === ""))) {
+                if (!matches || (route.method !== req.method && route.method !== "")) {
                     continue;
                 }
 
@@ -110,7 +112,6 @@ class Router {
 
                     try {
                         await new Promise((resolve, reject) => {
-                            // handle next
                             const next = (err) => {
                                 if (err) {
                                     reject(err);
@@ -129,6 +130,10 @@ class Router {
                         req.error_ = error;
                     }
                 }
+            }
+
+            if (req.error_) {
+                throw req.error_;
             }
 
             res.statusCode = 404;

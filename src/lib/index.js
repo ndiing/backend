@@ -1,13 +1,3 @@
-const {
-    getExtensionSAN,
-    getKeysAndCert,
-    generateRootCA,
-    generateCertsForHostname,
-    setDefaultAttrs,
-} = require("./cert.js");
-const {
-    signer,
-    verifier,
-    encode,
-    decode,
-}=require("./jwt.js");
+const { getExtensionSAN, getKeysAndCert, generateRootCA, generateCertsForHostname, setDefaultAttrs } = require("./cert.js");
+const { signer, verifier, encode, decode } = require("./jwt.js");
+const Router = require("./router.js");

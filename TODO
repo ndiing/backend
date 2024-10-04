@@ -5,7 +5,7 @@
 bagaian diluar core, karna sifatnya dinamis, sesuai dengan kasus masing-masing
 [x] router middleware => http messages
 [x] router middleware => http compression
-[ ] router middleware => http security
-[ ] router middleware => http cors
+[x] router middleware => http security
+[x] router middleware => http cors
 [x] router middleware => http cookies
-[ ] router middleware => http authentication&Authorization (auth)
+[x] router middleware => http authentication&Authorization (auth)

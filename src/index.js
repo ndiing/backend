@@ -24,10 +24,6 @@ app.use(compression(), messages(), cookies(), security(), cors(), authorization(
 app.use("/blogs", require("./api/blogs/index.js"));
 app.use("/", require("./api/main/index.js"));
 
-// app.get('/',(req,res) => {
-//     res.json({message:'ok'})
-// })
-
 app.use(fallback(), catchAll());
 
 const httpServer = http.createServer(app.handleRequest.bind(app));
@@ -39,92 +35,3 @@ httpServer.listen(config.httpPort, "0.0.0.0", () => {
 httpsServer.listen(config.httpsPort, "0.0.0.0", () => {
     console.log(httpsServer.address());
 });
-
-// // router test
-// (() => {
-//     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-//     // fetch('http://localhost/1') .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost') .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost', { method: 'POST', body: JSON.stringify({ title: 'foo', body: 'bar', userId: 1, }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/1', { method: 'PUT', body: JSON.stringify({ id: 1, title: 'foo', body: 'bar', userId: 1, }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/1', { method: 'PATCH', body: JSON.stringify({ title: 'foo', }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/1', { method: 'DELETE', }).then((response) => response.json()) .then((json) => console.log(json));;
-//     // fetch('http://localhost?userId=1') .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/1/comments') .then((response) => response.json()) .then((json) => console.log(json));
-
-//     // fetch('http://localhost/blogs/1') .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/blogs') .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/blogs', { method: 'POST', body: JSON.stringify({ title: 'foo', body: 'bar', userId: 1, }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/blogs/1', { method: 'PUT', body: JSON.stringify({ id: 1, title: 'foo', body: 'bar', userId: 1, }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/blogs/1', { method: 'PATCH', body: JSON.stringify({ title: 'foo', }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/blogs/1', { method: 'DELETE', }).then((response) => response.json()) .then((json) => console.log(json));;
-//     // fetch('http://localhost/blogs?userId=1') .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('http://localhost/blogs/1/comments') .then((response) => response.json()) .then((json) => console.log(json));
-
-//     // // cookies passed
-//     // fetch('http://localhost',{
-//     //     headers:{
-//     //         'Cookie':'name=value; name1=value1; name2=value2'
-//     //     }
-//     // })
-//     // .then((response) => {
-//     //     console.log(response)
-//     //     return response.json()
-//     // })
-//     // .then((json) => console.log(json))
-
-//     // // compression passed
-//     // fetch('http://localhost',{
-//     //     headers:{
-//     //         'Accept-Encoding':'br'
-//     //     }
-//     // })
-//     // .then((response) => response.json())
-//     // .then((json) => console.log(json))
-
-//     // fetch('http://localhost',{
-//     //     headers:{
-//     //         'Accept-Encoding':'gzip'
-//     //     }
-//     // })
-//     // .then((response) => response.json())
-//     // .then((json) => console.log(json))
-
-//     // fetch('http://localhost',{
-//     //     headers:{
-//     //         'Accept-Encoding':'deflate'
-//     //     }
-//     // })
-//     // .then((response) => response.json())
-//     // .then((json) => console.log(json))
-
-//     // request body passed
-//     // fetch("http://localhost", {
-//     //     method: "POST",
-//     //     body: JSON.stringify({
-//     //         title: "foo",
-//     //         body: "bar",
-//     //         userId: 1,
-//     //     }),
-//     //     headers: {
-//     //         "Content-type": "application/json",
-//     //     },
-//     // })
-//     //     .then((response) => response.json())
-//     //     .then((json) => console.log(json));
-
-//     // fetch("http://localhost", {
-//     //     method: "POST",
-//     //     body: new URLSearchParams({
-//     //         title: "foo",
-//     //         body: "bar",
-//     //         userId: 1,
-//     //     }).toString(),
-//     //     headers: {
-//     //         "Content-type": "application/x-www-form-urlencoded",
-//     //     },
-//     // })
-//     //     .then((response) => response.json())
-//     //     .then((json) => console.log(json));
-// })();

@@ -4,6 +4,48 @@ const Request = require("./request.js");
 const Response = require("./response.js");
 const CookieStore = require("./cookie-store.js");
 const ObjectObserver = require("./object-observer.js");
+const { execSync } = require("child_process");
+
+/**
+ * Mengaktifkan atau menonaktifkan pengaturan server proxy pada Windows.
+ *
+ * Fungsi ini mengubah entri registry pada Windows untuk mengaktifkan atau menonaktifkan server proxy.
+ * Jika `enable` bernilai `true`, proxy diaktifkan dengan konfigurasi default ke `127.0.0.1:8888` untuk HTTP, HTTPS, dan FTP.
+ * Jika `enable` bernilai `false`, proxy dinonaktifkan.
+ *
+ * @param {boolean} enable - Jika `true`, proxy akan diaktifkan. Jika `false`, proxy akan dinonaktifkan.
+ */
+function setProxyServer(enable) {
+    try {
+        if (enable) {
+            execSync('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f');
+            execSync('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyOverride /t REG_SZ /d "<-loopback>" /f');
+            execSync('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyServer /t REG_SZ /d "http=127.0.0.1:8888;https=127.0.0.1:8888;ftp=127.0.0.1:8888" /f');
+        } else {
+            execSync('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f');
+            execSync('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyOverride /t REG_SZ /d "" /f');
+            execSync('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyServer /t REG_SZ /d "" /f');
+        }
+    } catch (error) {}
+}
+
+/**
+ * Mendapatkan konfigurasi server proxy yang saat ini diatur pada Windows.
+ *
+ * Fungsi ini menggunakan perintah registry Windows untuk mengambil informasi server proxy yang diatur.
+ * Mengembalikan URL proxy untuk protokol HTTP jika ditemukan, atau `null` jika tidak ada proxy yang diatur.
+ *
+ * @returns {string|null} URL proxy untuk protokol HTTP jika ditemukan, atau `null` jika tidak ada pengaturan proxy.
+ */
+function getProxyServer() {
+    try {
+        const output = execSync('reg query "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /s /f "ProxyServer"');
+        const array = Array.from(output.toString().matchAll(/([^= ;]+)=([^;\r\n]+)/g), (match) => match.slice(1).join("://"));
+        const string = array.find((string) => string.includes("http"));
+        return string;
+    } catch (error) {}
+    return null;
+}
 
 /**
  * Membuat store yang terhubung dengan file JSON untuk menyimpan dan mengelola data.
@@ -56,8 +98,9 @@ function fetch(resource, options = {}) {
 
         // process.env.HTTP_PROXY
         // const process.env.HTTP_PROXY = null; //'http://127.0.0.1:8888'
-        if (config.httpProxy) {
-            const request2 = new Request(config.httpProxy, {
+        const httpProxy = getProxyServer();
+        if (httpProxy) {
+            const request2 = new Request(httpProxy, {
                 method: "CONNECT",
             });
             request2.path = [request.hostname, request.port].join(":");
@@ -131,70 +174,3 @@ function fetch(resource, options = {}) {
 fetch.createStore = createStore;
 
 module.exports = fetch;
-
-// test fetch
-
-// // test signal // passed
-// {
-//     const abortController = new AbortController()
-//     fetch('http://google.com',{
-//         signal:abortController.signal
-//     })
-//     .then(console.log)
-//     .catch(console.log)
-//     abortController.abort()
-// }
-
-// // passed
-// {
-//     const store = createStore('./data/data.json')
-
-//     fetch('http://google.com',{
-//         store
-//     })
-//     .then(console.log)
-//     .catch(console.log)
-// }
-
-// // test compression
-// // passed
-// {
-//     fetch('https://jsonplaceholder.typicode.com/posts/1',{
-//         headers:{
-//             'Accept-Encoding':'br'
-//         }
-//     })
-//     .then(res=>res.text())
-//     .then(console.log)
-//     .catch(console.log)
-
-//     fetch('https://jsonplaceholder.typicode.com/posts/1',{
-//         headers:{
-//             'Accept-Encoding':'gzip'
-//         }
-//     })
-//     .then(res=>res.text())
-//     .then(console.log)
-//     .catch(console.log)
-
-//     fetch('https://jsonplaceholder.typicode.com/posts/1',{
-//         headers:{
-//             'Accept-Encoding':'deflate'
-//         }
-//     })
-//     .then(res=>res.text())
-//     .then(console.log)
-//     .catch(console.log)
-// }
-
-// // passed
-// {
-//     // fetch('https://jsonplaceholder.typicode.com/posts/1') .then((response) => response.json()) .then((json) => console.log(json));
-//     fetch('https://jsonplaceholder.typicode.com/posts') .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('https://jsonplaceholder.typicode.com/posts', { method: 'POST', body: JSON.stringify({ title: 'foo', body: 'bar', userId: 1, }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'PUT', body: JSON.stringify({ id: 1, title: 'foo', body: 'bar', userId: 1, }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'PATCH', body: JSON.stringify({ title: 'foo', }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'DELETE', }).then((response) => response.json()) .then((json) => console.log(json));;
-//     // fetch('https://jsonplaceholder.typicode.com/posts?userId=1') .then((response) => response.json()) .then((json) => console.log(json));
-//     // fetch('https://jsonplaceholder.typicode.com/posts/1/comments') .then((response) => response.json()) .then((json) => console.log(json));
-// }

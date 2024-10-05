@@ -100,11 +100,4 @@ class Request {
     // text() { }
 }
 
-// // test request
-// // passed
-// {
-//     const request = new Request('http://google.com')
-//     console.log(request)
-// }
-
 module.exports = Request;

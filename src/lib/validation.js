@@ -114,22 +114,6 @@ function checkValidity(data, options) {
     }
 }
 
-// const options = {
-//     user: [
-//         Validators.required(),
-//     ],
-//     pass: [
-//         Validators.required(),
-//     ]
-// }
-
-// const data = {
-//     user: 'name',
-//     pass: 'word'
-// }
-
-// checkValidity(data, options)
-
 module.exports = {
     Validators,
     checkValidity,

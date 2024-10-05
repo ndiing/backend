@@ -12,12 +12,12 @@
 - [x] Modul JWT - Encode/decode token untuk autentikasi.
 - [x] Modul OTP - Mengelola One-Time Password untuk autentikasi yang lebih aman.
 - [x] Modul Fetch - Menangani permintaan HTTP dengan dukungan cookies secara langsung.
+- [x] Modul untuk Mengelola Konfigurasi Lingkungan - Mengelola variabel lingkungan.
+- [x] Modul Input Validation - Memvalidasi data yang masuk.
 
 #### Belum Selesai
-- [ ] Modul untuk Mengelola Konfigurasi Lingkungan - Mengelola variabel lingkungan.
 - [ ] Middleware untuk Rate Limiting - Mengontrol jumlah permintaan.
 - [ ] Middleware untuk Caching - Menyimpan data yang sering diakses.
-- [ ] Modul Input Validation - Memvalidasi data yang masuk.
 
 ### CATATAN
 - Target harus lebih cepat dari framework sebelumnya.

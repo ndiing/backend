@@ -1,6 +1,7 @@
 process.on("uncaughtException", console.log);
 process.on("unhandledRejection", console.log);
 
+const config = require("./lib/config.js");
 const Router = require("./lib/router.js");
 const { compression, messages, cookies, security, cors, authorization, fallback, catchAll } = require("./lib/middleware.js");
 const fs = require("fs");
@@ -32,10 +33,10 @@ app.use(fallback(), catchAll());
 const httpServer = http.createServer(app.handleRequest.bind(app));
 const httpsServer = https.createServer(options, app.handleRequest.bind(app));
 
-httpServer.listen(80, "0.0.0.0", () => {
+httpServer.listen(config.httpPort, "0.0.0.0", () => {
     console.log(httpServer.address());
 });
-httpsServer.listen(443, "0.0.0.0", () => {
+httpsServer.listen(config.httpsPort, "0.0.0.0", () => {
     console.log(httpsServer.address());
 });
 

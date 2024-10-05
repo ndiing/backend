@@ -6,6 +6,8 @@ const { Readable } = require("stream");
 const zlib = require("zlib");
 const fs = require("fs");
 const path = require("path");
+const config = require("./config.js");
+const { read, write } = require("./helper.js");
 
 /**
  * Menormalkan nama header HTTP ke format standar.
@@ -253,68 +255,18 @@ class CookieStore {
 // }
 
 /**
- * Kelas ObjectFile untuk membaca dan menulis file objek JSON.
- */
-class ObjectFile {
-    /**
-     * Membaca data dari file JSON.
-     *
-     * @param {string} pathname - Jalur ke file yang ingin dibaca.
-     * @param {Object} [data={}] - Data default yang akan dikembalikan jika file tidak ada atau tidak valid.
-     * @returns {Object} - Data yang dibaca dari file JSON, atau data default jika terjadi kesalahan.
-     */
-    static read(pathname, data) {
-        try {
-            data = fs.readFileSync(pathname, { encoding: "utf8" });
-            data = JSON.parse(data);
-        } catch (error) {}
-
-        return data;
-    }
-
-    /**
-     * Menulis data ke dalam file JSON.
-     *
-     * @param {string} pathname - Jalur ke file tempat data akan ditulis.
-     * @param {Object} data - Data yang akan ditulis ke file.
-     */
-    static write(pathname, data) {
-        const dirname = path.dirname(pathname);
-        try {
-            fs.readdirSync(dirname);
-        } catch (error) {
-            fs.mkdirSync(dirname, {
-                recursive: true,
-            });
-        }
-
-        data = JSON.stringify(data);
-        fs.writeFileSync(pathname, data);
-    }
-}
-
-// test object file
-
-// // passed
-// {
-//     // ObjectFile.write('./data/data.json',{})
-//     const data=ObjectFile.read('./data/data.json')
-//     // console.log(data)
-// }
-
-/**
  * Membuat store yang terhubung dengan file JSON untuk menyimpan dan mengelola data.
  *
  * @param {string} filename - Nama file tempat data akan disimpan dan dibaca.
  * @returns {Proxy} - Sebuah proxy untuk mengamati dan mengelola objek store.
  */
 function createStore(filename) {
-    const target = ObjectFile.read(filename) || {};
+    const target = read(filename, {});
 
     target.cookieStore = new CookieStore(target.cookieStore);
 
     const proxy = new ObjectObserver(target, (newTarget) => {
-        ObjectFile.write(filename, newTarget);
+        write(filename, newTarget);
     });
 
     return proxy;
@@ -847,8 +799,8 @@ function fetch(resource, options = {}) {
 
         // process.env.HTTP_PROXY
         // const process.env.HTTP_PROXY = null; //'http://127.0.0.1:8888'
-        if (process.env.HTTP_PROXY) {
-            const request2 = new Request(process.env.HTTP_PROXY, {
+        if (config.httpProxy) {
+            const request2 = new Request(config.httpProxy, {
                 method: "CONNECT",
             });
             request2.path = [request.hostname, request.port].join(":");
@@ -918,7 +870,6 @@ function fetch(resource, options = {}) {
 
 fetch.ObjectObserver = ObjectObserver;
 fetch.CookieStore = CookieStore;
-fetch.ObjectFile = ObjectFile;
 fetch.Headers = Headers;
 fetch.Request = Request;
 fetch.Response = Response;
@@ -929,7 +880,7 @@ fetch.createStore = createStore;
 
 module.exports = fetch;
 
-// // test fetch
+// test fetch
 
 // // passed
 // {

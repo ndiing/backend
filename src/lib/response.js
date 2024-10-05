@@ -2,45 +2,32 @@ const zlib = require("zlib");
 const Headers = require("./headers.js");
 
 /**
- * Kelas yang merepresentasikan sebuah respons HTTP.
+ * Kelas untuk menangani respons dari permintaan HTTP/HTTPS.
  */
 class Response {
     /**
-     * Membuat instance Response dengan isi dan opsi yang diberikan.
-     *
-     * @param {ReadableStream|Buffer|string} body - Isi dari respons.
-     * @param {object} [options={}] - Opsi tambahan untuk respons.
-     * @param {Headers} [options.headers={}] - Header yang akan ditambahkan ke respons.
-     * @param {number} [options.status=200] - Kode status HTTP.
-     * @param {string} [options.statusText="OK"] - Pesan status HTTP.
+     * Konstruktor untuk membuat instance `Response`.
+     * 
+     * @param {ReadableStream|string} body - Isi dari respons.
+     * @param {Object} [options={}] - Opsi untuk respons.
+     * @param {number} [options.status] - Kode status HTTP dari respons.
+     * @param {string} [options.statusText] - Pesan status HTTP dari respons.
      * @param {string} [options.url] - URL dari respons.
+     * @param {Object} [options.headers={}] - Header untuk respons.
      */
     constructor(body, options = {}) {
         this.body = body;
-
-        // this.bodyUsed = options.bodyUsed
-
         this.headers = new Headers(options.headers);
-
         this.ok = options.status >= 200 && options.status < 300;
-
-        // this.redirected = options.redirected
-
         this.status = options.status;
         this.statusText = options.statusText;
-
-        // this.type = options.type
-
         this.url = options.url;
     }
-    // static error(){}
-    // static json(){}
-    // static redirect(){}
 
     /**
-     * Mengambil isi respons sebagai Buffer.
-     *
-     * @returns {Promise<Buffer>} Buffer dari isi respons.
+     * Mengembalikan isi respons dalam bentuk Buffer.
+     * 
+     * @returns {Promise<Buffer>} - Isi dari respons sebagai Buffer.
      */
     async buffer() {
         if (this.headers.has("Content-Encoding")) {
@@ -53,41 +40,37 @@ class Response {
                 this.body = this.body.pipe(zlib.createInflate());
             }
         }
-
         const chunks = [];
         for await (const chunk of this.body) {
             chunks.push(chunk);
         }
-
         const buffer = Buffer.concat(chunks);
-
         return buffer;
     }
-    // async arrayBuffer(){}
-    // async blob(){}
-    // async bytes(){}
-    // async clone(){}
-    // async formData(){}
 
     /**
-     * Mengambil isi respons sebagai objek JSON.
-     *
-     * @returns {Promise<object>} Objek JSON yang diambil dari isi respons.
+     * Mengembalikan isi respons dalam bentuk objek JSON.
+     * 
+     * @returns {Promise<Object>} - Isi dari respons sebagai objek JSON.
      */
     async json() {
         const buffer = await this.buffer();
         return JSON.parse(buffer);
     }
 
-    /**
-     * Mengambil isi respons sebagai string.
-     *
-     * @returns {Promise<string>} String dari isi respons.
+     /**
+     * Mengembalikan isi respons dalam bentuk string.
+     * 
+     * @returns {Promise<string>} - Isi dari respons sebagai string.
      */
     async text() {
         const buffer = await this.buffer();
         return buffer.toString();
     }
 }
-
 module.exports = Response;
+
+// {
+//     const response = new Response('',{})
+//     console.log(response)
+// }

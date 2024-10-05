@@ -1,10 +1,12 @@
+/**
+ * Objek berisi validator untuk memeriksa nilai.
+ */
 const Validators = {
     /**
-     * Validator untuk memeriksa apakah nilai tidak kosong.
+     * Memeriksa apakah nilai tidak null, undefined, atau string kosong.
      *
-     * @param {string} [message="required value"] - Pesan error yang akan dilempar jika validasi gagal.
-     * @returns {function} - Fungsi validator yang akan memvalidasi nilai.
-     * @throws {Error} - Jika nilai kosong, undefined, atau null.
+     * @param {string} [message="required value"] - Pesan kesalahan jika validasi gagal.
+     * @returns {function} - Fungsi validasi yang memeriksa nilai.
      */
     required:
         (message = "required value") =>
@@ -15,12 +17,11 @@ const Validators = {
         },
 
     /**
-     * Validator untuk memeriksa panjang minimal string.
+     * Memeriksa apakah panjang nilai lebih besar dari atau sama dengan minLength.
      *
-     * @param {number} minLength - Panjang minimal yang valid.
-     * @param {string} [message="invalid min length"] - Pesan error jika panjang string kurang dari minLength.
-     * @returns {function} - Fungsi validator yang akan memvalidasi panjang string.
-     * @throws {Error} - Jika panjang string kurang dari minLength.
+     * @param {number} minLength - Panjang minimum yang diharapkan.
+     * @param {string} [message="invalid min length"] - Pesan kesalahan jika validasi gagal.
+     * @returns {function} - Fungsi validasi yang memeriksa panjang nilai.
      */
     minLength:
         (minLength, message = "invalid min length") =>
@@ -31,12 +32,11 @@ const Validators = {
         },
 
     /**
-     * Validator untuk memeriksa panjang maksimal string.
+     * Memeriksa apakah panjang nilai lebih kecil dari atau sama dengan maxLength.
      *
-     * @param {number} maxLength - Panjang maksimal yang valid.
-     * @param {string} [message="invalid max length"] - Pesan error jika panjang string melebihi maxLength.
-     * @returns {function} - Fungsi validator yang akan memvalidasi panjang string.
-     * @throws {Error} - Jika panjang string melebihi maxLength.
+     * @param {number} maxLength - Panjang maksimum yang diharapkan.
+     * @param {string} [message="invalid max length"] - Pesan kesalahan jika validasi gagal.
+     * @returns {function} - Fungsi validasi yang memeriksa panjang nilai.
      */
     maxLength:
         (maxLength, message = "invalid max length") =>
@@ -47,12 +47,11 @@ const Validators = {
         },
 
     /**
-     * Validator untuk memeriksa nilai minimal.
+     * Memeriksa apakah nilai lebih besar dari atau sama dengan min.
      *
-     * @param {number} min - Nilai minimal yang valid.
-     * @param {string} [message="invalid min value"] - Pesan error jika nilai kurang dari min.
-     * @returns {function} - Fungsi validator yang akan memvalidasi nilai.
-     * @throws {Error} - Jika nilai kurang dari min.
+     * @param {number} min - Nilai minimum yang diharapkan.
+     * @param {string} [message="invalid min value"] - Pesan kesalahan jika validasi gagal.
+     * @returns {function} - Fungsi validasi yang memeriksa nilai.
      */
     min:
         (min, message = "invalid min value") =>
@@ -63,12 +62,11 @@ const Validators = {
         },
 
     /**
-     * Validator untuk memeriksa nilai maksimal.
+     * Memeriksa apakah nilai lebih kecil dari atau sama dengan max.
      *
-     * @param {number} max - Nilai maksimal yang valid.
-     * @param {string} [message="invalid max value"] - Pesan error jika nilai melebihi max.
-     * @returns {function} - Fungsi validator yang akan memvalidasi nilai.
-     * @throws {Error} - Jika nilai melebihi max.
+     * @param {number} max - Nilai maksimum yang diharapkan.
+     * @param {string} [message="invalid max value"] - Pesan kesalahan jika validasi gagal.
+     * @returns {function} - Fungsi validasi yang memeriksa nilai.
      */
     max:
         (max, message = "invalid max value") =>
@@ -79,12 +77,11 @@ const Validators = {
         },
 
     /**
-     * Validator untuk memeriksa apakah nilai cocok dengan pola regex.
+     * Memeriksa apakah nilai cocok dengan pola regex yang diberikan.
      *
-     * @param {RegExp|string} pattern - Pola regex yang valid.
-     * @param {string} [message="invalid pattern"] - Pesan error jika nilai tidak sesuai dengan pola.
-     * @returns {function} - Fungsi validator yang akan memvalidasi nilai.
-     * @throws {Error} - Jika nilai tidak cocok dengan pola regex.
+     * @param {string} pattern - Pola regex untuk validasi.
+     * @param {string} [message="invalid pattern"] - Pesan kesalahan jika validasi gagal.
+     * @returns {function} - Fungsi validasi yang memeriksa pola nilai.
      */
     pattern:
         (pattern, message = "invalid pattern") =>
@@ -96,11 +93,11 @@ const Validators = {
 };
 
 /**
- * Memeriksa validitas data menggunakan validator yang ditentukan dalam opsi.
+ * Memeriksa validitas data berdasarkan opsi validasi yang diberikan.
  *
- * @param {object} data - Objek data yang akan divalidasi, berisi pasangan key-value untuk setiap properti yang ingin diperiksa.
- * @param {object} options - Opsi validasi, berisi pasangan key dengan validator yang akan diterapkan ke properti yang bersangkutan.
- * @throws {Error} Jika validasi tidak berhasil pada salah satu properti data.
+ * @param {Object} data - Objek data yang akan divalidasi.
+ * @param {Object} options - Opsi validasi yang berisi nama dan metode validasi.
+ * @throws {Error} - Membuang kesalahan jika salah satu validasi gagal.
  */
 function checkValidity(data, options) {
     for (const name in data) {
@@ -118,3 +115,17 @@ module.exports = {
     Validators,
     checkValidity,
 };
+
+// {
+//     const data={
+//         user:'ismyusername',
+//         pass:'word'
+//     }
+//     const options={
+//         user:[
+//             Validators.required(),
+//             Validators.minLength(10),
+//         ]
+//     }
+//     checkValidity(data,options)
+// }

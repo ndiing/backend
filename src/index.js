@@ -12,18 +12,13 @@ if (process.env.NODE_ENV === "development") {
     require("./lib/index.js");
 }
 
-const options = {
-    key: fs.readFileSync("./host.key"),
-    cert: fs.readFileSync("./host.crt"),
-};
+const options = { key: fs.readFileSync("./host.key"), cert: fs.readFileSync("./host.crt") };
 
 const app = new Router();
 
 app.use(compression(), messages(), cookies(), security(), cors(), authorization());
-
 app.use("/blogs", require("./api/blogs/index.js"));
 app.use("/", require("./api/main/index.js"));
-
 app.use(fallback(), catchAll());
 
 const httpServer = http.createServer(app.handleRequest.bind(app));

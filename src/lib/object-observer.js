@@ -1,81 +1,75 @@
 /**
- * Kelas ObjectObserver digunakan untuk mengamati perubahan pada objek JavaScript.
+ * Kelas untuk mengawasi perubahan pada objek dan menjalankan callback saat terjadi perubahan.
  */
 class ObjectObserver {
     /**
-     * Membuat instance ObjectObserver.
-     * @param {Object} [target={}] - Objek yang ingin diamati.
-     * @param {Function} [callback=() => {}] - Fungsi callback yang dipanggil saat terjadi perubahan.
+     * Konstruktor untuk membuat instance `ObjectObserver`.
+     * 
+     * @param {Object} [target={}] - Objek yang akan diawasi.
+     * @param {function} [callback=() => {}] - Fungsi callback yang akan dipanggil saat perubahan terjadi.
      */
     constructor(target = {}, callback = () => {}) {
         this.target = target;
         this.callback = callback;
-
         return new Proxy(this.target, this);
     }
 
     /**
-     * Metode ini dipanggil saat properti dari objek diakses.
-     * @param {Object} target - Objek yang sedang diamati.
-     * @param {string} property - Nama properti yang diakses.
-     * @returns {any} - Nilai dari properti yang diakses.
+     * Mendapatkan nilai properti dari objek yang diawasi.
+     * 
+     * @param {Object} target - Objek yang diawasi.
+     * @param {string} property - Nama properti yang ingin diambil.
+     * @returns {*} Nilai dari properti yang diambil.
      */
     get(target, property) {
         if (["[object Object]", "[object Array]"].includes(toString.call(target[property]))) {
             return new Proxy(target[property], this);
         }
-
         return target[property];
     }
 
     /**
-     * Metode ini dipanggil saat properti diubah.
-     * @param {Object} target - Objek yang sedang diamati.
-     * @param {string} property - Nama properti yang diubah.
-     * @param {any} value - Nilai baru untuk properti tersebut.
-     * @returns {boolean} - Mengembalikan true jika operasi berhasil.
+     * Mengatur nilai properti dari objek yang diawasi.
+     * 
+     * @param {Object} target - Objek yang diawasi.
+     * @param {string} property - Nama properti yang akan diatur.
+     * @param {*} value - Nilai baru untuk properti tersebut.
+     * @returns {boolean} True jika pengaturan berhasil.
      */
     set(target, property, value) {
         const oldValue = target[property];
         if (oldValue === value) {
             return true;
         }
-
         Reflect.set(target, property, value);
-
         this.callback(this.target);
-
         return true;
     }
 
     /**
-     * Metode ini dipanggil saat properti dihapus.
-     * @param {Object} target - Objek yang sedang diamati.
-     * @param {string} property - Nama properti yang dihapus.
-     * @returns {boolean} - Mengembalikan true jika operasi berhasil.
+     * Menghapus properti dari objek yang diawasi.
+     * 
+     * @param {Object} target - Objek yang diawasi.
+     * @param {string} property - Nama properti yang akan dihapus.
+     * @returns {boolean} True jika penghapusan berhasil.
      */
     deleteProperty(target, property) {
         const oldValue = target[property];
         if (oldValue === undefined) {
             return true;
         }
-
         Reflect.deleteProperty(target, property);
-
         this.callback(this.target);
-
         return true;
     }
 }
 
-// // test store
-// // passed
-// {
-//     const store = new ObjectObserver({},console.log)
-//     store.name='value'
-//     store.object = {}
-//     store.object.name='value'
-//     console.log(store)
-// }
-
 module.exports = ObjectObserver;
+
+// {
+//     const objectObserver = new ObjectObserver({},console.log)
+
+//     objectObserver.name='value'
+//     objectObserver.obj={}
+//     objectObserver.obj.name='value'
+// }

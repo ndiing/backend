@@ -6,15 +6,6 @@ const CookieStore = require("./cookie-store.js");
 const ObjectObserver = require("./object-observer.js");
 const { execSync } = require("child_process");
 
-/**
- * Mengaktifkan atau menonaktifkan pengaturan server proxy pada Windows.
- *
- * Fungsi ini mengubah entri registry pada Windows untuk mengaktifkan atau menonaktifkan server proxy.
- * Jika `enable` bernilai `true`, proxy diaktifkan dengan konfigurasi default ke `127.0.0.1:8888` untuk HTTP, HTTPS, dan FTP.
- * Jika `enable` bernilai `false`, proxy dinonaktifkan.
- *
- * @param {boolean} enable - Jika `true`, proxy akan diaktifkan. Jika `false`, proxy akan dinonaktifkan.
- */
 function setProxyServer(enable) {
     try {
         if (enable) {
@@ -30,12 +21,10 @@ function setProxyServer(enable) {
 }
 
 /**
- * Mendapatkan konfigurasi server proxy yang saat ini diatur pada Windows.
- *
- * Fungsi ini menggunakan perintah registry Windows untuk mengambil informasi server proxy yang diatur.
- * Mengembalikan URL proxy untuk protokol HTTP jika ditemukan, atau `null` jika tidak ada proxy yang diatur.
- *
- * @returns {string|null} URL proxy untuk protokol HTTP jika ditemukan, atau `null` jika tidak ada pengaturan proxy.
+ * Mengambil alamat server proxy dari pengaturan Internet di Windows.
+ * 
+ * @returns {string|null} Alamat server proxy dalam format string jika ditemukan, 
+ *                        atau null jika tidak ada pengaturan proxy.
  */
 function getProxyServer() {
     try {
@@ -48,129 +37,161 @@ function getProxyServer() {
 }
 
 /**
- * Membuat store yang terhubung dengan file JSON untuk menyimpan dan mengelola data.
- *
- * @param {string} filename - Nama file tempat data akan disimpan dan dibaca.
- * @returns {Proxy} - Sebuah proxy untuk mengamati dan mengelola objek store.
+ * Membuat dan mengembalikan objek penyimpanan yang terhubung dengan file.
+ * 
+ * @param {string} filename - Nama file yang digunakan untuk membaca dan menulis data penyimpanan.
+ * @returns {Object} Objek yang mengamati perubahan pada data penyimpanan 
+ *                   dan menulis kembali ke file saat terjadi perubahan.
  */
 function createStore(filename) {
     const target = read(filename, {});
-
     target.cookieStore = new CookieStore(target.cookieStore);
-
     const proxy = new ObjectObserver(target, (newTarget) => {
         write(filename, newTarget);
     });
-
     return proxy;
 }
 
-// test store
-
-// // passed
-// {
-//     const store = createStore('./data/data.json')
-//     // store.name='value'
-//     console.log(store)
-// }
-
 /**
- * Melakukan permintaan HTTP dan mengembalikan respons.
- *
- * @param {string|URL} resource - URL atau sumber daya yang akan diambil.
- * @param {object} [options={}] - Opsi tambahan untuk permintaan.
- * @param {string} [options.credentials="same-origin"] - Menentukan apakah kredensial (seperti cookies) harus disertakan.
- * @param {object} [options.store] - Objek penyimpanan yang dapat digunakan untuk menyimpan cookies.
- * @param {string} [options.method="GET"] - Metode HTTP yang akan digunakan (GET, POST, dll.).
- * @param {number} [options.follow=30] - Jumlah maksimum pengalihan yang diizinkan.
- * @returns {Promise<Response>} - Promise yang mengembalikan objek Response.
+ * Melakukan permintaan HTTP dan mengembalikan responsnya sebagai Promise.
+ * 
+ * @param {string} resource - URL sumber daya yang ingin diambil.
+ * @param {Object} [options={}] - Opsi untuk permintaan HTTP.
+ * @param {string} [options.credentials] - Mengontrol apakah cookie harus disertakan dalam permintaan.
+ * @param {Object} [options.store] - Objek penyimpanan yang berisi cookie dan data lainnya.
+ * @returns {Promise<Response>} Promise yang menyelesaikan respons HTTP setelah permintaan selesai.
  */
 function fetch(resource, options = {}) {
     return new Promise(async (resolve, reject) => {
         const request = new Request(resource, options);
-
         if (options.credentials !== "omit" && options.store) {
             const cookie = options.store?.cookieStore?.cookie;
             if (cookie) {
                 request.headers.set("Cookie", cookie);
             }
         }
-
-        // process.env.HTTP_PROXY
-        // const process.env.HTTP_PROXY = null; //'http://127.0.0.1:8888'
         const httpProxy = getProxyServer();
         if (httpProxy) {
-            const request2 = new Request(httpProxy, {
-                method: "CONNECT",
-            });
-            request2.path = [request.hostname, request.port].join(":");
-
-            // overwrite host
+            const request2 = new Request(httpProxy, { method: "CONNECT" });
+            request2.path = `${request.hostname}:${request.port}`;
             request.hostname = request2.hostname;
             request.port = request2.port;
-
-            // console.log(request)
-            // console.log(request2)
-
+            console.log(request2);
             if (request.protocol === "https:") {
                 const agent = await new Promise((resolve, reject) => {
                     const req2 = request2.client.request(request2);
-
                     req2.on("error", reject);
                     req2.on("timeout", () => req2.destroy());
                     req2.on("connect", (req, socket, head) => {
                         const Agent = request.client.Agent;
-                        const agent = new Agent({
-                            rejectUnauthorized: false,
-                            keepAlive: true,
-                            socket,
-                        });
+                        const agent = new Agent({ rejectUnauthorized: false, keepAlive: true, socket });
                         resolve(agent);
                     });
-
                     request2.body.pipe(req2);
                 });
-                // replace
                 request.agent = agent;
             }
         }
-
         const req = request.client.request(request);
-
         req.on("error", reject);
         req.on("timeout", () => req.destroy());
         req.on("response", (res) => {
-            let response = new Response(res, {
-                headers: res.headers,
-                status: res.statusCode,
-                statusText: res.statusMessage,
-                url: request.url,
-            });
-
-            // // Set-Cookie
+            let response = new Response(res, { headers: res.headers, status: res.statusCode, statusText: res.statusMessage, url: request.url });
             const setCookie = response.headers.getSetCookie();
             if (options.credentials !== "omit" && options.store?.cookieStore && setCookie.length) {
                 options.store.cookieStore.cookie = setCookie;
             }
-
-            // Location
             if (response.headers.has("Location") && request.redirect === "follow" && request.follow > 0) {
                 --request.follow;
                 const location = response.headers.get("Location");
                 resource = new URL(location, request.origin);
-                response = fetch(resource, {
-                    follow: request.follow,
-                    store: options.store,
-                });
+                response = fetch(resource, { follow: request.follow, store: options.store });
             }
-
             resolve(response);
         });
-
         request.body.pipe(req);
     });
 }
 
+fetch.setProxyServer = setProxyServer;
+fetch.getProxyServer = getProxyServer;
 fetch.createStore = createStore;
 
 module.exports = fetch;
+
+// {
+//     fetch('https://jsonplaceholder.typicode.com/posts/1') .then((response) => response.json()) .then((json) => console.log(json));
+//     fetch('https://jsonplaceholder.typicode.com/posts') .then((response) => response.json()) .then((json) => console.log(json));
+//     fetch('https://jsonplaceholder.typicode.com/posts', { method: 'POST', body: JSON.stringify({ title: 'foo', body: 'bar', userId: 1, }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
+//     fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'PUT', body: JSON.stringify({ id: 1, title: 'foo', body: 'bar', userId: 1, }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
+//     fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'PATCH', body: JSON.stringify({ title: 'foo', }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
+//     fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'DELETE', });
+//     fetch('https://jsonplaceholder.typicode.com/posts?userId=1') .then((response) => response.json()) .then((json) => console.log(json));
+//     fetch('https://jsonplaceholder.typicode.com/posts/1/comments') .then((response) => response.json()) .then((json) => console.log(json));   
+// }
+
+// {
+//     // penanganan redirect
+//     fetch('http://google.com')
+//     .then(console.log)
+//     .catch(console.log)
+// }
+
+// {
+//     // penanganan kompresi
+//     fetch('https://jsonplaceholder.typicode.com/posts/1',{
+//         headers:{
+//             'accept-encoding':'br'
+//         }
+//     })
+//     .then(res=>res.json())
+//     .then(console.log)
+//     .catch(console.log)
+    
+//     // penanganan kompresi
+//     fetch('https://jsonplaceholder.typicode.com/posts/1',{
+//         headers:{
+//             'accept-encoding':'gzip'
+//         }
+//     })
+//     .then(res=>res.json())
+//     .then(console.log)
+//     .catch(console.log)
+
+//     // penanganan kompresi
+//     fetch('https://jsonplaceholder.typicode.com/posts/1',{
+//         headers:{
+//             'accept-encoding':'deflate'
+//         }
+//     })
+//     .then(res=>res.json())
+//     .then(console.log)
+//     .catch(console.log)
+// }
+
+
+// {
+//     // penanganan cookies
+
+//     const store = createStore('./data/google.json',{})
+
+//     fetch('http://google.com',{
+//         store
+//     })
+//     .then(console.log)
+//     .catch(console.log)
+
+//     console.log(store)
+// }
+
+// {
+//     // penanganan proxy
+//     // proxy auto detect ketika fiddler atau software monitoring lainnya dibuka
+
+
+//     fetch('http://google.com',{
+//     })
+//     .then(console.log)
+//     .catch(console.log)
+
+// }

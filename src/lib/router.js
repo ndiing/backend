@@ -2,7 +2,7 @@ const http = require("http");
 const { Readable } = require("stream");
 
 /**
- * Kelas Router untuk menangani routing HTTP dengan middleware.
+ * Kelas untuk menangani routing dalam aplikasi HTTP.
  */
 class Router {
     routes = [];
@@ -11,41 +11,33 @@ class Router {
 
     /**
      * Menambahkan rute baru ke router.
+     * 
      * @param {string} method - Metode HTTP (GET, POST, dll).
-     * @param {string} path - Jalur rute yang ditangani.
-     * @param {...function} middlewares - Middleware yang akan dijalankan untuk rute ini.
+     * @param {string} path - Jalur untuk rute.
+     * @param {...function} middlewares - Middleware yang akan diterapkan pada rute.
      */
     add(method, path, ...middlewares) {
         if (typeof path === "function") {
             middlewares = [path, ...middlewares];
             path = "*";
         }
-
         const [{ routes }] = middlewares;
-
         if (routes) {
             middlewares = [];
             for (const route of routes) {
                 this.add(route.method, path + route.path, ...route.middlewares);
             }
         }
-
         path = path.replace(/(?!^)\/$/, "");
-
         const pattern = `^${path.replace(/:(\w+)/g, "(?<$1>[^/]+)").replace(/\*/, "(?:.*)")}(?:\$)`;
         const regexp = new RegExp(pattern, "i");
-
-        this.routes.push({
-            method,
-            path,
-            middlewares,
-            regexp,
-        });
+        this.routes.push({ method, path, middlewares, regexp });
     }
 
     /**
-     * Menambahkan middleware ke router.
-     * @param {...function} args - Middleware yang akan dijalankan.
+     * Menambahkan middleware global untuk semua rute.
+     * 
+     * @param {...function} args - Middleware yang akan diterapkan.
      */
     use(...args) {
         this.add("", ...args);
@@ -53,7 +45,8 @@ class Router {
 
     /**
      * Menambahkan rute POST.
-     * @param {...*} args - Argumen untuk menambahkan rute.
+     * 
+     * @param {...*} args - Argumen untuk rute POST.
      */
     post(...args) {
         this.add("POST", ...args);
@@ -61,7 +54,8 @@ class Router {
 
     /**
      * Menambahkan rute GET.
-     * @param {...*} args - Argumen untuk menambahkan rute.
+     * 
+     * @param {...*} args - Argumen untuk rute GET.
      */
     get(...args) {
         this.add("GET", ...args);
@@ -69,7 +63,8 @@ class Router {
 
     /**
      * Menambahkan rute PATCH.
-     * @param {...*} args - Argumen untuk menambahkan rute.
+     * 
+     * @param {...*} args - Argumen untuk rute PATCH.
      */
     patch(...args) {
         this.add("PATCH", ...args);
@@ -77,7 +72,8 @@ class Router {
 
     /**
      * Menambahkan rute DELETE.
-     * @param {...*} args - Argumen untuk menambahkan rute.
+     * 
+     * @param {...*} args - Argumen untuk rute DELETE.
      */
     delete(...args) {
         this.add("DELETE", ...args);
@@ -85,17 +81,18 @@ class Router {
 
     /**
      * Menambahkan rute PUT.
-     * @param {...*} args - Argumen untuk menambahkan rute.
+     * 
+     * @param {...*} args - Argumen untuk rute PUT.
      */
     put(...args) {
         this.add("PUT", ...args);
     }
 
-    /**
-     * Menangani permintaan HTTP.
-     * @param {http.IncomingMessage} req - Objek permintaan HTTP.
-     * @param {http.ServerResponse} res - Objek respons HTTP.
-     * @returns {Promise<void>}
+     /**
+     * Menangani permintaan HTTP dan menjalankan middleware yang sesuai.
+     * 
+     * @param {http.IncomingMessage} req - Objek permintaan dari klien.
+     * @param {http.ServerResponse} res - Objek respons untuk dikirim kembali ke klien.
      */
     async handleRequest(req, res) {
         try {
@@ -104,7 +101,6 @@ class Router {
             req.url_ = new URL(`${req.protocol_}//${req.host_}${req.url}`);
             req.remoteAddress_ = req.socket.remoteAddress;
             req.pathname_ = req.url_.pathname;
-
             req.query = {};
             for (const [name, value] of req.url_.searchParams) {
                 if (req.query[name]) {
@@ -117,38 +113,29 @@ class Router {
                     req.query[name] = value;
                 }
             }
-
             res.send = (body) => {
                 if (typeof body === "string") {
                     const readable = new Readable();
                     readable.push(body);
                     readable.push(null);
-
                     body = readable;
                 }
-
                 body.pipe(res);
             };
-
             res.json = (body) => {
                 res.setHeader("Content-Type", "application/json");
                 res.send(JSON.stringify(body));
             };
-
             for (const route of this.routes) {
                 const matches = req.url_.pathname.match(route.regexp);
-
                 if (!matches || (route.method !== req.method && route.method !== "")) {
                     continue;
                 }
-
                 req.params = { ...matches?.groups };
-
                 for (const middleware of route.middlewares) {
                     if (req.error_ && middleware.length !== 4) {
                         continue;
                     }
-
                     try {
                         await new Promise((resolve, reject) => {
                             const next = (err) => {
@@ -158,7 +145,6 @@ class Router {
                                     resolve();
                                 }
                             };
-
                             if (req.error_) {
                                 middleware(req.error_, req, res, next);
                             } else {
@@ -170,11 +156,9 @@ class Router {
                     }
                 }
             }
-
             if (req.error_) {
                 throw req.error_;
             }
-
             res.statusCode = 404;
             res.json({ message: http.STATUS_CODES[res.statusCode] });
         } catch (error) {
@@ -187,9 +171,10 @@ class Router {
     }
 
     /**
-     * Menjalankan server pada port yang ditentukan.
-     * @param {...*} args - Argumen untuk mendengarkan permintaan.
-     * @returns {http.Server} - Server HTTP yang berjalan.
+     * Memulai server dan mendengarkan permintaan pada port yang ditentukan.
+     * 
+     * @param {...*} args - Argumen untuk mendengarkan server.
+     * @returns {http.Server} - Instance server.
      */
     listen(...args) {
         const server = http.createServer(this.handleRequest.bind(this));
@@ -199,3 +184,26 @@ class Router {
 }
 
 module.exports = Router;
+
+// {
+//     const app = new Router()
+//     // get|post|patch|delete|put|use
+//     app.get('/',(req,res)=>{
+//         res.send('ok')
+//     })
+//     app.get('/json',(req,res)=>{
+//         res.json({message:'ok'})
+//     })
+//     app.listen(3000)
+
+//     // test
+//     fetch('http://localhost:3000')
+//     .then(res=>res.text())
+//     .then(console.log)
+//     .catch(console.log)
+//     // test
+//     fetch('http://localhost:3000/json')
+//     .then(res=>res.text())
+//     .then(console.log)
+//     .catch(console.log)
+// }

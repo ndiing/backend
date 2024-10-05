@@ -23,6 +23,10 @@ app.use(compression(), messages(), cookies(), security(), cors(), authorization(
 app.use("/blogs", require("./api/blogs/index.js"));
 app.use("/", require("./api/main/index.js"));
 
+// app.get('/',(req,res) => {
+//     res.json({message:'ok'})
+// })
+
 app.use(fallback(), catchAll());
 
 const httpServer = http.createServer(app.handleRequest.bind(app));

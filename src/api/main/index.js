@@ -22,10 +22,6 @@ router.get("/:id", (req, res, next) => {
 });
 router.get("/", (req, res, next) => {
     res.json({
-        params: req.params,
-        query: req.query,
-        body: req.body,
-        cookies: req.cookies,
         message: "get",
     });
 });

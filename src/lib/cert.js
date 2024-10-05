@@ -1,6 +1,12 @@
 const forge = require("node-forge");
 
 const Util = {
+    /**
+     * Mengecek apakah domain adalah alamat IP.
+     *
+     * @param {string} [domain=""] - Domain atau alamat IP.
+     * @returns {boolean} - True jika domain adalah alamat IP, false jika bukan.
+     */
     isIpDomain: function (domain = "") {
         const ipReg = /^\d+?\.\d+?\.\d+?\.\d+?$/;
 
@@ -15,6 +21,12 @@ let defaultAttrs = [
     { shortName: "OU", value: "Ndiing" },
 ];
 
+/**
+ * Mendapatkan ekstensi Subject Alternative Name (SAN) untuk domain atau IP.
+ *
+ * @param {string} [domain=""] - Domain atau alamat IP.
+ * @returns {Object} - Ekstensi SAN yang berisi nama alternatif subjek.
+ */
 function getExtensionSAN(domain = "") {
     const isIpDomain = Util.isIpDomain(domain);
     if (isIpDomain) {
@@ -30,6 +42,12 @@ function getExtensionSAN(domain = "") {
     }
 }
 
+/**
+ * Menghasilkan pasangan kunci dan sertifikat.
+ *
+ * @param {string} [serialNumber] - Nomor seri sertifikat, jika tidak diberikan akan dihasilkan secara acak.
+ * @returns {Object} - Objek berisi kunci (privateKey dan publicKey) dan sertifikat.
+ */
 function getKeysAndCert(serialNumber) {
     const keys = forge.pki.rsa.generateKeyPair(2048);
     const cert = forge.pki.createCertificate();
@@ -44,6 +62,12 @@ function getKeysAndCert(serialNumber) {
     };
 }
 
+/**
+ * Menghasilkan Root Certificate Authority (CA).
+ *
+ * @param {string} [commonName] - Nama umum untuk sertifikat Root CA.
+ * @returns {Object} - Objek yang berisi privateKey, publicKey, dan sertifikat Root CA.
+ */
 function generateRootCA(commonName) {
     const keysAndCert = getKeysAndCert();
     const keys = keysAndCert.keys;
@@ -70,6 +94,13 @@ function generateRootCA(commonName) {
     };
 }
 
+/**
+ * Menghasilkan sertifikat untuk hostname berdasarkan Root CA.
+ *
+ * @param {string} domain - Nama domain atau IP yang akan digunakan dalam sertifikat.
+ * @param {Object} rootCAConfig - Konfigurasi Root CA yang berisi sertifikat dan kunci private.
+ * @returns {Object} - Objek berisi privateKey, publicKey, dan sertifikat untuk hostname.
+ */
 function generateCertsForHostname(domain, rootCAConfig) {
     const md = forge.md.md5.create();
     md.update(domain);
@@ -104,6 +135,11 @@ function generateCertsForHostname(domain, rootCAConfig) {
     };
 }
 
+/**
+ * Mengubah atribut default yang digunakan dalam pembuatan sertifikat.
+ *
+ * @param {Array<Object>} attrs - Array objek atribut yang baru.
+ */
 function setDefaultAttrs(attrs) {
     defaultAttrs = attrs;
 }

@@ -2,14 +2,14 @@ const { Readable } = require("stream");
 const zlib = require("zlib");
 const { decode } = require("./jwt.js");
 
-// compression
-// messages
-// cookies
-// security
-// cors
-// authentication
-// authorization
-
+/**
+ * Middleware untuk melakukan kompresi pada respon HTTP berdasarkan `Accept-Encoding` dari header request.
+ *
+ * Mendukung kompresi Brotli (`br`), Gzip (`gzip`), dan Deflate (`deflate`).
+ * Secara otomatis memilih metode kompresi yang sesuai berdasarkan preferensi client yang ada di header `accept-encoding`.
+ *
+ * @returns {Function} - Middleware Express yang menangani kompresi respon.
+ */
 function compression() {
     return (req, res, next) => {
         try {
@@ -44,6 +44,15 @@ function compression() {
     };
 }
 
+/**
+ * Middleware untuk menangani parsing body request berdasarkan metode HTTP dan `Content-Type`.
+ *
+ * Middleware ini memproses body request untuk metode `POST`, `PATCH`, dan `PUT`.
+ * Jika `Content-Type` adalah `application/json`, maka body akan diparsing sebagai JSON.
+ * Jika `Content-Type` adalah `application/x-www-form-urlencoded`, maka body akan diparsing menjadi objek form data.
+ *
+ * @returns {Function} - Middleware Express yang memproses dan memparsing body request.
+ */
 function messages() {
     return async (req, res, next) => {
         try {
@@ -73,6 +82,16 @@ function messages() {
     };
 }
 
+/**
+ * Middleware untuk menangani parsing cookie dari header request dan memungkinkan pengaturan cookie di response.
+ *
+ * - Pada request: Cookie yang terdapat di header `cookie` akan diparsing dan disimpan di `req.cookies` sebagai objek.
+ * - Pada response: Cookie dapat disetel dengan fungsi `res.cookie`, yang menerima nama, nilai, dan atribut cookie.
+ *
+ * Atribut cookie yang didukung: `domain`, `expires`, `httpOnly`, `maxAge`, `partitioned`, `path`, `secure`, `sameSite`.
+ *
+ * @returns {Function} - Middleware Express untuk menangani cookie request dan response.
+ */
 function cookies() {
     const COOKIE_ATTRIBUTES = {
         domain: "Domain",
@@ -120,6 +139,19 @@ function cookies() {
     };
 }
 
+/**
+ * Middleware untuk menambahkan header keamanan pada respon HTTP.
+ *
+ * Header yang ditambahkan:
+ * - `X-Content-Type-Options`: Menghindari penentuan jenis MIME oleh browser (nosniff).
+ * - `X-Frame-Options`: Mencegah embedding dalam iframe (DENY).
+ * - `Strict-Transport-Security`: Menerapkan HTTPS pada semua permintaan dengan `max-age` 2 tahun dan include subdomains (preload).
+ * - `X-XSS-Protection`: Mengaktifkan perlindungan XSS di browser.
+ * - `Content-Security-Policy`: Mengatur kebijakan sumber konten agar hanya dari domain sendiri (default-src 'self').
+ * - `Referrer-Policy`: Mencegah pengiriman informasi referrer (no-referrer).
+ *
+ * @returns {Function} Middleware Express yang menambahkan header keamanan pada response.
+ */
 function security() {
     return (req, res, next) => {
         try {
@@ -142,6 +174,18 @@ function security() {
     };
 }
 
+/**
+ * Middleware untuk menangani Cross-Origin Resource Sharing (CORS).
+ *
+ * Middleware ini menambahkan header yang memungkinkan permintaan lintas asal
+ * (cross-origin) untuk diizinkan dari semua sumber. Header yang ditambahkan meliputi:
+ * - `Access-Control-Allow-Origin`: Mengizinkan semua asal (`*`).
+ * - `Access-Control-Allow-Methods`: Mengizinkan metode HTTP: GET, POST, PUT, DELETE, OPTIONS.
+ * - `Access-Control-Allow-Headers`: Mengizinkan header yang digunakan: Content-Type, Authorization.
+ * - `Access-Control-Allow-Credentials`: Mengizinkan pengiriman kredensial (true).
+ *
+ * @returns {Function} Middleware Express untuk mengizinkan permintaan CORS.
+ */
 function cors() {
     return (req, res, next) => {
         try {
@@ -162,6 +206,16 @@ function cors() {
     };
 }
 
+/**
+ * Middleware untuk menangani otorisasi berdasarkan izin akses.
+ *
+ * Middleware ini memeriksa apakah pengguna memiliki izin untuk mengakses
+ * endpoint tertentu berdasarkan alamat IP, metode HTTP, dan token otorisasi.
+ *
+ * Izin akses diatur dalam bentuk pola regex untuk alamat IP dan path.
+ *
+ * @returns {Function} Middleware Express untuk memeriksa otorisasi pengguna.
+ */
 function authorization() {
     const permissions = [
         {
@@ -216,9 +270,14 @@ function authorization() {
     };
 }
 
-// fallback
-// catchAll
-
+/**
+ * Middleware untuk menangani permintaan yang tidak ditemukan (404).
+ *
+ * Middleware ini mengatur respons dengan status 404 dan mengembalikan
+ * pesan "Tidak ditemukan" ketika rute yang diminta tidak ada.
+ *
+ * @returns {Function} Middleware Express untuk menangani permintaan yang tidak ditemukan.
+ */
 function fallback() {
     return (req, res, next) => {
         res.statusCode = 404;
@@ -226,6 +285,19 @@ function fallback() {
     };
 }
 
+/**
+ * Middleware untuk menangani semua kesalahan yang tidak tertangani.
+ *
+ * Middleware ini mengubah status kode respons menjadi 500 jika status kode
+ * saat ini berada dalam rentang 200 hingga 299. Kemudian, ia mengembalikan
+ * pesan kesalahan dalam format JSON.
+ *
+ * @param {Error} err - Objek kesalahan yang dilemparkan.
+ * @param {Object} req - Objek permintaan Express.
+ * @param {Object} res - Objek respons Express.
+ * @param {Function} next - Fungsi untuk melanjutkan ke middleware berikutnya.
+ * @returns {void}
+ */
 function catchAll() {
     return (err, req, res, next) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {

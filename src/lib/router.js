@@ -1,11 +1,20 @@
 const http = require("http");
 const { Readable } = require("stream");
 
+/**
+ * Kelas Router untuk menangani routing HTTP dengan middleware.
+ */
 class Router {
     routes = [];
 
     constructor() {}
 
+    /**
+     * Menambahkan rute baru ke router.
+     * @param {string} method - Metode HTTP (GET, POST, dll).
+     * @param {string} path - Jalur rute yang ditangani.
+     * @param {...function} middlewares - Middleware yang akan dijalankan untuk rute ini.
+     */
     add(method, path, ...middlewares) {
         if (typeof path === "function") {
             middlewares = [path, ...middlewares];
@@ -34,30 +43,60 @@ class Router {
         });
     }
 
+    /**
+     * Menambahkan middleware ke router.
+     * @param {...function} args - Middleware yang akan dijalankan.
+     */
     use(...args) {
         this.add("", ...args);
     }
 
+    /**
+     * Menambahkan rute POST.
+     * @param {...*} args - Argumen untuk menambahkan rute.
+     */
     post(...args) {
         this.add("POST", ...args);
     }
 
+    /**
+     * Menambahkan rute GET.
+     * @param {...*} args - Argumen untuk menambahkan rute.
+     */
     get(...args) {
         this.add("GET", ...args);
     }
 
+    /**
+     * Menambahkan rute PATCH.
+     * @param {...*} args - Argumen untuk menambahkan rute.
+     */
     patch(...args) {
         this.add("PATCH", ...args);
     }
 
+    /**
+     * Menambahkan rute DELETE.
+     * @param {...*} args - Argumen untuk menambahkan rute.
+     */
     delete(...args) {
         this.add("DELETE", ...args);
     }
 
+    /**
+     * Menambahkan rute PUT.
+     * @param {...*} args - Argumen untuk menambahkan rute.
+     */
     put(...args) {
         this.add("PUT", ...args);
     }
 
+    /**
+     * Menangani permintaan HTTP.
+     * @param {http.IncomingMessage} req - Objek permintaan HTTP.
+     * @param {http.ServerResponse} res - Objek respons HTTP.
+     * @returns {Promise<void>}
+     */
     async handleRequest(req, res) {
         try {
             req.protocol_ = req.socket.encrypted ? "https:" : "http:";
@@ -147,6 +186,11 @@ class Router {
         }
     }
 
+    /**
+     * Menjalankan server pada port yang ditentukan.
+     * @param {...*} args - Argumen untuk mendengarkan permintaan.
+     * @returns {http.Server} - Server HTTP yang berjalan.
+     */
     listen(...args) {
         const server = http.createServer(this.handleRequest.bind(this));
         server.listen(...args);

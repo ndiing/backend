@@ -18,6 +18,7 @@ function compression() {
                     const readable = new Readable();
                     readable.push(body);
                     readable.push(null);
+
                     body = readable;
                 }
 
@@ -119,16 +120,21 @@ function cookies() {
             const setCookie = [];
             res.cookie = (name, value, attributes = {}) => {
                 const array = [];
+
                 array.push([name, value].join("="));
                 for (const name in attributes) {
                     const value = attributes[name];
                     const key = COOKIE_ATTRIBUTES[name];
+
                     if (!key) {
                         continue;
                     }
+
                     array.push([key, value].join("="));
                 }
+
                 setCookie.push(array.join("; "));
+
                 res.setHeader("Set-Cookie", setCookie);
             };
 
@@ -303,7 +309,9 @@ function catchAll() {
         if (res.statusCode >= 200 && res.statusCode < 300) {
             res.statusCode = 500;
         }
+
         err = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
+
         res.json({ message: err.message });
     };
 }

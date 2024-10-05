@@ -51,11 +51,15 @@ function getExtensionSAN(domain = "") {
 function getKeysAndCert(serialNumber) {
     const keys = forge.pki.rsa.generateKeyPair(2048);
     const cert = forge.pki.createCertificate();
+
     cert.publicKey = keys.publicKey;
     cert.serialNumber = serialNumber || Math.floor(Math.random() * 100000) + "";
+
     var now = Date.now();
+
     cert.validity.notBefore = new Date(now - 24 * 60 * 60 * 1000);
     cert.validity.notAfter = new Date(now + 824 * 24 * 60 * 60 * 1000);
+
     return {
         keys,
         cert,
@@ -70,6 +74,7 @@ function getKeysAndCert(serialNumber) {
  */
 function generateRootCA(commonName) {
     const keysAndCert = getKeysAndCert();
+
     const keys = keysAndCert.keys;
     const cert = keysAndCert.cert;
 
@@ -81,6 +86,7 @@ function generateRootCA(commonName) {
             value: commonName,
         },
     ]);
+
     cert.setSubject(attrs);
     cert.setIssuer(attrs);
     cert.setExtensions([{ name: "basicConstraints", cA: true }]);
@@ -106,6 +112,7 @@ function generateCertsForHostname(domain, rootCAConfig) {
     md.update(domain);
 
     const keysAndCert = getKeysAndCert(md.digest().toHex());
+
     const keys = keysAndCert.keys;
     const cert = keysAndCert.cert;
 

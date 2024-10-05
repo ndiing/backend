@@ -28,6 +28,7 @@ class ObjectObserver {
     constructor(target = {}, callback = () => {}) {
         this.target = target;
         this.callback = callback;
+
         return new Proxy(this.target, this);
     }
 
@@ -41,6 +42,7 @@ class ObjectObserver {
         if (["[object Object]", "[object Array]"].includes(toString.call(target[property]))) {
             return new Proxy(target[property], this);
         }
+
         return target[property];
     }
 
@@ -56,8 +58,11 @@ class ObjectObserver {
         if (oldValue === value) {
             return true;
         }
+
         Reflect.set(target, property, value);
+
         this.callback(this.target);
+
         return true;
     }
 
@@ -72,8 +77,11 @@ class ObjectObserver {
         if (oldValue === undefined) {
             return true;
         }
+
         Reflect.deleteProperty(target, property);
+
         this.callback(this.target);
+
         return true;
     }
 }
@@ -103,6 +111,7 @@ function normalizeCookie(name, value) {
     if (typeof name !== "object") {
         object = { name, value };
     }
+
     return object;
 }
 
@@ -122,9 +131,11 @@ class CookieStore {
      */
     get cookie() {
         const array = [];
+
         for (const [, { name, value }] of Object.entries(this)) {
             array.push([name, value].join("="));
         }
+
         return array.join("; ");
     }
 
@@ -137,11 +148,13 @@ class CookieStore {
         if (!Array.isArray(array)) {
             array = [array];
         }
+
         for (const string of array) {
             for (const [, name, value] of string.matchAll(/([^= ]+)=([^;]+)/g)) {
                 if (COOKIE_ATTRIBUTES_REGEXP.test(name)) {
-                    continue;
+                    continue; // skip attributes
                 }
+
                 if (value) {
                     this.set(name, value);
                 } else {
@@ -255,6 +268,7 @@ class ObjectFile {
             data = fs.readFileSync(pathname, { encoding: "utf8" });
             data = JSON.parse(data);
         } catch (error) {}
+
         return data;
     }
 
@@ -273,6 +287,7 @@ class ObjectFile {
                 recursive: true,
             });
         }
+
         data = JSON.stringify(data);
         fs.writeFileSync(pathname, data);
     }
@@ -367,7 +382,7 @@ class Headers {
     /**
      * Mengembalikan iterator untuk entri header (nama dan nilai).
      *
-     * @returns {IterableIterator<[string, string]>} - Iterator untuk entri header.
+     * @returns {IterableIterator} - Iterator untuk entri header.
      */
     *entries() {
         for (const [name, value] of Object.entries(this)) {
@@ -427,7 +442,7 @@ class Headers {
     /**
      * Mengembalikan iterator untuk kunci header.
      *
-     * @returns {IterableIterator<string>} - Iterator untuk kunci header.
+     * @returns {IterableIterator} - Iterator untuk kunci header.
      */
     *keys() {
         for (const [name] of Object.entries(this)) {
@@ -449,7 +464,7 @@ class Headers {
     /**
      * Mengembalikan iterator untuk nilai header.
      *
-     * @returns {IterableIterator<string>} - Iterator untuk nilai header.
+     * @returns {IterableIterator} - Iterator untuk nilai header.
      */
     *values() {
         for (const [, value] of Object.entries(this)) {
@@ -650,8 +665,11 @@ class Request {
 
         // this.bodyUsed = options.bodyUsed
         // this.cache = options.cache
+
         this.credentials = options.credentials ?? "same-origin";
+
         // this.destination = options.destination
+
         this.headers = new Headers({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
             Host: this.input.host,
@@ -661,8 +679,11 @@ class Request {
             Connection: "keep-alive",
             ...options.headers,
         });
+
         // this.integrity = options.integrity
+
         this.method = options.method ?? "GET";
+
         // this.mode = options.mode
 
         this.redirect = options.redirect ?? "follow";
@@ -678,24 +699,23 @@ class Request {
 
         if (!this.agent) {
             const Agent = this.client.Agent;
+
             const agent = new Agent({
                 keepAlive: true,
                 rejectUnauthorized: false,
             });
+
             this.agent = agent;
         }
 
         this.host = this.input.host;
         this.hostname = this.input.hostname;
         this.insecureHTTPParser = options.insecureHTTPParser ?? true;
-
         this.path = this.input.pathname + this.input.search + this.input.hash;
-
         this.port = parseInt(this.input.port || (this.input.protocol === "https:" ? 443 : 80));
         this.protocol = this.input.protocol;
         this.signal = options.signal ?? new AbortController().signal;
         this.timeout = options.timeout ?? 30 * 1000;
-
         this.origin = this.input.origin;
     }
     // arrayBuffer() { }
@@ -730,13 +750,20 @@ class Response {
      */
     constructor(body, options = {}) {
         this.body = body;
+
         // this.bodyUsed = options.bodyUsed
+
         this.headers = new Headers(options.headers);
+
         this.ok = options.status >= 200 && options.status < 300;
+
         // this.redirected = options.redirected
+
         this.status = options.status;
         this.statusText = options.statusText;
+
         // this.type = options.type
+
         this.url = options.url;
     }
     // static error(){}
@@ -764,6 +791,7 @@ class Response {
         for await (const chunk of this.body) {
             chunks.push(chunk);
         }
+
         const buffer = Buffer.concat(chunks);
 
         return buffer;
@@ -832,7 +860,9 @@ function fetch(resource, options = {}) {
             if (request.protocol === "https:") {
                 const agent = await new Promise((resolve, reject) => {
                     const req2 = request2.client.request(request2);
+
                     req2.on("error", reject);
+                    req2.on("timeout", () => req2.end());
                     req2.on("connect", (req, socket, head) => {
                         const Agent = request.client.Agent;
                         const agent = new Agent({
@@ -842,6 +872,7 @@ function fetch(resource, options = {}) {
                         });
                         resolve(agent);
                     });
+
                     request2.body.pipe(req2);
                 });
                 // replace
@@ -852,6 +883,7 @@ function fetch(resource, options = {}) {
         const req = request.client.request(request);
 
         req.on("error", reject);
+        req.on("timeout", () => req.end());
         req.on("response", (res) => {
             let response = new Response(res, {
                 headers: res.headers,
@@ -879,6 +911,7 @@ function fetch(resource, options = {}) {
 
             resolve(response);
         });
+
         request.body.pipe(req);
     });
 }

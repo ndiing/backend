@@ -61,12 +61,12 @@ Nama: Ridho Prasetya
 Email: ndiing.inc@gmail.com  
 GitHub: [ndiing](https://github.com/ndiing)
 
-<!-- 
+<!--
 benchmark compare
 nd-core faster then express
  -->
 
-<!-- 
+<!--
 from express
 ab -n 1000 -c 100 http://localhost:3000/
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
@@ -124,7 +124,7 @@ Percentage of the requests served within a certain time (ms)
  100%     45 (longest request)
  -->
 
-<!-- 
+<!--
 from nd-core
 
 ab -n 1000 -c 100 http://localhost/
@@ -183,4 +183,3 @@ Percentage of the requests served within a certain time (ms)
  100%     32 (longest request)
 
  -->
-

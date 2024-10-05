@@ -4,27 +4,27 @@
 
 ## Fitur
 
-- **Modularitas**: Memudahkan pengorganisasian kode dan pemisahan tanggung jawab.
-- **Middleware**: Mendukung penggunaan middleware untuk menangani permintaan dan respons.
-- **Routing**: Sistem routing yang fleksibel untuk menangani berbagai jalur aplikasi.
-- **Integrasi Database**: Mudah terhubung dengan berbagai database.
+-   **Modularitas**: Memudahkan pengorganisasian kode dan pemisahan tanggung jawab.
+-   **Middleware**: Mendukung penggunaan middleware untuk menangani permintaan dan respons.
+-   **Routing**: Sistem routing yang fleksibel untuk menangani berbagai jalur aplikasi.
+-   **Integrasi Database**: Mudah terhubung dengan berbagai database.
 
 ## Instalasi
 
 Untuk menginstal **nd-core**, ikuti langkah-langkah berikut:
 
 1. Kloning repositori ini:
-   <pre>
-   git clone https://github.com/ndiing/nd-core.git
-   </pre>
+    <pre>
+    git clone https://github.com/ndiing/nd-core.git
+    </pre>
 2. Masuk ke direktori proyek:
-   <pre>
-   cd nd-core
-   </pre>
+    <pre>
+    cd nd-core
+    </pre>
 3. Instal dependensi:
-   <pre>
-   npm install
-   </pre>
+    <pre>
+    npm install
+    </pre>
 
 ## Penggunaan
 

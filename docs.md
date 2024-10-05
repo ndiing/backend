@@ -1,9 +1,6 @@
 ## Classes
 
 <dl>
-<dt><a href="#ObjectObserver">ObjectObserver</a></dt>
-<dd><p>Kelas ObjectObserver digunakan untuk mengamati perubahan pada objek JavaScript.</p>
-</dd>
 <dt><a href="#CookieStore">CookieStore</a></dt>
 <dd><p>Kelas CookieStore untuk mengelola cookie.</p>
 <p>Kelas ini menyediakan metode untuk mengatur, mendapatkan, dan menghapus cookie
@@ -12,6 +9,9 @@ string yang sesuai dengan format cookie HTTP.</p>
 </dd>
 <dt><a href="#Headers">Headers</a></dt>
 <dd><p>Kelas untuk mengelola header HTTP dengan metode untuk menambah, menghapus, dan mengambil nilai header.</p>
+</dd>
+<dt><a href="#ObjectObserver">ObjectObserver</a></dt>
+<dd><p>Kelas ObjectObserver digunakan untuk mengamati perubahan pada objek JavaScript.</p>
 </dd>
 <dt><a href="#Request">Request</a></dt>
 <dd><p>Kelas yang merepresentasikan sebuah permintaan HTTP.</p>
@@ -42,9 +42,6 @@ string yang sesuai dengan format cookie HTTP.</p>
 <dt><a href="#setDefaultAttrs">setDefaultAttrs(attrs)</a></dt>
 <dd><p>Mengubah atribut default yang digunakan dalam pembuatan sertifikat.</p>
 </dd>
-<dt><a href="#normalizeHeaders">normalizeHeaders(name)</a> ⇒ <code>string</code></dt>
-<dd><p>Menormalkan nama header HTTP ke format standar.</p>
-</dd>
 <dt><a href="#normalizeCookie">normalizeCookie(name, [value])</a> ⇒ <code>Object</code></dt>
 <dd><p>Mengnormalize cookie menjadi objek dengan properti &#39;name&#39; dan &#39;value&#39;.</p>
 <p>Jika parameter &#39;name&#39; bukan objek, fungsi ini akan mengonversi
@@ -55,6 +52,9 @@ menjadi objek dengan properti &#39;name&#39; dan &#39;value&#39;.</p>
 </dd>
 <dt><a href="#fetch">fetch(resource, [options])</a> ⇒ <code><a href="#Response">Promise.&lt;Response&gt;</a></code></dt>
 <dd><p>Melakukan permintaan HTTP dan mengembalikan respons.</p>
+</dd>
+<dt><a href="#normalizeHeaders">normalizeHeaders(name)</a> ⇒ <code>string</code></dt>
+<dd><p>Menormalkan nama header HTTP ke format standar.</p>
 </dd>
 <dt><a href="#encode">encode(header, payload, secret)</a> ⇒ <code>string</code></dt>
 <dd><p>Mengenkode header dan payload menjadi token JWT.</p>
@@ -131,70 +131,6 @@ pesan kesalahan dalam format JSON.</p>
 <dd><p>Memeriksa validitas data menggunakan validator yang ditentukan dalam opsi.</p>
 </dd>
 </dl>
-
-<a name="ObjectObserver"></a>
-
-## ObjectObserver
-Kelas ObjectObserver digunakan untuk mengamati perubahan pada objek JavaScript.
-
-**Kind**: global class  
-
-* [ObjectObserver](#ObjectObserver)
-    * [new ObjectObserver([target], [callback])](#new_ObjectObserver_new)
-    * [.get(target, property)](#ObjectObserver+get) ⇒ <code>any</code>
-    * [.set(target, property, value)](#ObjectObserver+set) ⇒ <code>boolean</code>
-    * [.deleteProperty(target, property)](#ObjectObserver+deleteProperty) ⇒ <code>boolean</code>
-
-<a name="new_ObjectObserver_new"></a>
-
-### new ObjectObserver([target], [callback])
-Membuat instance ObjectObserver.
-
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| [target] | <code>Object</code> | <code>{}</code> | Objek yang ingin diamati. |
-| [callback] | <code>function</code> | <code>() &#x3D;&gt; {}</code> | Fungsi callback yang dipanggil saat terjadi perubahan. |
-
-<a name="ObjectObserver+get"></a>
-
-### objectObserver.get(target, property) ⇒ <code>any</code>
-Metode ini dipanggil saat properti dari objek diakses.
-
-**Kind**: instance method of [<code>ObjectObserver</code>](#ObjectObserver)  
-**Returns**: <code>any</code> - - Nilai dari properti yang diakses.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| target | <code>Object</code> | Objek yang sedang diamati. |
-| property | <code>string</code> | Nama properti yang diakses. |
-
-<a name="ObjectObserver+set"></a>
-
-### objectObserver.set(target, property, value) ⇒ <code>boolean</code>
-Metode ini dipanggil saat properti diubah.
-
-**Kind**: instance method of [<code>ObjectObserver</code>](#ObjectObserver)  
-**Returns**: <code>boolean</code> - - Mengembalikan true jika operasi berhasil.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| target | <code>Object</code> | Objek yang sedang diamati. |
-| property | <code>string</code> | Nama properti yang diubah. |
-| value | <code>any</code> | Nilai baru untuk properti tersebut. |
-
-<a name="ObjectObserver+deleteProperty"></a>
-
-### objectObserver.deleteProperty(target, property) ⇒ <code>boolean</code>
-Metode ini dipanggil saat properti dihapus.
-
-**Kind**: instance method of [<code>ObjectObserver</code>](#ObjectObserver)  
-**Returns**: <code>boolean</code> - - Mengembalikan true jika operasi berhasil.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| target | <code>Object</code> | Objek yang sedang diamati. |
-| property | <code>string</code> | Nama properti yang dihapus. |
 
 <a name="CookieStore"></a>
 
@@ -419,6 +355,70 @@ Mengembalikan iterator untuk nilai header.
 
 **Kind**: instance method of [<code>Headers</code>](#Headers)  
 **Returns**: <code>IterableIterator</code> - - Iterator untuk nilai header.  
+<a name="ObjectObserver"></a>
+
+## ObjectObserver
+Kelas ObjectObserver digunakan untuk mengamati perubahan pada objek JavaScript.
+
+**Kind**: global class  
+
+* [ObjectObserver](#ObjectObserver)
+    * [new ObjectObserver([target], [callback])](#new_ObjectObserver_new)
+    * [.get(target, property)](#ObjectObserver+get) ⇒ <code>any</code>
+    * [.set(target, property, value)](#ObjectObserver+set) ⇒ <code>boolean</code>
+    * [.deleteProperty(target, property)](#ObjectObserver+deleteProperty) ⇒ <code>boolean</code>
+
+<a name="new_ObjectObserver_new"></a>
+
+### new ObjectObserver([target], [callback])
+Membuat instance ObjectObserver.
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [target] | <code>Object</code> | <code>{}</code> | Objek yang ingin diamati. |
+| [callback] | <code>function</code> | <code>() &#x3D;&gt; {}</code> | Fungsi callback yang dipanggil saat terjadi perubahan. |
+
+<a name="ObjectObserver+get"></a>
+
+### objectObserver.get(target, property) ⇒ <code>any</code>
+Metode ini dipanggil saat properti dari objek diakses.
+
+**Kind**: instance method of [<code>ObjectObserver</code>](#ObjectObserver)  
+**Returns**: <code>any</code> - - Nilai dari properti yang diakses.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| target | <code>Object</code> | Objek yang sedang diamati. |
+| property | <code>string</code> | Nama properti yang diakses. |
+
+<a name="ObjectObserver+set"></a>
+
+### objectObserver.set(target, property, value) ⇒ <code>boolean</code>
+Metode ini dipanggil saat properti diubah.
+
+**Kind**: instance method of [<code>ObjectObserver</code>](#ObjectObserver)  
+**Returns**: <code>boolean</code> - - Mengembalikan true jika operasi berhasil.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| target | <code>Object</code> | Objek yang sedang diamati. |
+| property | <code>string</code> | Nama properti yang diubah. |
+| value | <code>any</code> | Nilai baru untuk properti tersebut. |
+
+<a name="ObjectObserver+deleteProperty"></a>
+
+### objectObserver.deleteProperty(target, property) ⇒ <code>boolean</code>
+Metode ini dipanggil saat properti dihapus.
+
+**Kind**: instance method of [<code>ObjectObserver</code>](#ObjectObserver)  
+**Returns**: <code>boolean</code> - - Mengembalikan true jika operasi berhasil.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| target | <code>Object</code> | Objek yang sedang diamati. |
+| property | <code>string</code> | Nama properti yang dihapus. |
+
 <a name="Request"></a>
 
 ## Request
@@ -676,18 +676,6 @@ Mengubah atribut default yang digunakan dalam pembuatan sertifikat.
 | --- | --- | --- |
 | attrs | <code>Array.&lt;Object&gt;</code> | Array objek atribut yang baru. |
 
-<a name="normalizeHeaders"></a>
-
-## normalizeHeaders(name) ⇒ <code>string</code>
-Menormalkan nama header HTTP ke format standar.
-
-**Kind**: global function  
-**Returns**: <code>string</code> - - Nama header yang dinormalkan atau nama asli jika tidak ditemukan.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>string</code> | Nama header HTTP yang ingin dinormalkan. |
-
 <a name="normalizeCookie"></a>
 
 ## normalizeCookie(name, [value]) ⇒ <code>Object</code>
@@ -732,6 +720,18 @@ Melakukan permintaan HTTP dan mengembalikan respons.
 | [options.store] | <code>object</code> |  | Objek penyimpanan yang dapat digunakan untuk menyimpan cookies. |
 | [options.method] | <code>string</code> | <code>&quot;\&quot;GET\&quot;&quot;</code> | Metode HTTP yang akan digunakan (GET, POST, dll.). |
 | [options.follow] | <code>number</code> | <code>30</code> | Jumlah maksimum pengalihan yang diizinkan. |
+
+<a name="normalizeHeaders"></a>
+
+## normalizeHeaders(name) ⇒ <code>string</code>
+Menormalkan nama header HTTP ke format standar.
+
+**Kind**: global function  
+**Returns**: <code>string</code> - - Nama header yang dinormalkan atau nama asli jika tidak ditemukan.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Nama header HTTP yang ingin dinormalkan. |
 
 <a name="encode"></a>
 

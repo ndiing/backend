@@ -32,7 +32,7 @@ class Router {
 
         path = path.replace(/(?!^)\/$/, "");
 
-        const pattern = "^" + path.replace(/:(\w+)/g, "(?<$1>[^/]+)").replace(/\*/, "(?:.*)") + "(?:$)";
+        const pattern = `^${path.replace(/:(\w+)/g, "(?<$1>[^/]+)").replace(/\*/, "(?:.*)")}(?:\$)`;
         const regexp = new RegExp(pattern, "i");
 
         this.routes.push({
@@ -101,7 +101,7 @@ class Router {
         try {
             req.protocol_ = req.socket.encrypted ? "https:" : "http:";
             req.host_ = req.headers.host;
-            req.url_ = new URL(req.protocol_ + "//" + req.host_ + req.url);
+            req.url_ = new URL(`${req.protocol_}//${req.host_}${req.url}`);
             req.remoteAddress_ = req.socket.remoteAddress;
             req.pathname_ = req.url_.pathname;
 

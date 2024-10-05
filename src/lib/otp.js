@@ -24,7 +24,7 @@ function hotp(options = {}) {
 
     const offset = parseInt(hash.charAt(hash.length - 1), 16);
 
-    const result = parseInt(hash.substring(offset * 2, offset * 2 + 2 * 4), 16) & 0x7fffffff;
+    const result = parseInt(hash.substring(offset * 2, (offset * 2) + (2 * 4)), 16) & 0x7fffffff;
 
     return String(result)
         .padStart(digits, "0")
@@ -244,7 +244,3 @@ module.exports = {
     hotp,
     totp,
 };
-
-// // Usage example
-// console.log(hotp({secret:'12345678901234567890'}))
-// console.log(totp({secret:'12345678901234567890'}))

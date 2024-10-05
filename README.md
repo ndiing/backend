@@ -58,5 +58,5 @@ Proyek ini didistribusikan di bawah lisensi MIT. Lihat [LICENSE](LICENSE) untuk 
 ## Kontak
 
 Nama: Ridho Prasetya  
-Email: ridho@example.com  
+Email: ndiing.inc@gmail.com  
 GitHub: [ndiing](https://github.com/ndiing)

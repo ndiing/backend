@@ -1,6 +1,5 @@
 ### TODO
 
-#### Sudah Selesai
 - [x] Router Core - Mengatur routing untuk REST API.
 - [x] Middleware untuk Messages - Mengelola pesan, termasuk logging dan feedback.
 - [x] Middleware untuk Compression - Mengompres data respons agar lebih ringan.
@@ -14,10 +13,6 @@
 - [x] Modul Fetch - Menangani permintaan HTTP dengan dukungan cookies secara langsung.
 - [x] Modul untuk Mengelola Konfigurasi Lingkungan - Mengelola variabel lingkungan.
 - [x] Modul Input Validation - Memvalidasi data yang masuk.
-
-#### Belum Selesai
-- [ ] Middleware untuk Rate Limiting - Mengontrol jumlah permintaan.
-- [ ] Middleware untuk Caching - Menyimpan data yang sering diakses.
 
 ### CATATAN
 - Target harus lebih cepat dari framework sebelumnya.

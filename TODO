@@ -1,11 +1,14 @@
-[x] router core
+### TODO
+- [x] Router Core
+- [x] Modul JWT
+- [x] Middleware untuk Messages
+- [x] Middleware untuk Compression
+- [x] Middleware untuk Security
+- [x] Middleware untuk CORS
+- [x] Middleware untuk Cookies
+- [x] Middleware untuk Authorization
 
-[x] modul jwt
-
-bagaian diluar core, karna sifatnya dinamis, sesuai dengan kasus masing-masing
-[x] router middleware => http messages
-[x] router middleware => http compression
-[x] router middleware => http security
-[x] router middleware => http cors
-[x] router middleware => http cookies
-[x] router middleware => http authentication&Authorization (auth)
+### CATATAN
+- Target harus lebih cepat dibandingkan dengan framework sebelumnya.
+- Fokus pengembangan lebih diarahkan pada bridging untuk penanganan web service.
+- **Jangan hapus catatan ini!** Catatan ini akan berfungsi sebagai pengingat di masa depan.

@@ -21,6 +21,10 @@ app.use("/blogs", require("./api/blogs/index.js"));
 app.use("/", require("./api/main/index.js"));
 app.use(fallback(), catchAll());
 
+// app.get('/',(req,res) => {
+//     res.json({message:'ok'})
+// })
+
 const httpServer = http.createServer(app.handleRequest.bind(app));
 const httpsServer = https.createServer(options, app.handleRequest.bind(app));
 

@@ -14,17 +14,17 @@
 Untuk menginstal **nd-core**, ikuti langkah-langkah berikut:
 
 1. Kloning repositori ini:
-    <pre>
-    git clone https://github.com/ndiing/nd-core.git
-    </pre>
+ <pre>
+ git clone https://github.com/ndiing/nd-core.git
+ </pre>
 2. Masuk ke direktori proyek:
-    <pre>
-    cd nd-core
-    </pre>
+ <pre>
+ cd nd-core
+ </pre>
 3. Instal dependensi:
-    <pre>
-    npm install
-    </pre>
+ <pre>
+ npm install
+ </pre>
 
 ## Penggunaan
 

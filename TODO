@@ -1,14 +1,26 @@
 ### TODO
-- [x] Router Core
-- [x] Modul JWT
-- [x] Middleware untuk Messages
-- [x] Middleware untuk Compression
-- [x] Middleware untuk Security
-- [x] Middleware untuk CORS
-- [x] Middleware untuk Cookies
-- [x] Middleware untuk Authorization
+
+#### Sudah Selesai
+- [x] Router Core - Mengatur routing untuk REST API.
+- [x] Middleware untuk Messages - Mengelola pesan, termasuk logging dan feedback.
+- [x] Middleware untuk Compression - Mengompres data respons agar lebih ringan.
+- [x] Middleware untuk Security - Menambahkan fitur keamanan, seperti XSS protection dan rate limiting.
+- [x] Middleware untuk CORS - Mengatur akses antar-domain (CORS).
+- [x] Middleware untuk Cookies - Membaca dan menulis cookies pada request/response.
+- [x] Middleware untuk Authorization - Memeriksa izin akses pengguna.
+- [x] Modul untuk Generate SSL Certificates - Menghasilkan sertifikat root dan host key untuk pengujian HTTPS lokal.
+- [x] Modul JWT - Encode/decode token untuk autentikasi.
+
+#### Belum Selesai
+- [ ] Modul untuk Mengelola Konfigurasi Lingkungan - Mengelola variabel lingkungan.
+- [ ] Middleware untuk Rate Limiting - Mengontrol jumlah permintaan.
+- [ ] Middleware untuk Caching - Menyimpan data yang sering diakses.
+- [ ] Modul Input Validation - Memvalidasi data yang masuk.
+- [x] Modul OTP - Mengelola One-Time Password untuk autentikasi yang lebih aman.
+- [x] Modul Fetch - Menangani permintaan HTTP dengan dukungan cookies secara langsung.
 
 ### CATATAN
-- Target harus lebih cepat dibandingkan dengan framework sebelumnya.
-- Fokus pengembangan lebih diarahkan pada bridging untuk penanganan web service.
-- **Jangan hapus catatan ini!** Catatan ini akan berfungsi sebagai pengingat di masa depan.
+- Target harus lebih cepat dari framework sebelumnya.
+- Fokus utama adalah bridging untuk penanganan web service.
+- **Jangan hapus catatan ini!** Catatan ini sebagai pengingat ke depan.
+- Jika suatu modul atau middleware sudah selesai, pindahkan ke daftar "Sudah Selesai".

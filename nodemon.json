@@ -1,7 +1,8 @@
 {
     "ignore": [".git", "node_modules/**/node_modules"],
     "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "development",
+        "HTTP_PROXY": "http://127.0.0.1:8888"
     },
     "ext": "js"
 }

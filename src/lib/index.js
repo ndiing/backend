@@ -1,4 +1,5 @@
-require("./config.js");
+// pindah ke @ndiinginc/env
+// require("./env.js");
 
 // pindah ke @ndiinginc/cert
 // require("./cert.js");
@@ -22,4 +23,4 @@ require("./config.js");
 // require("./router.js");
 // require("./middleware.js");
 
-require("./validation.js");
+// require("./validation.js");

@@ -1,6 +1,7 @@
 {
     "dependencies": {
         "@ndiinginc/cert": "^2.0.0",
+        "@ndiinginc/env": "^1.0.0",
         "@ndiinginc/fetch": "^2.0.0",
         "@ndiinginc/jwt": "^2.0.0",
         "@ndiinginc/otp": "^2.0.0",

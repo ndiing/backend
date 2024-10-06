@@ -2,8 +2,8 @@ process.on("uncaughtException", console.log);
 process.on("unhandledRejection", console.log);
 
 const config = require("./lib/config.js");
-const Router = require("./lib/router.js");
-const { compression, messages, cookies, security, cors, authorization, fallback, catchAll } = require("./lib/middleware.js");
+const Router = require("@ndiinginc/router");
+const { compression, messages, cookies, security, cors, authorization, fallback, catchAll } = require("@ndiinginc/router");
 const fs = require("fs");
 const http = require("http");
 const https = require("https");

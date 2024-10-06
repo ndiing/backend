@@ -1,4 +1,4 @@
-const Router = require("../../lib/router.js");
+const Router = require("@ndiinginc/router");
 
 const router = new Router();
 

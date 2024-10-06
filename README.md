@@ -1,6 +1,6 @@
-# nd-core
+# backend
 
-**nd-core** adalah framework backend berbasis Node.js yang dirancang untuk memudahkan pengembangan aplikasi web. Framework ini menyediakan struktur yang jelas dan berbagai fitur untuk mempercepat proses pengembangan.
+**backend** adalah framework backend berbasis Node.js yang dirancang untuk memudahkan pengembangan aplikasi web. Framework ini menyediakan struktur yang jelas dan berbagai fitur untuk mempercepat proses pengembangan.
 
 ## Fitur
 
@@ -11,15 +11,15 @@
 
 ## Instalasi
 
-Untuk menginstal **nd-core**, ikuti langkah-langkah berikut:
+Untuk menginstal **backend**, ikuti langkah-langkah berikut:
 
 1. Kloning repositori ini:
  <pre>
- git clone https://github.com/ndiing/nd-core.git
+ git clone https://github.com/ndiing/backend.git
  </pre>
 2. Masuk ke direktori proyek:
  <pre>
- cd nd-core
+ cd backend
  </pre>
 3. Instal dependensi:
  <pre>
@@ -28,7 +28,7 @@ Untuk menginstal **nd-core**, ikuti langkah-langkah berikut:
 
 ## Penggunaan
 
-Berikut adalah contoh cara menggunakan **nd-core** dalam proyek Anda:
+Berikut adalah contoh cara menggunakan **backend** dalam proyek Anda:
 
 <pre>
 const Router = require("./lib/router.js");
@@ -43,7 +43,7 @@ app.listen(3000);
 
 ## Kontribusi
 
-Jika Anda ingin berkontribusi pada **nd-core**, silakan ikuti langkah-langkah berikut:
+Jika Anda ingin berkontribusi pada **backend**, silakan ikuti langkah-langkah berikut:
 
 1. Fork repositori ini.
 2. Buat cabang baru (`git checkout -b feature-nama-fitur`).
@@ -63,7 +63,7 @@ GitHub: [ndiing](https://github.com/ndiing)
 
 <!--
 benchmark compare
-nd-core faster then express
+backend faster then express
  -->
 
 <!--
@@ -125,7 +125,7 @@ Percentage of the requests served within a certain time (ms)
  -->
 
 <!--
-from nd-core
+from backend
 
 ab -n 1000 -c 100 http://localhost/
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>

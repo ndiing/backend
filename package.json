@@ -3,7 +3,7 @@
         "@ndiinginc/router": "^2.1.0",
         "node-forge": "^1.3.1"
     },
-    "name": "nd-core",
+    "name": "backend",
     "version": "1.0.0",
     "description": "nodejs backend framework",
     "main": "index.js",

@@ -2,7 +2,7 @@ const crypto = require("crypto");
 
 /**
  * Objek untuk menandatangani data menggunakan berbagai algoritma.
- * 
+ *
  * @type {Object}
  * @property {function} hs256 - Menandatangani data menggunakan HMAC SHA-256.
  * @property {function} hs384 - Menandatangani data menggunakan HMAC SHA-384.
@@ -58,7 +58,7 @@ const signer = {
 
 /**
  * Objek untuk memverifikasi tanda tangan menggunakan berbagai algoritma.
- * 
+ *
  * @type {Object}
  * @property {function} hs256 - Memverifikasi tanda tangan menggunakan HMAC SHA-256.
  * @property {function} hs384 - Memverifikasi tanda tangan menggunakan HMAC SHA-384.
@@ -114,7 +114,7 @@ const verifier = {
 
 /**
  * Mengkodekan header dan payload menjadi token JWT menggunakan algoritma penandatanganan yang ditentukan.
- * 
+ *
  * @param {Object} header - Objek header JWT yang berisi informasi algoritma dan tipe token.
  * @param {Object} payload - Objek payload JWT yang berisi informasi yang ingin disimpan dalam token.
  * @param {string} secret - Kunci rahasia yang digunakan untuk menandatangani token.
@@ -134,7 +134,7 @@ function encode(header, payload, secret) {
 
 /**
  * Menguraikan token JWT dan memverifikasi tanda tangan menggunakan kunci rahasia.
- * 
+ *
  * @param {string} token - Token JWT yang ingin diuraikan.
  * @param {string} secret - Kunci rahasia yang digunakan untuk memverifikasi token.
  * @returns {Object|null} Objek payload jika token valid, atau null jika tidak valid.
@@ -260,5 +260,5 @@ module.exports = { signer, verifier, encode, decode };
 //         const {token,secret,privateKey} = N[alg]
 //         // valid jika tidak null
 //         console.log(alg,decode(token,secret||privateKey)!==null)
-//     } 
+//     }
 // }

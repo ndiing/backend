@@ -4,7 +4,7 @@
 class ObjectObserver {
     /**
      * Konstruktor untuk membuat instance `ObjectObserver`.
-     * 
+     *
      * @param {Object} [target={}] - Objek yang akan diawasi.
      * @param {function} [callback=() => {}] - Fungsi callback yang akan dipanggil saat perubahan terjadi.
      */
@@ -16,7 +16,7 @@ class ObjectObserver {
 
     /**
      * Mendapatkan nilai properti dari objek yang diawasi.
-     * 
+     *
      * @param {Object} target - Objek yang diawasi.
      * @param {string} property - Nama properti yang ingin diambil.
      * @returns {*} Nilai dari properti yang diambil.
@@ -30,7 +30,7 @@ class ObjectObserver {
 
     /**
      * Mengatur nilai properti dari objek yang diawasi.
-     * 
+     *
      * @param {Object} target - Objek yang diawasi.
      * @param {string} property - Nama properti yang akan diatur.
      * @param {*} value - Nilai baru untuk properti tersebut.
@@ -48,7 +48,7 @@ class ObjectObserver {
 
     /**
      * Menghapus properti dari objek yang diawasi.
-     * 
+     *
      * @param {Object} target - Objek yang diawasi.
      * @param {string} property - Nama properti yang akan dihapus.
      * @returns {boolean} True jika penghapusan berhasil.

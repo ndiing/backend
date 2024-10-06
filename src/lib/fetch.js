@@ -22,8 +22,8 @@ function setProxyServer(enable) {
 
 /**
  * Mengambil alamat server proxy dari pengaturan Internet di Windows.
- * 
- * @returns {string|null} Alamat server proxy dalam format string jika ditemukan, 
+ *
+ * @returns {string|null} Alamat server proxy dalam format string jika ditemukan,
  *                        atau null jika tidak ada pengaturan proxy.
  */
 function getProxyServer() {
@@ -38,9 +38,9 @@ function getProxyServer() {
 
 /**
  * Membuat dan mengembalikan objek penyimpanan yang terhubung dengan file.
- * 
+ *
  * @param {string} filename - Nama file yang digunakan untuk membaca dan menulis data penyimpanan.
- * @returns {Object} Objek yang mengamati perubahan pada data penyimpanan 
+ * @returns {Object} Objek yang mengamati perubahan pada data penyimpanan
  *                   dan menulis kembali ke file saat terjadi perubahan.
  */
 function createStore(filename) {
@@ -54,7 +54,7 @@ function createStore(filename) {
 
 /**
  * Melakukan permintaan HTTP dan mengembalikan responsnya sebagai Promise.
- * 
+ *
  * @param {string} resource - URL sumber daya yang ingin diambil.
  * @param {Object} [options={}] - Opsi untuk permintaan HTTP.
  * @param {string} [options.credentials] - Mengontrol apakah cookie harus disertakan dalam permintaan.
@@ -127,7 +127,7 @@ module.exports = fetch;
 //     fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'PATCH', body: JSON.stringify({ title: 'foo', }), headers: { 'Content-type': 'application/json; charset=UTF-8', }, }) .then((response) => response.json()) .then((json) => console.log(json));
 //     fetch('https://jsonplaceholder.typicode.com/posts/1', { method: 'DELETE', });
 //     fetch('https://jsonplaceholder.typicode.com/posts?userId=1') .then((response) => response.json()) .then((json) => console.log(json));
-//     fetch('https://jsonplaceholder.typicode.com/posts/1/comments') .then((response) => response.json()) .then((json) => console.log(json));   
+//     fetch('https://jsonplaceholder.typicode.com/posts/1/comments') .then((response) => response.json()) .then((json) => console.log(json));
 // }
 
 // {
@@ -147,7 +147,7 @@ module.exports = fetch;
 //     .then(res=>res.json())
 //     .then(console.log)
 //     .catch(console.log)
-    
+
 //     // penanganan kompresi
 //     fetch('https://jsonplaceholder.typicode.com/posts/1',{
 //         headers:{
@@ -169,7 +169,6 @@ module.exports = fetch;
 //     .catch(console.log)
 // }
 
-
 // {
 //     // penanganan cookies
 
@@ -187,7 +186,6 @@ module.exports = fetch;
 // {
 //     // penanganan proxy
 //     // proxy auto detect ketika fiddler atau software monitoring lainnya dibuka
-
 
 //     fetch('http://google.com',{
 //     })

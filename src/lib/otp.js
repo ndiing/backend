@@ -1,9 +1,9 @@
 const crypto = require("crypto");
 
 /**
- * Menghitung One-Time Password (OTP) berdasarkan HMAC-based One-Time Password (HOTP) 
+ * Menghitung One-Time Password (OTP) berdasarkan HMAC-based One-Time Password (HOTP)
  * menggunakan parameter yang diberikan.
- * 
+ *
  * @param {Object} options - Opsi untuk menghasilkan OTP.
  * @param {string} options.secret - Kunci rahasia yang digunakan untuk menghasilkan OTP.
  * @param {number} options.count - Hitungan yang digunakan untuk menghitung OTP.
@@ -27,7 +27,7 @@ function hotp(options = {}) {
 /**
  * Menghitung One-Time Password (OTP) berdasarkan Time-based One-Time Password (TOTP)
  * menggunakan parameter yang diberikan.
- * 
+ *
  * @param {Object} options - Opsi untuk menghasilkan OTP.
  * @param {string} options.secret - Kunci rahasia yang digunakan untuk menghasilkan OTP.
  * @param {number} [options.T=Math.floor(Date.now() / 1000)] - Waktu saat ini dalam detik (default: waktu sekarang).

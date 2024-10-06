@@ -11,7 +11,7 @@ class Router {
 
     /**
      * Menambahkan rute baru ke router.
-     * 
+     *
      * @param {string} method - Metode HTTP (GET, POST, dll).
      * @param {string} path - Jalur untuk rute.
      * @param {...function} middlewares - Middleware yang akan diterapkan pada rute.
@@ -36,7 +36,7 @@ class Router {
 
     /**
      * Menambahkan middleware global untuk semua rute.
-     * 
+     *
      * @param {...function} args - Middleware yang akan diterapkan.
      */
     use(...args) {
@@ -45,7 +45,7 @@ class Router {
 
     /**
      * Menambahkan rute POST.
-     * 
+     *
      * @param {...*} args - Argumen untuk rute POST.
      */
     post(...args) {
@@ -54,7 +54,7 @@ class Router {
 
     /**
      * Menambahkan rute GET.
-     * 
+     *
      * @param {...*} args - Argumen untuk rute GET.
      */
     get(...args) {
@@ -63,7 +63,7 @@ class Router {
 
     /**
      * Menambahkan rute PATCH.
-     * 
+     *
      * @param {...*} args - Argumen untuk rute PATCH.
      */
     patch(...args) {
@@ -72,7 +72,7 @@ class Router {
 
     /**
      * Menambahkan rute DELETE.
-     * 
+     *
      * @param {...*} args - Argumen untuk rute DELETE.
      */
     delete(...args) {
@@ -81,16 +81,16 @@ class Router {
 
     /**
      * Menambahkan rute PUT.
-     * 
+     *
      * @param {...*} args - Argumen untuk rute PUT.
      */
     put(...args) {
         this.add("PUT", ...args);
     }
 
-     /**
+    /**
      * Menangani permintaan HTTP dan menjalankan middleware yang sesuai.
-     * 
+     *
      * @param {http.IncomingMessage} req - Objek permintaan dari klien.
      * @param {http.ServerResponse} res - Objek respons untuk dikirim kembali ke klien.
      */
@@ -172,7 +172,7 @@ class Router {
 
     /**
      * Memulai server dan mendengarkan permintaan pada port yang ditentukan.
-     * 
+     *
      * @param {...*} args - Argumen untuk mendengarkan server.
      * @returns {http.Server} - Instance server.
      */

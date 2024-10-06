@@ -7,7 +7,7 @@ const Headers = require("./headers.js");
 class Response {
     /**
      * Konstruktor untuk membuat instance `Response`.
-     * 
+     *
      * @param {ReadableStream|string} body - Isi dari respons.
      * @param {Object} [options={}] - Opsi untuk respons.
      * @param {number} [options.status] - Kode status HTTP dari respons.
@@ -26,7 +26,7 @@ class Response {
 
     /**
      * Mengembalikan isi respons dalam bentuk Buffer.
-     * 
+     *
      * @returns {Promise<Buffer>} - Isi dari respons sebagai Buffer.
      */
     async buffer() {
@@ -50,7 +50,7 @@ class Response {
 
     /**
      * Mengembalikan isi respons dalam bentuk objek JSON.
-     * 
+     *
      * @returns {Promise<Object>} - Isi dari respons sebagai objek JSON.
      */
     async json() {
@@ -58,9 +58,9 @@ class Response {
         return JSON.parse(buffer);
     }
 
-     /**
+    /**
      * Mengembalikan isi respons dalam bentuk string.
-     * 
+     *
      * @returns {Promise<string>} - Isi dari respons sebagai string.
      */
     async text() {

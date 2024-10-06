@@ -9,7 +9,7 @@ const Headers = require("./headers.js");
 class Request {
     /**
      * Konstruktor untuk membuat instance `Request`.
-     * 
+     *
      * @param {string} input - URL untuk permintaan.
      * @param {Object} [options={}] - Opsi untuk permintaan.
      * @param {string|Readable} [options.body=""] - Isi dari permintaan.

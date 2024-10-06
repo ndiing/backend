@@ -4,7 +4,7 @@ const { decode } = require("./jwt.js");
 
 /**
  * Middleware untuk kompresi respons berdasarkan header 'Accept-Encoding'.
- * 
+ *
  * @returns {function} Middleware yang melakukan kompresi respons.
  */
 function compression() {
@@ -39,7 +39,7 @@ function compression() {
 
 /**
  * Middleware untuk mem-parsing body permintaan pada metode POST, PATCH, dan PUT.
- * 
+ *
  * @returns {function} Middleware yang mem-parsing body permintaan.
  */
 function messages() {
@@ -68,7 +68,7 @@ function messages() {
 
 /**
  * Middleware untuk mengelola cookie dalam permintaan dan respons.
- * 
+ *
  * @returns {function} Middleware yang mengelola cookie.
  */
 function cookies() {
@@ -106,7 +106,7 @@ function cookies() {
 
 /**
  * Middleware untuk menambahkan header keamanan pada respons.
- * 
+ *
  * @returns {function} Middleware yang menambahkan header keamanan.
  */
 function security() {
@@ -126,7 +126,7 @@ function security() {
 
 /**
  * Middleware untuk menangani permintaan CORS.
- * 
+ *
  * @returns {function} Middleware yang mengatur header CORS.
  */
 function cors() {
@@ -146,11 +146,21 @@ function cors() {
 
 /**
  * Middleware untuk mengelola otorisasi akses berdasarkan IP dan token.
- * 
+ *
  * @returns {function} Middleware yang mengatur otorisasi.
  */
 function authorization() {
-    const permissions = [{ path: "^.*$", matcher: "^(127\\.0\\.0\\.1|10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3}|172\\.(1[6-9]|2[0-9]|3[0-1])\\.\\d{1,3}\\.\\d{1,3})$", POST: "any", GET: "any", PATCH: "any", DELETE: "any", PUT: "any" }];
+    const permissions = [
+        {
+            path: "^.*$",
+            matcher: "^(127\\.0\\.0\\.1|10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3}|172\\.(1[6-9]|2[0-9]|3[0-1])\\.\\d{1,3}\\.\\d{1,3})$",
+            POST: "any",
+            GET: "any",
+            PATCH: "any",
+            DELETE: "any",
+            PUT: "any",
+        },
+    ];
 
     function getPermission(pathname_, remoteAddress_, method) {
         return permissions.find((permission) => {
@@ -187,7 +197,7 @@ function authorization() {
 
 /**
  * Middleware untuk mengembalikan respons 404 jika tidak ditemukan.
- * 
+ *
  * @returns {function} Middleware yang mengatur respons 404.
  */
 function fallback() {
@@ -199,7 +209,7 @@ function fallback() {
 
 /**
  * Middleware untuk menangani kesalahan.
- * 
+ *
  * @param {Error} err - Kesalahan yang ditangkap.
  * @param {Object} req - Objek permintaan.
  * @param {Object} res - Objek respons.

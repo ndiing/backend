@@ -4,10 +4,10 @@ const path = require("path");
 /**
  * Membaca data dari file dan mengembalikannya.
  * Jika file tidak ada, akan membuat file baru dengan data awal yang diberikan.
- * 
+ *
  * @param {string} filename - Nama file yang akan dibaca.
  * @param {Object} [data={}] - Data awal yang akan digunakan jika file tidak ditemukan.
- * @returns {Object|string} Data yang dibaca dari file. 
+ * @returns {Object|string} Data yang dibaca dari file.
  *                         Jika file adalah JSON, maka akan dikembalikan sebagai objek.
  */
 function read(filename, data) {
@@ -25,7 +25,7 @@ function read(filename, data) {
 /**
  * Menyimpan data ke dalam file.
  * Jika direktori untuk file tidak ada, akan membuat direktori tersebut secara rekursif.
- * 
+ *
  * @param {string} filename - Nama file tempat data akan disimpan.
  * @param {Object|string} data - Data yang akan disimpan ke file.
  */

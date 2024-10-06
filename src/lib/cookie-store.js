@@ -14,7 +14,7 @@ const COOKIE_ATTRIBUTES_REGEXP = /^(Domain|Expires|HttpOnly|Max-Age|Partitioned|
 class CookieStore {
     /**
      * Mengambil semua cookie yang disimpan dalam format string yang sesuai dengan format HTTP.
-     * 
+     *
      * @returns {string} Daftar cookie dalam format "key=value", dipisahkan dengan "; ".
      */
     get cookie() {
@@ -27,7 +27,7 @@ class CookieStore {
 
     /**
      * Menyimpan cookie dari string atau array yang sesuai dengan format HTTP.
-     * 
+     *
      * @param {string|string[]} value - Nilai string atau array yang berisi cookie dalam format "key=value".
      */
     set cookie(value) {
@@ -49,9 +49,9 @@ class CookieStore {
         }
     }
 
-     /**
+    /**
      * Konstruktor untuk membuat instance `CookieStore` dengan inisialisasi data.
-     * 
+     *
      * @param {Object} [init] - Objek inisialisasi yang berisi nama cookie dan opsinya.
      */
     constructor(init) {
@@ -65,7 +65,7 @@ class CookieStore {
 
     /**
      * Menghapus cookie berdasarkan nama.
-     * 
+     *
      * @param {string} name - Nama cookie yang akan dihapus.
      */
     delete(name) {
@@ -75,7 +75,7 @@ class CookieStore {
 
     /**
      * Mengambil nilai cookie berdasarkan nama.
-     * 
+     *
      * @param {string} name - Nama cookie yang akan diambil.
      * @returns {Object} Objek cookie yang ditemukan atau undefined jika tidak ada.
      */
@@ -86,7 +86,7 @@ class CookieStore {
 
     /**
      * Mengambil semua nilai cookie yang cocok dengan nama tertentu.
-     * 
+     *
      * @param {string} name - Nama cookie yang akan diambil.
      * @returns {Array} Array nilai cookie yang cocok.
      */
@@ -97,7 +97,7 @@ class CookieStore {
 
     /**
      * Menyimpan cookie dengan nama dan nilai yang diberikan.
-     * 
+     *
      * @param {string} name - Nama cookie.
      * @param {string} value - Nilai cookie.
      */

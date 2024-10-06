@@ -4,14 +4,13 @@ function normalizeHeaders(name) {
     return HTTP_HEADERS.find((key) => key.toLowerCase() === name.toLowerCase()) || name;
 }
 
-
 /**
  * Kelas untuk mengelola header HTTP sebagai objek.
  */
 class Headers {
     /**
      * Konstruktor untuk membuat instance `Headers`.
-     * 
+     *
      * @param {Object|Array} [init] - Inisialisasi header, bisa berupa objek atau array.
      */
     constructor(init) {
@@ -27,7 +26,7 @@ class Headers {
 
     /**
      * Menambahkan nilai baru ke header yang sudah ada, atau membuat header baru jika belum ada.
-     * 
+     *
      * @param {string} name - Nama header.
      * @param {string} value - Nilai header.
      */
@@ -46,7 +45,7 @@ class Headers {
 
     /**
      * Menghapus header berdasarkan nama.
-     * 
+     *
      * @param {string} name - Nama header yang akan dihapus.
      */
     delete(name) {
@@ -56,7 +55,7 @@ class Headers {
 
     /**
      * Mengembalikan iterator untuk pasangan nama dan nilai dari header.
-     * 
+     *
      * @returns {IterableIterator} Iterator untuk entri header.
      */
     *entries() {
@@ -67,7 +66,7 @@ class Headers {
 
     /**
      * Menjalankan fungsi callback untuk setiap header.
-     * 
+     *
      * @param {function} callbackFn - Fungsi callback yang menerima nilai, nama, dan objek headers.
      */
     forEach(callbackFn) {
@@ -78,7 +77,7 @@ class Headers {
 
     /**
      * Mengambil nilai dari header berdasarkan nama.
-     * 
+     *
      * @param {string} name - Nama header yang akan diambil.
      * @returns {string|null} Nilai header atau null jika tidak ada.
      */
@@ -92,7 +91,7 @@ class Headers {
 
     /**
      * Mengambil semua nilai dari header "Set-Cookie".
-     * 
+     *
      * @returns {Array} Array nilai cookie yang diatur dalam header.
      */
     getSetCookie() {
@@ -103,7 +102,7 @@ class Headers {
 
     /**
      * Memeriksa apakah header dengan nama tertentu ada.
-     * 
+     *
      * @param {string} name - Nama header yang akan diperiksa.
      * @returns {boolean} True jika header ada, false jika tidak.
      */
@@ -114,7 +113,7 @@ class Headers {
 
     /**
      * Mengembalikan iterator untuk nama-nama header.
-     * 
+     *
      * @returns {IterableIterator} Iterator untuk nama header.
      */
     *keys() {
@@ -125,7 +124,7 @@ class Headers {
 
     /**
      * Mengatur atau mengganti nilai dari header berdasarkan nama.
-     * 
+     *
      * @param {string} name - Nama header.
      * @param {string} value - Nilai header.
      */
@@ -136,7 +135,7 @@ class Headers {
 
     /**
      * Mengembalikan iterator untuk nilai-nilai dari header.
-     * 
+     *
      * @returns {IterableIterator} Iterator untuk nilai header.
      */
     *values() {

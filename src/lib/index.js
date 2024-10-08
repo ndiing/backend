@@ -109,3 +109,13 @@
 //         process.exit(1);
 //     });
 // }
+
+
+// (async () => {
+//     const CaptchaSolver = require('@ndiinginc/captcha-solver')
+
+//     const cs = new CaptchaSolver()
+//     const response = await cs.postIn({body:{resource:'https://griyabayar.com/interface/captcha.php?w=160&h=48'}})
+
+//     console.log(response)
+// })();

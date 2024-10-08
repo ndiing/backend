@@ -1,5 +1,6 @@
 {
     "dependencies": {
+        "@ndiinginc/captcha-solver": "^1.0.1",
         "@ndiinginc/cert": "^2.0.0",
         "@ndiinginc/env": "^1.0.0",
         "@ndiinginc/fetch": "^2.0.0",
